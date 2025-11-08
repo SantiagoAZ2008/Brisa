@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Brisa - Apoyo Emocional</title>
+
   <style>
     body {
       margin: 0;
@@ -18,16 +19,14 @@
       overflow: hidden;
     }
 
-    .fade-in {
-      animation: fade 1.2s ease-in-out;
-    }
+    .fade-in { animation: fade 1.2s ease-in-out; }
     @keyframes fade {
       from { opacity: 0; transform: translateY(20px);} 
       to { opacity: 1; transform: translateY(0);} 
     }
 
     .login-box {
-      background: rgba(255, 255, 255, 0.08);
+      background: rgba(255,255,255,0.08);
       padding: 35px;
       width: 350px;
       border-radius: 15px;
@@ -59,9 +58,7 @@
       transition: 0.3s;
     }
 
-    button:hover {
-      background: #7a1321;
-    }
+    button:hover { background: #7a1321; }
 
     .error {
       margin-top: 10px;
@@ -76,9 +73,7 @@
       animation: fade 1.2s ease-in-out;
     }
 
-    .state-box {
-      margin-top: 25px;
-    }
+    .state-box { margin-top: 25px; }
 
     select {
       width: 80%;
@@ -97,6 +92,7 @@
     }
   </style>
 </head>
+
 <body>
 
   <div class="login-box fade-in" id="login">
@@ -111,7 +107,7 @@
   <div id="home" class="fade-in">
     <h1>Hola <span id="user-name"></span></h1>
     <p>¿Cómo te sientes hoy?</p>
-    
+
     <div class="state-box">
       <select id="emotion">
         <option value="feliz">Feliz</option>
