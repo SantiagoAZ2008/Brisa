@@ -25,16 +25,17 @@
       to { opacity: 1; transform: translateY(0);} 
     }
 
-    .login-box {
+    .box {
       background: rgba(255,255,255,0.08);
       padding: 35px;
       width: 350px;
       border-radius: 15px;
       backdrop-filter: blur(6px);
       box-shadow: 0 0 20px rgba(0,0,0,0.4);
+      text-align: center;
     }
 
-    input {
+    input, select {
       width: 100%;
       padding: 12px;
       border-radius: 8px;
@@ -60,99 +61,178 @@
 
     button:hover { background: #7a1321; }
 
-    .error {
-      margin-top: 10px;
-      color: #ffb3b3;
-      font-size: 14px;
+    .error { color: #ffb3b3; font-size: 14px; display: none; }
+
+    #home, #register, #emotionMenu, #game, #saved {
       display: none;
     }
 
-    #home {
-      display: none;
-      text-align: center;
-      animation: fade 1.2s ease-in-out;
-    }
-
-    .state-box { margin-top: 25px; }
-
-    select {
-      width: 80%;
-      padding: 12px;
-      border-radius: 10px;
-      border: none;
-      background: rgba(255,255,255,0.20);
-      color: white;
-      margin-top: 10px;
-    }
-
-    .saved {
-      margin-top: 20px;
-      font-size: 14px;
-      color: #c9e2c9;
-    }
+    .menu-btn { margin-top: 15px; width: 80%; }
   </style>
 </head>
 
 <body>
 
-  <div class="login-box fade-in" id="login">
+  <!-- LOGIN -->
+  <div class="box fade-in" id="login">
     <h2>Brisa</h2>
-    <p>Bienvenido, inicia sesión</p>
-    <input type="text" id="username" placeholder="Usuario" />
-    <input type="password" id="password" placeholder="Contraseña" />
+    <p>Inicia sesión</p>
+
+    <input type="text" id="loginUser" placeholder="Usuario" />
+    <input type="password" id="loginPass" placeholder="Contraseña" />
     <button onclick="login()">Ingresar</button>
-    <p class="error" id="error-msg">Datos incorrectos</p>
+
+    <p class="error" id="loginError">Datos incorrectos</p>
+
+    <button onclick="showRegister()" class="menu-btn">Crear cuenta</button>
   </div>
 
-  <div id="home" class="fade-in">
-    <h1>Hola <span id="user-name"></span></h1>
-    <p>¿Cómo te sientes hoy?</p>
+  <!-- REGISTER -->
+  <div class="box fade-in" id="register">
+    <h2>Brisa</h2>
+    <p>Crear cuenta</p>
 
-    <div class="state-box">
-      <select id="emotion">
-        <option value="feliz">Feliz</option>
-        <option value="triste">Triste</option>
-        <option value="estresado">Estresado</option>
-        <option value="motivado">Motivado</option>
-        <option value="cansado">Cansado</option>
-      </select>
-      <button onclick="saveEmotion()">Guardar Estado</button>
-    </div>
+    <input type="text" id="regUser" placeholder="Nuevo usuario" />
+    <input type="password" id="regPass" placeholder="Nueva contraseña" />
 
-    <p class="saved" id="saved-msg"></p>
+    <button onclick="registerUser()">Registrar</button>
+
+    <p class="error" id="regError">Complete todos los campos</p>
+
+    <button onclick="showLogin()" class="menu-btn">Volver</button>
+  </div>
+
+  <!-- HOME MENU -->
+  <div class="box fade-in" id="home">
+    <h1>Hola <span id="userName"></span></h1>
+
+    <button class="menu-btn" onclick="showEmotionMenu()">Registrar emoción</button>
+    <button class="menu-btn" onclick="showGame()">Jugar</button>
+    <button class="menu-btn" onclick="showSaved()">Historial</button>
+    <button class="menu-btn" onclick="logout()">Cerrar sesión</button>
+  </div>
+
+  <!-- EMOTION -->
+  <div class="box fade-in" id="emotionMenu">
+    <h2>¿Cómo te sientes?</h2>
+
+    <select id="emotion">
+      <option value="feliz">Feliz</option>
+      <option value="triste">Triste</option>
+      <option value="estresado">Estresado</option>
+      <option value="motivado">Motivado</option>
+      <option value="cansado">Cansado</option>
+    </select>
+
+    <button onclick="saveEmotion()">Guardar</button>
+    <p id="savedMsg"></p>
+
+    <button class="menu-btn" onclick="returnHome()">Volver</button>
+  </div>
+
+  <!-- GAME -->
+  <div class="box fade-in" id="game">
+    <h2>Mini juego</h2>
+    <p>Haz clic lo más rápido posible</p>
+
+    <button onclick="clickGame()">Clic aquí</button>
+    <p id="gameScore">Puntaje: 0</p>
+
+    <button class="menu-btn" onclick="returnHome()">Volver</button>
+  </div>
+
+  <!-- SAVED EMOTIONS -->
+  <div class="box fade-in" id="saved">
+    <h2>Historial emocional</h2>
+    <p id="savedList"></p>
+
+    <button class="menu-btn" onclick="returnHome()">Volver</button>
   </div>
 
   <script>
-    function login() {
-      const user = document.getElementById("username").value;
-      const pass = document.getElementById("password").value;
-      const error = document.getElementById("error-msg");
+    function showRegister(){
+      login.style.display = "none";
+      register.style.display = "block";
+    }
 
-      if (user.length < 3 || pass.length < 3) {
-        error.style.display = "block";
+    function showLogin(){
+      register.style.display = "none";
+      login.style.display = "block";
+    }
+
+    function registerUser(){
+      let u = regUser.value;
+      let p = regPass.value;
+
+      if(u.length < 3 || p.length < 3){
+        regError.style.display = "block";
         return;
       }
 
-      localStorage.setItem("brisaUser", user);
-
-      document.getElementById("login").style.display = "none";
-      document.getElementById("home").style.display = "block";
-      document.getElementById("user-name").innerText = user;
+      localStorage.setItem("brisaUser", u);
+      localStorage.setItem("brisaPass", p);
+      showLogin();
     }
 
-    function saveEmotion() {
-      const emotion = document.getElementById("emotion").value;
-      localStorage.setItem("brisaEmotion", emotion);
-      document.getElementById("saved-msg").innerText = "Estado guardado correctamente";
-    }
+    function login(){
+      let u = loginUser.value;
+      let p = loginPass.value;
+      let su = localStorage.getItem("brisaUser");
+      let sp = localStorage.getItem("brisaPass");
 
-    window.onload = () => {
-      const savedUser = localStorage.getItem("brisaUser");
-      if (savedUser) {
-        document.getElementById("login").style.display = "none";
-        document.getElementById("home").style.display = "block";
-        document.getElementById("user-name").innerText = savedUser;
+      if(u === su && p === sp){
+        login.style.display = "none";
+        home.style.display = "block";
+        userName.innerText = u;
+      } else {
+        loginError.style.display = "block";
       }
+    }
+
+    function showEmotionMenu(){
+      home.style.display = "none";
+      emotionMenu.style.display = "block";
+    }
+
+    function showGame(){
+      home.style.display = "none";
+      game.style.display = "block";
+    }
+
+    function showSaved(){
+      home.style.display = "none";
+      saved.style.display = "block";
+
+      let list = JSON.parse(localStorage.getItem("brisaEmotions")) || [];
+      savedList.innerHTML = list.join("<br>");
+    }
+
+    function returnHome(){
+      emotionMenu.style.display = "none";
+      game.style.display = "none";
+      saved.style.display = "none";
+      home.style.display = "block";
+    }
+
+    function saveEmotion(){
+      let emotionValue = emotion.value;
+      let list = JSON.parse(localStorage.getItem("brisaEmotions")) || [];
+
+      list.push(emotionValue + " - " + new Date().toLocaleString());
+      localStorage.setItem("brisaEmotions", JSON.stringify(list));
+
+      savedMsg.innerText = "Estado guardado correctamente";
+    }
+
+    let score = 0;
+    function clickGame(){
+      score++;
+      gameScore.innerText = "Puntaje: " + score;
+    }
+
+    function logout(){
+      home.style.display = "none";
+      login.style.display = "block";
     }
   </script>
 
