@@ -3,238 +3,251 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Brisa - Apoyo Emocional</title>
+  <title>Brisa – Bienestar Emocional</title>
 
   <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+
     body {
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-      background: #2b0d12;
-      color: white;
+      background: linear-gradient(135deg, #3a0b14, #8b1e2d);
+      height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      overflow: hidden;
+      color: white;
     }
 
-    .fade-in { animation: fade 1.2s ease-in-out; }
-    @keyframes fade {
-      from { opacity: 0; transform: translateY(20px);} 
-      to { opacity: 1; transform: translateY(0);} 
-    }
-
-    .box {
+    /* Tarjetas flotantes */
+    .card {
+      width: 380px;
       background: rgba(255,255,255,0.08);
       padding: 35px;
-      width: 350px;
-      border-radius: 15px;
-      backdrop-filter: blur(6px);
-      box-shadow: 0 0 20px rgba(0,0,0,0.4);
-      text-align: center;
+      border-radius: 25px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 0 25px rgba(0,0,0,0.5);
+      animation: fadeIn .9s ease-in-out;
+      display: none;
     }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1, h2 { margin-bottom: 15px; }
 
     input, select {
       width: 100%;
-      padding: 12px;
-      border-radius: 8px;
+      padding: 14px;
+      margin-top: 12px;
+      border-radius: 12px;
       border: none;
-      outline: none;
-      margin-top: 8px;
       background: rgba(255,255,255,0.15);
       color: white;
     }
 
     button {
       width: 100%;
-      margin-top: 18px;
-      padding: 12px;
-      background: #5c0f19;
+      padding: 14px;
+      background: #b92035;
       border: none;
+      margin-top: 18px;
+      border-radius: 12px;
       color: white;
-      cursor: pointer;
       font-size: 16px;
-      border-radius: 8px;
+      cursor: pointer;
       transition: 0.3s;
     }
 
-    button:hover { background: #7a1321; }
+    button:hover { background: #e72f4a; }
 
-    .error { color: #ffb3b3; font-size: 14px; display: none; }
-
-    #home, #register, #emotionMenu, #game, #saved {
-      display: none;
+    .link {
+      margin-top: 15px;
+      cursor: pointer;
+      text-decoration: underline;
+      font-size: 14px;
+      opacity: .8;
     }
 
-    .menu-btn { margin-top: 15px; width: 80%; }
+    .menu-btn {
+      margin-top: 12px;
+      width: 100%;
+      padding: 14px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.2);
+      transition: .3s;
+    }
+
+    .menu-btn:hover { background: rgba(255,255,255,0.1); }
+
+    #error { color: #ffb3b3; display: none; margin-top: 10px; font-size: 14px; }
   </style>
 </head>
 
 <body>
 
   <!-- LOGIN -->
-  <div class="box fade-in" id="login">
-    <h2>Brisa</h2>
-    <p>Inicia sesión</p>
+  <div class="card" id="loginCard" style="display:block;">
+    <h1>Bienvenido</h1>
+    <p>Inicia sesión para entrar a Brisa</p>
 
-    <input type="text" id="loginUser" placeholder="Usuario" />
-    <input type="password" id="loginPass" placeholder="Contraseña" />
-    <button onclick="login()">Ingresar</button>
+    <input type="text" id="loginUser" placeholder="Usuario">
+    <input type="password" id="loginPass" placeholder="Contraseña">
 
-    <p class="error" id="loginError">Datos incorrectos</p>
+    <button onclick="login()">Entrar</button>
 
-    <button onclick="showRegister()" class="menu-btn">Crear cuenta</button>
+    <div id="error">Usuario o contraseña incorrectos</div>
+
+    <div class="link" onclick="switchToRegister()">Crear cuenta</div>
   </div>
 
   <!-- REGISTER -->
-  <div class="box fade-in" id="register">
-    <h2>Brisa</h2>
-    <p>Crear cuenta</p>
+  <div class="card" id="registerCard">
+    <h1>Crear cuenta</h1>
+    <p>Únete a Brisa</p>
 
-    <input type="text" id="regUser" placeholder="Nuevo usuario" />
-    <input type="password" id="regPass" placeholder="Nueva contraseña" />
+    <input type="text" id="regUser" placeholder="Usuario nuevo">
+    <input type="password" id="regPass" placeholder="Contraseña nueva">
 
     <button onclick="registerUser()">Registrar</button>
+    <div id="errorReg" style="color:#ffb3b3; display:none; margin-top:10px;">Complete los campos</div>
 
-    <p class="error" id="regError">Complete todos los campos</p>
-
-    <button onclick="showLogin()" class="menu-btn">Volver</button>
+    <div class="link" onclick="switchToLogin()">Volver</div>
   </div>
 
   <!-- HOME MENU -->
-  <div class="box fade-in" id="home">
-    <h1>Hola <span id="userName"></span></h1>
-
-    <button class="menu-btn" onclick="showEmotionMenu()">Registrar emoción</button>
-    <button class="menu-btn" onclick="showGame()">Jugar</button>
-    <button class="menu-btn" onclick="showSaved()">Historial</button>
+  <div class="card" id="homeCard">
+    <h2>Hola <span id="userName"></span></h2>
+    <button class="menu-btn" onclick="openEmotion()">Registrar emoción</button>
+    <button class="menu-btn" onclick="openGame()">Mini-juego</button>
+    <button class="menu-btn" onclick="openHistory()">Historial emocional</button>
     <button class="menu-btn" onclick="logout()">Cerrar sesión</button>
   </div>
 
   <!-- EMOTION -->
-  <div class="box fade-in" id="emotionMenu">
+  <div class="card" id="emotionCard">
     <h2>¿Cómo te sientes?</h2>
 
-    <select id="emotion">
-      <option value="feliz">Feliz</option>
-      <option value="triste">Triste</option>
-      <option value="estresado">Estresado</option>
-      <option value="motivado">Motivado</option>
-      <option value="cansado">Cansado</option>
+    <select id="emotionSelect">
+      <option value="Feliz">Feliz</option>
+      <option value="Triste">Triste</option>
+      <option value="Motivado">Motivado</option>
+      <option value="Ansioso">Ansioso</option>
+      <option value="Cansado">Cansado</option>
     </select>
 
-    <button onclick="saveEmotion()">Guardar</button>
-    <p id="savedMsg"></p>
+    <button onclick="saveEmotion()">Guardar emoción</button>
+    <div id="savedMsg"></div>
 
-    <button class="menu-btn" onclick="returnHome()">Volver</button>
+    <div class="link" onclick="returnHome()">Volver</div>
   </div>
 
   <!-- GAME -->
-  <div class="box fade-in" id="game">
-    <h2>Mini juego</h2>
-    <p>Haz clic lo más rápido posible</p>
+  <div class="card" id="gameCard">
+    <h2>Mini-juego</h2>
+    <p>Toca el botón tantas veces como puedas.</p>
 
-    <button onclick="clickGame()">Clic aquí</button>
-    <p id="gameScore">Puntaje: 0</p>
+    <button onclick="tapGame()">Tócame</button>
+    <p id="gameCount">Puntaje: 0</p>
 
-    <button class="menu-btn" onclick="returnHome()">Volver</button>
+    <div class="link" onclick="returnHome()">Volver</div>
   </div>
 
-  <!-- SAVED EMOTIONS -->
-  <div class="box fade-in" id="saved">
+  <!-- HISTORY -->
+  <div class="card" id="historyCard">
     <h2>Historial emocional</h2>
-    <p id="savedList"></p>
+    <div id="historyList"></div>
 
-    <button class="menu-btn" onclick="returnHome()">Volver</button>
+    <div class="link" onclick="returnHome()">Volver</div>
   </div>
 
-  <script>
-    function showRegister(){
-      login.style.display = "none";
-      register.style.display = "block";
-    }
+<script>
 
-    function showLogin(){
-      register.style.display = "none";
-      login.style.display = "block";
-    }
+function switchToRegister(){
+  loginCard.style.display = "none";
+  registerCard.style.display = "block";
+}
+function switchToLogin(){
+  registerCard.style.display = "none";
+  loginCard.style.display = "block";
+}
 
-    function registerUser(){
-      let u = regUser.value;
-      let p = regPass.value;
+function registerUser(){
+  let u = regUser.value;
+  let p = regPass.value;
 
-      if(u.length < 3 || p.length < 3){
-        regError.style.display = "block";
-        return;
-      }
+  if(u.length < 3 || p.length < 3){
+    errorReg.style.display = "block";
+    return;
+  }
 
-      localStorage.setItem("brisaUser", u);
-      localStorage.setItem("brisaPass", p);
-      showLogin();
-    }
+  localStorage.setItem("brisaUser", u);
+  localStorage.setItem("brisaPass", p);
+  switchToLogin();
+}
 
-    function login(){
-      let u = loginUser.value;
-      let p = loginPass.value;
-      let su = localStorage.getItem("brisaUser");
-      let sp = localStorage.getItem("brisaPass");
+function login(){
+  let u = loginUser.value;
+  let p = loginPass.value;
 
-      if(u === su && p === sp){
-        login.style.display = "none";
-        home.style.display = "block";
-        userName.innerText = u;
-      } else {
-        loginError.style.display = "block";
-      }
-    }
+  let su = localStorage.getItem("brisaUser");
+  let sp = localStorage.getItem("brisaPass");
 
-    function showEmotionMenu(){
-      home.style.display = "none";
-      emotionMenu.style.display = "block";
-    }
+  if(u === su && p === sp){
+    loginCard.style.display = "none";
+    homeCard.style.display = "block";
+    userName.innerText = u;
+  } else {
+    error.style.display = "block";
+  }
+}
 
-    function showGame(){
-      home.style.display = "none";
-      game.style.display = "block";
-    }
+function openEmotion(){
+  homeCard.style.display = "none";
+  emotionCard.style.display = "block";
+}
+function openGame(){
+  homeCard.style.display = "none";
+  gameCard.style.display = "block";
+}
+function openHistory(){
+  homeCard.style.display = "none";
+  historyCard.style.display = "block";
 
-    function showSaved(){
-      home.style.display = "none";
-      saved.style.display = "block";
+  let data = JSON.parse(localStorage.getItem("brisaEmotions")) || [];
+  historyList.innerHTML = data.join("<br>");
+}
 
-      let list = JSON.parse(localStorage.getItem("brisaEmotions")) || [];
-      savedList.innerHTML = list.join("<br>");
-    }
+function returnHome(){
+  emotionCard.style.display = "none";
+  gameCard.style.display = "none";
+  historyCard.style.display = "none";
+  homeCard.style.display = "block";
+}
 
-    function returnHome(){
-      emotionMenu.style.display = "none";
-      game.style.display = "none";
-      saved.style.display = "none";
-      home.style.display = "block";
-    }
+function saveEmotion(){
+  let emo = emotionSelect.value;
+  let list = JSON.parse(localStorage.getItem("brisaEmotions")) || [];
 
-    function saveEmotion(){
-      let emotionValue = emotion.value;
-      let list = JSON.parse(localStorage.getItem("brisaEmotions")) || [];
+  list.push(emo + " — " + new Date().toLocaleString());
+  localStorage.setItem("brisaEmotions", JSON.stringify(list));
 
-      list.push(emotionValue + " - " + new Date().toLocaleString());
-      localStorage.setItem("brisaEmotions", JSON.stringify(list));
+  savedMsg.innerText = "Guardado ✔";
+}
 
-      savedMsg.innerText = "Estado guardado correctamente";
-    }
+let score = 0;
+function tapGame(){
+  score++;
+  gameCount.innerText = "Puntaje: " + score;
+}
 
-    let score = 0;
-    function clickGame(){
-      score++;
-      gameScore.innerText = "Puntaje: " + score;
-    }
+function logout(){
+  homeCard.style.display = "none";
+  loginCard.style.display = "block";
+}
 
-    function logout(){
-      home.style.display = "none";
-      login.style.display = "block";
-    }
-  </script>
+</script>
 
 </body>
 </html>
