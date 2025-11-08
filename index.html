@@ -6,55 +6,59 @@
   <title>Brisa – Bienestar Emocional</title>
 
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
 
     body {
-      background: linear-gradient(135deg, #4c1a24, #b33f55, #4c1a24);
+      background: linear-gradient(135deg, #642b73, #c6426e);
       background-size: 300% 300%;
-      animation: damasco 10s infinite alternate;
-      height: 100vh;
+      animation: fondo 10s infinite alternate;
+      min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
       color: white;
+      overflow: hidden;
     }
 
-    @keyframes damasco {
+    @keyframes fondo {
       0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
     }
 
-    /* Barra superior estilo navegador */
     .navBar {
       position: absolute;
       top: 0;
       width: 100%;
       height: 55px;
-      background: rgba(0,0,0,0.4);
+      background: rgba(0,0,0,0.3);
       display: flex;
       align-items: center;
-      padding-left: 18px;
-      backdrop-filter: blur(8px);
-      box-shadow: 0 0 10px rgba(0,0,0,0.5);
-      font-size: 18px;
+      justify-content: center;
+      font-weight: bold;
       letter-spacing: 1px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.5);
     }
 
     .card {
       width: 420px;
-      background: rgba(255,255,255,0.07);
+      background: rgba(255,255,255,0.1);
       padding: 35px;
-      border-radius: 25px;
+      border-radius: 20px;
       backdrop-filter: blur(12px);
       box-shadow: 0 0 25px rgba(0,0,0,0.5);
-      animation: fadeIn .9s ease-in-out;
       display: none;
+      animation: fadeIn .6s ease-in-out;
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
+      from { opacity: 0; transform: translateY(15px); }
       to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1, h2 {
+      text-align: center;
+      margin-bottom: 15px;
     }
 
     input, select {
@@ -63,14 +67,17 @@
       margin-top: 12px;
       border-radius: 12px;
       border: none;
-      background: rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.2);
       color: white;
+      outline: none;
     }
+
+    input::placeholder { color: #ddd; }
 
     button {
       width: 100%;
       padding: 14px;
-      background: #d9485c;
+      background: #ff5c74;
       border: none;
       margin-top: 18px;
       border-radius: 12px;
@@ -80,36 +87,64 @@
       transition: 0.3s;
     }
 
-    button:hover { background: #ff6074; }
+    button:hover { background: #ff758b; transform: scale(1.03); }
 
     .menu-btn {
       margin-top: 12px;
       width: 100%;
       padding: 14px;
-      background: rgba(0,0,0,0.3);
+      background: rgba(255,255,255,0.1);
       border-radius: 12px;
       border: 1px solid rgba(255,255,255,0.2);
+      transition: 0.3s;
     }
 
-    .link { margin-top: 15px; cursor: pointer; text-decoration: underline; font-size: 14px; }
+    .menu-btn:hover { background: rgba(255,255,255,0.25); }
 
-    #error, #errorReg { color:#ffb3b3; display:none; margin-top:12px; }
+    .link {
+      margin-top: 15px;
+      cursor: pointer;
+      text-decoration: underline;
+      font-size: 14px;
+      text-align: center;
+      display: block;
+    }
 
+    #error, #errorReg, #savedMsg {
+      color:#ffb3b3;
+      display:none;
+      margin-top:12px;
+      text-align: center;
+    }
+
+    #savedMsg.success { color: #b2ffb2; display:block; }
+
+    #historyList, #userList {
+      margin-top: 15px;
+      max-height: 200px;
+      overflow-y: auto;
+      font-size: 14px;
+    }
+
+    #reactionBtn {
+      transition: background 0.3s;
+      font-size: 16px;
+    }
   </style>
 </head>
 
 <body>
-  <div class="navBar">BRISA – PANEL</div>
+  <div class="navBar">🌸 BRISA – Bienestar Emocional</div>
 
   <!-- LOGIN -->
   <div class="card" id="loginCard" style="display:block;">
     <h1>Bienvenido</h1>
-    <p>Inicia sesión para acceder</p>
+    <p>Inicia sesión para continuar</p>
     <input type="text" id="loginUser" placeholder="Usuario">
     <input type="password" id="loginPass" placeholder="Contraseña">
     <button onclick="login()">Entrar</button>
     <div id="error">Usuario o contraseña incorrectos</div>
-    <div class="link" onclick="switchToRegister()">Crear cuenta</div>
+    <div class="link" onclick="switchToRegister()">Crear cuenta nueva</div>
   </div>
 
   <!-- REGISTER -->
@@ -118,15 +153,15 @@
     <input type="text" id="regUser" placeholder="Usuario nuevo">
     <input type="password" id="regPass" placeholder="Contraseña nueva">
     <button onclick="registerUser()">Registrar</button>
-    <div id="errorReg">Complete los campos</div>
+    <div id="errorReg">Complete los campos o usuario ya existe</div>
     <div class="link" onclick="switchToLogin()">Volver</div>
   </div>
 
   <!-- HOME -->
   <div class="card" id="homeCard">
-    <h2>Hola <span id="userName"></span></h2>
+    <h2>Hola <span id="userName"></span> 👋</h2>
     <button class="menu-btn" onclick="openEmotion()">Registrar emoción</button>
-    <button class="menu-btn" onclick="openGame()">Mini-juegos</button>
+    <button class="menu-btn" onclick="openGame()">Mini-juego de reflejos</button>
     <button class="menu-btn" onclick="openHistory()">Historial emocional</button>
     <button class="menu-btn" onclick="openUsers()">Usuarios registrados</button>
     <button class="menu-btn" onclick="logout()">Cerrar sesión</button>
@@ -134,68 +169,163 @@
 
   <!-- EMOTION -->
   <div class="card" id="emotionCard">
-    <h2>Estado emocional</h2>
+    <h2>¿Cómo te sientes hoy?</h2>
     <select id="emotionSelect">
-      <option value="Feliz">Feliz</option>
-      <option value="Triste">Triste</option>
-      <option value="Ansioso">Ansioso</option>
-      <option value="Cansado">Cansado</option>
-      <option value="Motivado">Motivado</option>
-      <option value="Molesto">Molesto</option>
-      <option value="Confundido">Confundido</option>
+      <option value="Feliz">😊 Feliz</option>
+      <option value="Triste">😢 Triste</option>
+      <option value="Ansioso">😰 Ansioso</option>
+      <option value="Cansado">😴 Cansado</option>
+      <option value="Motivado">💪 Motivado</option>
+      <option value="Molesto">😡 Molesto</option>
+      <option value="Confundido">😕 Confundido</option>
     </select>
-    <button onclick="saveEmotion()">Guardar</button>
+    <button onclick="saveEmotion()">Guardar emoción</button>
     <div id="savedMsg"></div>
     <div class="link" onclick="returnHome()">Volver</div>
   </div>
 
-  <!-- IMPROVED MINI-GAME -->
+  <!-- GAME -->
   <div class="card" id="gameCard">
-    <h2>Reflejos</h2>
+    <h2>🕹️ Juego de reflejos</h2>
     <p>Presiona el botón cuando cambie de color</p>
-    <button id="reactionBtn" style="background:#333;">Espera...</button>
+    <button id="reactionBtn" style="background:#444;">Espera...</button>
     <p id="reactionResult"></p>
     <div class="link" onclick="returnHome()">Volver</div>
   </div>
 
   <!-- HISTORY -->
   <div class="card" id="historyCard">
-    <h2>Historial emocional</h2>
+    <h2>📊 Tu historial emocional</h2>
     <div id="historyList"></div>
     <div class="link" onclick="returnHome()">Volver</div>
   </div>
 
   <!-- USERS -->
   <div class="card" id="usersCard">
-    <h2>Usuarios registrados</h2>
+    <h2>👥 Usuarios registrados</h2>
     <div id="userList"></div>
     <div class="link" onclick="returnHome()">Volver</div>
   </div>
 
 <script>
+const loginCard = document.getElementById("loginCard");
+const registerCard = document.getElementById("registerCard");
+const homeCard = document.getElementById("homeCard");
+const emotionCard = document.getElementById("emotionCard");
+const gameCard = document.getElementById("gameCard");
+const historyCard = document.getElementById("historyCard");
+const usersCard = document.getElementById("usersCard");
+
 function switchToRegister(){ loginCard.style.display="none"; registerCard.style.display="block"; }
 function switchToLogin(){ registerCard.style.display="none"; loginCard.style.display="block"; }
 
 function registerUser(){
-  let u = regUser.value.trim(); let p = regPass.value.trim();
+  let u = regUser.value.trim();
+  let p = regPass.value.trim();
   if(u.length<3 || p.length<3){ errorReg.style.display="block"; return; }
 
   let users = JSON.parse(localStorage.getItem("brisaUsers")) || [];
-  users.push({ user:u, pass:p });
+  if(users.find(x => x.user === u)){ errorReg.style.display="block"; return; }
+
+  users.push({ user:u, pass:p, emotions:[] });
   localStorage.setItem("brisaUsers", JSON.stringify(users));
+  regUser.value = ""; regPass.value = "";
   switchToLogin();
 }
 
 function login(){
-  let u = loginUser.value.trim(); let p = loginPass.value.trim();
+  let u = loginUser.value.trim();
+  let p = loginPass.value.trim();
   let users = JSON.parse(localStorage.getItem("brisaUsers")) || [];
-
   let exists = users.find(x => x.user===u && x.pass===p);
-  if(exists){ loginCard.style.display="none"; homeCard.style.display="block"; userName.innerText=u; }
-  else error.style.display="block";
+  if(exists){
+    localStorage.setItem("brisaActive", u);
+    loginCard.style.display="none";
+    homeCard.style.display="block";
+    document.getElementById("userName").innerText = u;
+  } else {
+    error.style.display="block";
+  }
 }
 
-function openEmotion(){ homeCard.style.display="none"; emotionCard.style.display="block"; }
-function openGame(){ homeCard.style.display="none"; gameCard.style.display="block"; startReaction(); }
-function openHistory(){ homeCard.style.display="none"; historyCard.style.display="block"; loadHistory(); }
-function openUsers()
+function logout(){
+  localStorage.removeItem("brisaActive");
+  homeCard.style.display="none";
+  loginCard.style.display="block";
+}
+
+function openEmotion(){ switchCard(homeCard, emotionCard); }
+function openGame(){ switchCard(homeCard, gameCard); startReaction(); }
+function openHistory(){ switchCard(homeCard, historyCard); loadHistory(); }
+function openUsers(){ switchCard(homeCard, usersCard); loadUsers(); }
+function returnHome(){ hideAll(); homeCard.style.display="block"; }
+
+function switchCard(from,to){ from.style.display="none"; to.style.display="block"; }
+function hideAll(){
+  [loginCard,registerCard,homeCard,emotionCard,gameCard,historyCard,usersCard].forEach(c=>c.style.display="none");
+}
+
+function saveEmotion(){
+  let emo = emotionSelect.value;
+  let u = localStorage.getItem("brisaActive");
+  let users = JSON.parse(localStorage.getItem("brisaUsers")) || [];
+  let user = users.find(x => x.user === u);
+  if(user){
+    user.emotions.push({ emotion: emo, date: new Date().toLocaleString() });
+    localStorage.setItem("brisaUsers", JSON.stringify(users));
+    savedMsg.className="success";
+    savedMsg.innerText="Emoción registrada con éxito 💖";
+    savedMsg.style.display="block";
+    setTimeout(()=>savedMsg.style.display="none", 2000);
+  }
+}
+
+function loadHistory(){
+  let u = localStorage.getItem("brisaActive");
+  let users = JSON.parse(localStorage.getItem("brisaUsers")) || [];
+  let user = users.find(x => x.user === u);
+  historyList.innerHTML = user && user.emotions.length ? 
+    user.emotions.map(e=>`<div>• ${e.emotion} (${e.date})</div>`).join("") :
+    "<p>No hay emociones registradas aún.</p>";
+}
+
+function loadUsers(){
+  let users = JSON.parse(localStorage.getItem("brisaUsers")) || [];
+  userList.innerHTML = users.length ? users.map(u=>`<div>${u.user} — ${u.emotions.length} registros</div>`).join("") : "<p>No hay usuarios aún.</p>";
+}
+
+// --- Mini juego de reflejos ---
+let startTime, timeout;
+function startReaction(){
+  const btn = document.getElementById("reactionBtn");
+  const result = document.getElementById("reactionResult");
+  btn.style.background="#444"; btn.innerText="Espera...";
+  result.innerText="";
+  clearTimeout(timeout);
+
+  timeout = setTimeout(()=>{
+    btn.style.background="#37d67a";
+    btn.innerText="¡Presiona ahora!";
+    startTime = Date.now();
+    btn.onclick = ()=> {
+      let time = Date.now() - startTime;
+      result.innerText = `⏱️ Tu tiempo de reacción: ${time} ms`;
+      btn.innerText="Reintentar";
+      btn.style.background="#ff5c74";
+      btn.onclick = startReaction;
+    }
+  }, Math.random()*3000 + 1000);
+}
+
+// Mantener sesión activa
+window.onload = () => {
+  const active = localStorage.getItem("brisaActive");
+  if(active){
+    loginCard.style.display="none";
+    homeCard.style.display="block";
+    userName.innerText = active;
+  }
+};
+</script>
+</body>
+</html>
