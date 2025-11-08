@@ -9,7 +9,9 @@
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
 
     body {
-      background: linear-gradient(135deg, #3a0b14, #8b1e2d);
+      background: linear-gradient(135deg, #4c1a24, #b33f55, #4c1a24);
+      background-size: 300% 300%;
+      animation: damasco 10s infinite alternate;
       height: 100vh;
       display: flex;
       justify-content: center;
@@ -17,13 +19,34 @@
       color: white;
     }
 
-    /* Tarjetas flotantes */
+    @keyframes damasco {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Barra superior estilo navegador */
+    .navBar {
+      position: absolute;
+      top: 0;
+      width: 100%;
+      height: 55px;
+      background: rgba(0,0,0,0.4);
+      display: flex;
+      align-items: center;
+      padding-left: 18px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+      font-size: 18px;
+      letter-spacing: 1px;
+    }
+
     .card {
-      width: 380px;
-      background: rgba(255,255,255,0.08);
+      width: 420px;
+      background: rgba(255,255,255,0.07);
       padding: 35px;
       border-radius: 25px;
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(12px);
       box-shadow: 0 0 25px rgba(0,0,0,0.5);
       animation: fadeIn .9s ease-in-out;
       display: none;
@@ -34,22 +57,20 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    h1, h2 { margin-bottom: 15px; }
-
     input, select {
       width: 100%;
       padding: 14px;
       margin-top: 12px;
       border-radius: 12px;
       border: none;
-      background: rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.18);
       color: white;
     }
 
     button {
       width: 100%;
       padding: 14px;
-      background: #b92035;
+      background: #d9485c;
       border: none;
       margin-top: 18px;
       border-radius: 12px;
@@ -59,15 +80,7 @@
       transition: 0.3s;
     }
 
-    button:hover { background: #e72f4a; }
-
-    .link {
-      margin-top: 15px;
-      cursor: pointer;
-      text-decoration: underline;
-      font-size: 14px;
-      opacity: .8;
-    }
+    button:hover { background: #ff6074; }
 
     .menu-btn {
       margin-top: 12px;
@@ -76,81 +89,72 @@
       background: rgba(0,0,0,0.3);
       border-radius: 12px;
       border: 1px solid rgba(255,255,255,0.2);
-      transition: .3s;
     }
 
-    .menu-btn:hover { background: rgba(255,255,255,0.1); }
+    .link { margin-top: 15px; cursor: pointer; text-decoration: underline; font-size: 14px; }
 
-    #error { color: #ffb3b3; display: none; margin-top: 10px; font-size: 14px; }
+    #error, #errorReg { color:#ffb3b3; display:none; margin-top:12px; }
+
   </style>
 </head>
 
 <body>
+  <div class="navBar">BRISA – PANEL</div>
 
   <!-- LOGIN -->
   <div class="card" id="loginCard" style="display:block;">
     <h1>Bienvenido</h1>
-    <p>Inicia sesión para entrar a Brisa</p>
-
+    <p>Inicia sesión para acceder</p>
     <input type="text" id="loginUser" placeholder="Usuario">
     <input type="password" id="loginPass" placeholder="Contraseña">
-
     <button onclick="login()">Entrar</button>
-
     <div id="error">Usuario o contraseña incorrectos</div>
-
     <div class="link" onclick="switchToRegister()">Crear cuenta</div>
   </div>
 
   <!-- REGISTER -->
   <div class="card" id="registerCard">
-    <h1>Crear cuenta</h1>
-    <p>Únete a Brisa</p>
-
+    <h1>Registro</h1>
     <input type="text" id="regUser" placeholder="Usuario nuevo">
     <input type="password" id="regPass" placeholder="Contraseña nueva">
-
     <button onclick="registerUser()">Registrar</button>
-    <div id="errorReg" style="color:#ffb3b3; display:none; margin-top:10px;">Complete los campos</div>
-
+    <div id="errorReg">Complete los campos</div>
     <div class="link" onclick="switchToLogin()">Volver</div>
   </div>
 
-  <!-- HOME MENU -->
+  <!-- HOME -->
   <div class="card" id="homeCard">
     <h2>Hola <span id="userName"></span></h2>
     <button class="menu-btn" onclick="openEmotion()">Registrar emoción</button>
-    <button class="menu-btn" onclick="openGame()">Mini-juego</button>
+    <button class="menu-btn" onclick="openGame()">Mini-juegos</button>
     <button class="menu-btn" onclick="openHistory()">Historial emocional</button>
+    <button class="menu-btn" onclick="openUsers()">Usuarios registrados</button>
     <button class="menu-btn" onclick="logout()">Cerrar sesión</button>
   </div>
 
   <!-- EMOTION -->
   <div class="card" id="emotionCard">
-    <h2>¿Cómo te sientes?</h2>
-
+    <h2>Estado emocional</h2>
     <select id="emotionSelect">
       <option value="Feliz">Feliz</option>
       <option value="Triste">Triste</option>
-      <option value="Motivado">Motivado</option>
       <option value="Ansioso">Ansioso</option>
       <option value="Cansado">Cansado</option>
+      <option value="Motivado">Motivado</option>
+      <option value="Molesto">Molesto</option>
+      <option value="Confundido">Confundido</option>
     </select>
-
-    <button onclick="saveEmotion()">Guardar emoción</button>
+    <button onclick="saveEmotion()">Guardar</button>
     <div id="savedMsg"></div>
-
     <div class="link" onclick="returnHome()">Volver</div>
   </div>
 
-  <!-- GAME -->
+  <!-- IMPROVED MINI-GAME -->
   <div class="card" id="gameCard">
-    <h2>Mini-juego</h2>
-    <p>Toca el botón tantas veces como puedas.</p>
-
-    <button onclick="tapGame()">Tócame</button>
-    <p id="gameCount">Puntaje: 0</p>
-
+    <h2>Reflejos</h2>
+    <p>Presiona el botón cuando cambie de color</p>
+    <button id="reactionBtn" style="background:#333;">Espera...</button>
+    <p id="reactionResult"></p>
     <div class="link" onclick="returnHome()">Volver</div>
   </div>
 
@@ -158,96 +162,40 @@
   <div class="card" id="historyCard">
     <h2>Historial emocional</h2>
     <div id="historyList"></div>
+    <div class="link" onclick="returnHome()">Volver</div>
+  </div>
 
+  <!-- USERS -->
+  <div class="card" id="usersCard">
+    <h2>Usuarios registrados</h2>
+    <div id="userList"></div>
     <div class="link" onclick="returnHome()">Volver</div>
   </div>
 
 <script>
-
-function switchToRegister(){
-  loginCard.style.display = "none";
-  registerCard.style.display = "block";
-}
-function switchToLogin(){
-  registerCard.style.display = "none";
-  loginCard.style.display = "block";
-}
+function switchToRegister(){ loginCard.style.display="none"; registerCard.style.display="block"; }
+function switchToLogin(){ registerCard.style.display="none"; loginCard.style.display="block"; }
 
 function registerUser(){
-  let u = regUser.value;
-  let p = regPass.value;
+  let u = regUser.value.trim(); let p = regPass.value.trim();
+  if(u.length<3 || p.length<3){ errorReg.style.display="block"; return; }
 
-  if(u.length < 3 || p.length < 3){
-    errorReg.style.display = "block";
-    return;
-  }
-
-  localStorage.setItem("brisaUser", u);
-  localStorage.setItem("brisaPass", p);
+  let users = JSON.parse(localStorage.getItem("brisaUsers")) || [];
+  users.push({ user:u, pass:p });
+  localStorage.setItem("brisaUsers", JSON.stringify(users));
   switchToLogin();
 }
 
 function login(){
-  let u = loginUser.value;
-  let p = loginPass.value;
+  let u = loginUser.value.trim(); let p = loginPass.value.trim();
+  let users = JSON.parse(localStorage.getItem("brisaUsers")) || [];
 
-  let su = localStorage.getItem("brisaUser");
-  let sp = localStorage.getItem("brisaPass");
-
-  if(u === su && p === sp){
-    loginCard.style.display = "none";
-    homeCard.style.display = "block";
-    userName.innerText = u;
-  } else {
-    error.style.display = "block";
-  }
+  let exists = users.find(x => x.user===u && x.pass===p);
+  if(exists){ loginCard.style.display="none"; homeCard.style.display="block"; userName.innerText=u; }
+  else error.style.display="block";
 }
 
-function openEmotion(){
-  homeCard.style.display = "none";
-  emotionCard.style.display = "block";
-}
-function openGame(){
-  homeCard.style.display = "none";
-  gameCard.style.display = "block";
-}
-function openHistory(){
-  homeCard.style.display = "none";
-  historyCard.style.display = "block";
-
-  let data = JSON.parse(localStorage.getItem("brisaEmotions")) || [];
-  historyList.innerHTML = data.join("<br>");
-}
-
-function returnHome(){
-  emotionCard.style.display = "none";
-  gameCard.style.display = "none";
-  historyCard.style.display = "none";
-  homeCard.style.display = "block";
-}
-
-function saveEmotion(){
-  let emo = emotionSelect.value;
-  let list = JSON.parse(localStorage.getItem("brisaEmotions")) || [];
-
-  list.push(emo + " — " + new Date().toLocaleString());
-  localStorage.setItem("brisaEmotions", JSON.stringify(list));
-
-  savedMsg.innerText = "Guardado ✔";
-}
-
-let score = 0;
-function tapGame(){
-  score++;
-  gameCount.innerText = "Puntaje: " + score;
-}
-
-function logout(){
-  homeCard.style.display = "none";
-  loginCard.style.display = "block";
-}
-
-</script>
-
-</body>
-</html>
+function openEmotion(){ homeCard.style.display="none"; emotionCard.style.display="block"; }
+function openGame(){ homeCard.style.display="none"; gameCard.style.display="block"; startReaction(); }
+function openHistory(){ homeCard.style.display="none"; historyCard.style.display="block"; loadHistory(); }
+function openUsers(){
