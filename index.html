@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Brisa - Apoyo Emocional</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background: #2b0d12;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .fade-in {
+      animation: fade 1.2s ease-in-out;
+    }
+    @keyframes fade {
+      from { opacity: 0; transform: translateY(20px);} 
+      to { opacity: 1; transform: translateY(0);} 
+    }
+
+    .login-box {
+      background: rgba(255, 255, 255, 0.08);
+      padding: 35px;
+      width: 350px;
+      border-radius: 15px;
+      backdrop-filter: blur(6px);
+      box-shadow: 0 0 20px rgba(0,0,0,0.4);
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+      margin-top: 8px;
+      background: rgba(255,255,255,0.15);
+      color: white;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 18px;
+      padding: 12px;
+      background: #5c0f19;
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-size: 16px;
+      border-radius: 8px;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #7a1321;
+    }
+
+    .error {
+      margin-top: 10px;
+      color: #ffb3b3;
+      font-size: 14px;
+      display: none;
+    }
+
+    #home {
+      display: none;
+      text-align: center;
+      animation: fade 1.2s ease-in-out;
+    }
+
+    .state-box {
+      margin-top: 25px;
+    }
+
+    select {
+      width: 80%;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      background: rgba(255,255,255,0.20);
+      color: white;
+      margin-top: 10px;
+    }
+
+    .saved {
+      margin-top: 20px;
+      font-size: 14px;
+      color: #c9e2c9;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-box fade-in" id="login">
+    <h2>Brisa</h2>
+    <p>Bienvenido, inicia sesión</p>
+    <input type="text" id="username" placeholder="Usuario" />
+    <input type="password" id="password" placeholder="Contraseña" />
+    <button onclick="login()">Ingresar</button>
+    <p class="error" id="error-msg">Datos incorrectos</p>
+  </div>
+
+  <div id="home" class="fade-in">
+    <h1>Hola <span id="user-name"></span></h1>
+    <p>¿Cómo te sientes hoy?</p>
+    
+    <div class="state-box">
+      <select id="emotion">
+        <option value="feliz">Feliz</option>
+        <option value="triste">Triste</option>
+        <option value="estresado">Estresado</option>
+        <option value="motivado">Motivado</option>
+        <option value="cansado">Cansado</option>
+      </select>
+      <button onclick="saveEmotion()">Guardar Estado</button>
+    </div>
+
+    <p class="saved" id="saved-msg"></p>
+  </div>
+
+  <script>
+    function login() {
+      const user = document.getElementById("username").value;
+      const pass = document.getElementById("password").value;
+      const error = document.getElementById("error-msg");
+
+      if (user.length < 3 || pass.length < 3) {
+        error.style.display = "block";
+        return;
+      }
+
+      localStorage.setItem("brisaUser", user);
+
+      document.getElementById("login").style.display = "none";
+      document.getElementById("home").style.display = "block";
+      document.getElementById("user-name").innerText = user;
+    }
+
+    function saveEmotion() {
+      const emotion = document.getElementById("emotion").value;
+      localStorage.setItem("brisaEmotion", emotion);
+      document.getElementById("saved-msg").innerText = "Estado guardado correctamente";
+    }
+
+    window.onload = () => {
+      const savedUser = localStorage.getItem("brisaUser");
+      if (savedUser) {
+        document.getElementById("login").style.display = "none";
+        document.getElementById("home").style.display = "block";
+        document.getElementById("user-name").innerText = savedUser;
+      }
+    }
+  </script>
+
+</body>
+</html>
