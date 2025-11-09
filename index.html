@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Brisa 2025</title>
 
-  <!-- 🌈 Favicon SVG animado -->
+  <!-- 🌈 Favicon animado SVG -->
   <link rel="icon" href="data:image/svg+xml,
   <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>
     <defs>
@@ -14,217 +14,268 @@
         <stop offset='100%' stop-color='%23f0f'/>
       </radialGradient>
     </defs>
-    <circle cx='50' cy='50' r='40' fill='url(%23grad)'>
-      <animate attributeName='fill' values='url(%23grad);url(%23grad)' dur='5s' repeatCount='indefinite' />
-    </circle>
+    <circle cx='50' cy='50' r='40' fill='url(%23grad)' />
   </svg>" type="image/svg+xml">
 
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
+    * {margin:0;padding:0;box-sizing:border-box;font-family:"Poppins",sans-serif;}
 
     body {
-      height: 100vh;
-      overflow: hidden;
-      background: radial-gradient(circle at 30% 30%, #050505, #0b0b0f, #101018);
-      color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      height:100vh;
+      background: radial-gradient(circle at 20% 20%, #2a0034, #000);
+      overflow:hidden;
+      color:white;
     }
 
-    /* 🌌 Fondo animado tipo camuflaje neón */
+    /* 🌌 Fondo animado tipo camuflaje */
     body::before {
-      content: "";
-      position: absolute;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(0, 153, 255, 0.1) 0%, transparent 60%),
-                  radial-gradient(circle, rgba(255, 0, 255, 0.1) 0%, transparent 60%);
-      background-size: 60% 60%;
-      animation: moveBg 15s infinite alternate ease-in-out;
-      z-index: 0;
+      content:'';
+      position:fixed;
+      top:0;left:0;width:100%;height:100%;
+      background: radial-gradient(circle at 50% 50%, #5e1f7c44, transparent 40%),
+                  radial-gradient(circle at 20% 80%, #431a6b55, transparent 40%),
+                  radial-gradient(circle at 80% 20%, #7a1b6f55, transparent 40%);
+      animation: moveBg 10s ease-in-out infinite alternate;
+      z-index:-1;
+      filter:blur(80px);
     }
 
     @keyframes moveBg {
-      0% { transform: translate(0, 0) rotate(0deg); }
-      50% { transform: translate(-20%, -10%) rotate(45deg); }
-      100% { transform: translate(10%, 20%) rotate(90deg); }
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
     }
 
-    /* 🌟 Header superior animado */
-    header {
-      position: fixed;
-      top: 0;
-      width: 100%;
-      text-align: center;
-      padding: 15px;
-      font-size: 1.8em;
-      font-weight: 700;
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(10px);
-      color: #fff;
-      text-shadow: 0 0 12px #7f00ff, 0 0 20px #00b3ff;
-      animation: glow 4s ease-in-out infinite alternate;
-      z-index: 10;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    /* 🔮 Panel lateral */
+    nav {
+      position:fixed;
+      left:0;top:0;
+      width:220px;
+      height:100%;
+      background:rgba(255,255,255,0.06);
+      backdrop-filter:blur(12px);
+      border-right:1px solid rgba(255,255,255,0.1);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      padding-top:40px;
+      transition:0.3s;
     }
 
-    @keyframes glow {
-      0% { text-shadow: 0 0 10px #7f00ff, 0 0 25px #00b3ff; }
-      50% { text-shadow: 0 0 25px #ff00ff, 0 0 35px #0099ff; }
-      100% { text-shadow: 0 0 12px #7f00ff, 0 0 20px #00b3ff; }
+    nav h2 {
+      font-size:1.4em;
+      color:#fff;
+      text-align:center;
+      margin-bottom:30px;
+      animation: glowText 4s ease-in-out infinite alternate;
     }
 
-    /* 🎯 Tarjetas */
+    @keyframes glowText {
+      0% {text-shadow:0 0 10px #7f00ff,0 0 25px #00b3ff;}
+      100% {text-shadow:0 0 25px #ff00ff,0 0 35px #0099ff;}
+    }
+
+    .menu-btn {
+      width:180px;
+      margin:10px 0;
+      padding:12px;
+      background:rgba(255,255,255,0.08);
+      border:none;
+      border-radius:12px;
+      color:white;
+      cursor:pointer;
+      transition:0.3s;
+    }
+
+    .menu-btn:hover {
+      background:rgba(255,255,255,0.25);
+      transform:scale(1.05);
+    }
+
+    /* 🧊 Contenido principal */
+    .content {
+      margin-left:220px;
+      padding:40px;
+      transition:0.4s;
+    }
+
     .card {
-      position: relative;
-      width: 380px;
-      background: rgba(255, 255, 255, 0.07);
-      padding: 40px;
-      border-radius: 25px;
-      backdrop-filter: blur(15px);
-      box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
-      animation: fadeIn 1s ease-in-out;
-      z-index: 1;
+      background:rgba(255,255,255,0.08);
+      backdrop-filter:blur(15px);
+      border-radius:25px;
+      padding:30px;
+      box-shadow:0 0 30px rgba(0,0,0,0.4);
+      animation: fadeIn 0.6s ease-in-out;
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.95); }
-      to { opacity: 1; transform: scale(1); }
+      from {opacity:0; transform:translateY(20px);}
+      to {opacity:1; transform:translateY(0);}
+    }
+
+    /* Login/Registro */
+    #loginCard, #registerCard {
+      position:fixed;
+      top:0;left:0;width:100%;height:100%;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      background:rgba(0,0,0,0.6);
+      backdrop-filter:blur(10px);
+      transition:opacity 0.5s;
+    }
+
+    .login-box {
+      background:rgba(255,255,255,0.08);
+      padding:40px;
+      border-radius:20px;
+      text-align:center;
+      width:360px;
+      box-shadow:0 0 25px rgba(0,0,0,0.5);
+      animation: scaleIn 0.8s ease;
+    }
+
+    @keyframes scaleIn {
+      from {transform:scale(0.9);opacity:0;}
+      to {transform:scale(1);opacity:1;}
     }
 
     input {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border: none;
-      border-radius: 10px;
-      background: rgba(255, 255, 255, 0.1);
-      color: white;
-      font-size: 15px;
+      width:100%;
+      padding:12px;
+      margin:10px 0;
+      border:none;
+      border-radius:10px;
+      background:rgba(255,255,255,0.15);
+      color:white;
     }
 
     button {
-      width: 100%;
-      padding: 14px;
-      margin-top: 12px;
-      border: none;
-      border-radius: 12px;
-      background: linear-gradient(90deg, #0077ff, #9b00ff);
-      color: white;
-      font-size: 16px;
-      cursor: pointer;
-      transition: 0.3s;
+      width:100%;
+      padding:12px;
+      border:none;
+      border-radius:10px;
+      background:#7b2cbf;
+      color:white;
+      cursor:pointer;
+      transition:0.3s;
+      margin-top:10px;
     }
 
-    button:hover {
-      background: linear-gradient(90deg, #0099ff, #b300ff);
-      transform: scale(1.03);
-    }
+    button:hover {background:#9d4edd;}
 
     .link {
-      margin-top: 15px;
-      text-align: center;
-      font-size: 14px;
-      color: #ccc;
-      cursor: pointer;
-      text-decoration: underline;
+      margin-top:10px;
+      font-size:14px;
+      text-decoration:underline;
+      cursor:pointer;
+      color:#ddd;
     }
 
-    #error, #errorReg { color: #ff8080; display: none; margin-top: 12px; text-align: center; }
   </style>
 </head>
 
 <body>
-  <header>🌌 Brisa 2025 — Bienestar Emocional</header>
+  <nav>
+    <h2>🌌 Brisa 2025</h2>
+    <button class="menu-btn" onclick="showSection('home')">Inicio</button>
+    <button class="menu-btn" onclick="showSection('games')">Mini Juegos</button>
+    <button class="menu-btn" onclick="showSection('emotions')">Emociones</button>
+    <button class="menu-btn" onclick="showSection('profile')">Perfil</button>
+    <button class="menu-btn" onclick="showSection('users')">Usuarios</button>
+    <button class="menu-btn" onclick="logout()">Cerrar sesión</button>
+  </nav>
+
+  <div class="content">
+    <div id="home" class="card">
+      <h1>Bienvenido a Brisa 2025</h1>
+      <p>Tu espacio digital para gestionar emociones y bienestar emocional.</p>
+      <p>Desarrollado por <b>Santiago Nuñez Mejía</b>.</p>
+      <a href="https://www.instagram.com/sa_mejia.e/" target="_blank">Instagram del creador</a>
+    </div>
+
+    <div id="games" class="card" style="display:none;">
+      <h2>🎮 Mini Juegos</h2>
+      <p>Juegos para entrenar tus reflejos y concentración.</p>
+    </div>
+
+    <div id="emotions" class="card" style="display:none;">
+      <h2>💭 Registro Emocional</h2>
+      <textarea id="emotionNotes" placeholder="Describe cómo te sientes hoy..." rows="5" style="width:100%;padding:10px;border-radius:10px;"></textarea>
+      <button>Guardar Emoción</button>
+    </div>
+
+    <div id="profile" class="card" style="display:none;">
+      <h2>👤 Perfil del Usuario</h2>
+      <p>Aquí verás tu información personal e invitaciones.</p>
+    </div>
+
+    <div id="users" class="card" style="display:none;">
+      <h2>👥 Usuarios Registrados</h2>
+      <div id="userList"></div>
+    </div>
+  </div>
 
   <!-- LOGIN -->
-  <div class="card" id="loginCard">
-    <h2>Bienvenido</h2>
-    <p>Inicia sesión para continuar</p>
-    <input type="text" id="loginUser" placeholder="Usuario">
-    <input type="password" id="loginPass" placeholder="Contraseña">
-    <button onclick="login()">Entrar</button>
-    <div id="error">Usuario o contraseña incorrectos</div>
-    <div class="link" onclick="switchToRegister()">Crear cuenta</div>
+  <div id="loginCard">
+    <div class="login-box">
+      <h2>Iniciar Sesión</h2>
+      <input type="text" id="loginUser" placeholder="Usuario">
+      <input type="password" id="loginPass" placeholder="Contraseña">
+      <button onclick="login()">Entrar</button>
+      <div class="link" onclick="toggleLogin(false)">Crear cuenta</div>
+    </div>
   </div>
 
-  <!-- REGISTER -->
-  <div class="card" id="registerCard" style="display:none;">
-    <h2>Crear cuenta</h2>
-    <input type="text" id="regUser" placeholder="Usuario nuevo">
-    <input type="password" id="regPass" placeholder="Contraseña nueva">
-    <button onclick="registerUser()">Registrar</button>
-    <div id="errorReg">Complete los campos</div>
-    <div class="link" onclick="switchToLogin()">Volver</div>
-  </div>
-
-  <!-- DASHBOARD -->
-  <div class="card" id="homeCard" style="display:none;">
-    <h2>Hola, <span id="userName"></span> 👋</h2>
-    <p>Bienvenido a Brisa 2025</p>
-    <button onclick="logout()">Cerrar sesión</button>
+  <!-- REGISTRO -->
+  <div id="registerCard" style="display:none;">
+    <div class="login-box">
+      <h2>Crear cuenta</h2>
+      <input type="text" id="regUser" placeholder="Nuevo usuario">
+      <input type="password" id="regPass" placeholder="Contraseña">
+      <button onclick="register()">Registrar</button>
+      <div class="link" onclick="toggleLogin(true)">Volver</div>
+    </div>
   </div>
 
   <script>
-    // 🌠 Título animado en la pestaña
+    // Animación del título en pestaña
     const titles = ["💫 Brisa 2025", "🌌 Bienestar Emocional", "💭 Conecta contigo"];
     let i = 0;
-    setInterval(() => {
-      document.title = titles[i % titles.length];
-      i++;
-    }, 2000);
+    setInterval(() => { document.title = titles[i++ % titles.length]; }, 2000);
 
-    // 🔄 Alternar entre Login y Registro
-    function switchToRegister() {
-      loginCard.style.display = "none";
-      registerCard.style.display = "block";
-    }
-    function switchToLogin() {
-      registerCard.style.display = "none";
-      loginCard.style.display = "block";
+    function toggleLogin(showLogin){
+      document.getElementById('loginCard').style.display = showLogin ? 'flex':'none';
+      document.getElementById('registerCard').style.display = showLogin ? 'none':'flex';
     }
 
-    // 🧩 Registro de usuario
-    function registerUser() {
-      const u = regUser.value.trim();
-      const p = regPass.value.trim();
-      if (u.length < 3 || p.length < 3) {
-        errorReg.style.display = "block";
-        return;
-      }
-      let users = JSON.parse(localStorage.getItem("brisaUsers")) || [];
-      if (users.find(x => x.user === u)) {
-        errorReg.innerText = "Usuario ya existe";
-        errorReg.style.display = "block";
-        return;
-      }
-      users.push({ user: u, pass: p });
+    function register(){
+      let user = regUser.value.trim(), pass = regPass.value.trim();
+      if(!user || !pass) return alert("Completa todos los campos.");
+      let users = JSON.parse(localStorage.getItem("brisaUsers")||"[]");
+      users.push({user, pass});
       localStorage.setItem("brisaUsers", JSON.stringify(users));
-      switchToLogin();
-      alert("Cuenta creada correctamente 🌟");
+      toggleLogin(true);
+      alert("Usuario registrado correctamente");
     }
 
-    // 🔑 Inicio de sesión
-    function login() {
-      const u = loginUser.value.trim();
-      const p = loginPass.value.trim();
-      let users = JSON.parse(localStorage.getItem("brisaUsers")) || [];
-      let exists = users.find(x => x.user === u && x.pass === p);
-      if (exists) {
-        loginCard.style.display = "none";
-        registerCard.style.display = "none";
-        homeCard.style.display = "block";
-        document.getElementById("userName").innerText = u;
-      } else {
-        error.style.display = "block";
-      }
+    function login(){
+      let user = loginUser.value.trim(), pass = loginPass.value.trim();
+      let users = JSON.parse(localStorage.getItem("brisaUsers")||"[]");
+      let found = users.find(u=>u.user===user && u.pass===pass);
+      if(found){
+        document.getElementById("loginCard").style.display="none";
+        document.getElementById("registerCard").style.display="none";
+      }else alert("Usuario o contraseña incorrectos.");
     }
 
-    // 🚪 Cerrar sesión
-    function logout() {
-      homeCard.style.display = "none";
-      loginCard.style.display = "block";
+    function logout(){
+      document.getElementById("loginCard").style.display="flex";
+    }
+
+    function showSection(id){
+      document.querySelectorAll(".card").forEach(c=>c.style.display="none");
+      document.getElementById(id).style.display="block";
     }
   </script>
 </body>
