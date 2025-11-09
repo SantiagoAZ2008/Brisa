@@ -1,20 +1,18 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Brisa 2025</title>
 
-  <!-- 🌈 Favicon animado -->
+  <!-- Favicon animado -->
   <link rel="icon" href="data:image/svg+xml,
   <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>
-    <defs>
-      <radialGradient id='grad'>
-        <stop offset='0%' stop-color='%2300f'/>
-        <stop offset='100%' stop-color='%23f0f'/>
-      </radialGradient>
-    </defs>
-    <circle cx='50' cy='50' r='40' fill='url(%23grad)' />
+    <defs><radialGradient id='grad'>
+      <stop offset='0%' stop-color='%2300f'/>
+      <stop offset='100%' stop-color='%23f0f'/>
+    </radialGradient></defs>
+    <circle cx='50' cy='50' r='40' fill='url(%23grad)'/>
   </svg>" type="image/svg+xml">
 
   <style>
@@ -23,89 +21,41 @@
       height:100vh;overflow:hidden;color:white;
       background: radial-gradient(circle at 25% 25%, #1a001f, #000);
     }
-
-    /* Fondo animado tipo neón */
     body::before {
-      content:'';
-      position:fixed;top:0;left:0;width:100%;height:100%;
+      content:'';position:fixed;top:0;left:0;width:100%;height:100%;
       background: radial-gradient(circle at 10% 20%, #5f2b8b44, transparent 40%),
                   radial-gradient(circle at 90% 70%, #b0306066, transparent 40%),
                   radial-gradient(circle at 50% 90%, #5f2b8b44, transparent 40%);
-      filter:blur(80px);
-      animation:bgMove 12s ease-in-out infinite alternate;
-      z-index:-1;
+      filter:blur(80px);animation:bgMove 12s ease-in-out infinite alternate;z-index:-1;
     }
-
-    @keyframes bgMove {
-      0%{background-position:0% 50%;}
-      100%{background-position:100% 50%;}
-    }
-
-    /* Panel lateral */
+    @keyframes bgMove {0%{background-position:0% 50%;}100%{background-position:100% 50%;}}
     nav {
       position:fixed;top:0;left:0;width:230px;height:100%;
       background:rgba(255,255,255,0.07);backdrop-filter:blur(10px);
       border-right:1px solid rgba(255,255,255,0.1);
       display:flex;flex-direction:column;align-items:center;padding-top:40px;
     }
-
-    nav h2 {
-      font-size:1.5em;text-align:center;
-      text-shadow:0 0 15px #a020f0,0 0 25px #00b3ff;
-      animation:glowText 4s ease-in-out infinite alternate;
-    }
-
-    @keyframes glowText {
-      0%{text-shadow:0 0 10px #7f00ff,0 0 25px #00b3ff;}
-      100%{text-shadow:0 0 25px #ff00ff,0 0 35px #0099ff;}
-    }
-
-    .menu-btn {
-      width:180px;margin:10px 0;padding:12px;border:none;border-radius:12px;
-      background:rgba(255,255,255,0.1);color:white;cursor:pointer;transition:0.3s;
-    }
+    nav h2 {font-size:1.5em;text-shadow:0 0 15px #a020f0,0 0 25px #00b3ff;animation:glowText 4s ease-in-out infinite alternate;}
+    @keyframes glowText {0%{text-shadow:0 0 10px #7f00ff,0 0 25px #00b3ff;}100%{text-shadow:0 0 25px #ff00ff,0 0 35px #0099ff;}}
+    .menu-btn {width:180px;margin:10px 0;padding:12px;border:none;border-radius:12px;background:rgba(255,255,255,0.1);color:white;cursor:pointer;transition:0.3s;}
     .menu-btn:hover {background:rgba(255,255,255,0.25);transform:scale(1.05);}
-
-    .content {margin-left:230px;padding:40px;transition:0.4s;}
+    .content {margin-left:230px;padding:40px;}
     .card {
       background:rgba(255,255,255,0.07);backdrop-filter:blur(15px);
       border-radius:25px;padding:30px;box-shadow:0 0 25px rgba(0,0,0,0.5);
       animation:fadeIn 0.7s ease-in-out;
     }
-
     @keyframes fadeIn {from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
-
-    /* Login / Registro */
-    #loginCard,#registerCard {
-      position:fixed;top:0;left:0;width:100%;height:100%;
-      display:flex;justify-content:center;align-items:center;
-      background:rgba(0,0,0,0.6);backdrop-filter:blur(10px);transition:0.5s;
-    }
-
-    .login-box {
-      background:rgba(255,255,255,0.08);padding:40px;border-radius:20px;text-align:center;
-      width:360px;box-shadow:0 0 25px rgba(0,0,0,0.5);animation:scaleIn 0.8s ease;
-    }
-
-    @keyframes scaleIn {from{transform:scale(0.9);opacity:0;}to{transform:scale(1);opacity:1;}}
-
-    input, textarea {
+    input, textarea, select {
       width:100%;padding:12px;margin:10px 0;border:none;border-radius:10px;
       background:rgba(255,255,255,0.15);color:white;
     }
-
-    button {
-      width:100%;padding:12px;border:none;border-radius:10px;
-      background:#7b2cbf;color:white;cursor:pointer;transition:0.3s;
-    }
-
+    button {width:100%;padding:12px;border:none;border-radius:10px;background:#7b2cbf;color:white;cursor:pointer;transition:0.3s;}
     button:hover {background:#9d4edd;}
-    .link {margin-top:10px;font-size:14px;text-decoration:underline;cursor:pointer;color:#ddd;}
   </style>
 </head>
 
 <body>
-  <!-- Menú lateral -->
   <nav>
     <h2>🌌 Brisa 2025</h2>
     <button class="menu-btn" onclick="showSection('home')">Inicio</button>
@@ -116,30 +66,51 @@
     <button class="menu-btn" onclick="logout()">Cerrar sesión</button>
   </nav>
 
-  <!-- Contenido principal -->
   <div class="content">
     <div id="home" class="card">
-      <h1>Bienvenido a Brisa 2025</h1>
-      <p>Una plataforma creada para mejorar tu bienestar emocional y conectar contigo mismo.</p>
-      <p><b>Creador:</b> Santiago Nuñez Mejía</p>
-      <a href="https://www.instagram.com/sa_mejia.e/" target="_blank">Instagram del creador</a>
+      <h1>Bienvenido a Brisa 2025 🌬️</h1>
+      <p><b>Desarrollado por:</b> Santiago Nuñez Mejía</p>
+      <p><a href="https://www.instagram.com/sa_mejia.e/" target="_blank" style="color:#9d4edd;">Instagram del creador</a></p>
+      <p>Brisa es una plataforma creada para ayudarte a explorar tus emociones, mejorar tu bienestar mental y desarrollar tu concentración a través de minijuegos y autoevaluaciones.</p>
+      <ul>
+        <li>🌈 Registra tus emociones diarias.</li>
+        <li>🧠 Mejora tu concentración con juegos mentales.</li>
+        <li>🎯 Crea tu perfil emocional personalizado.</li>
+        <li>🤝 Invita a tus amigos con un código único.</li>
+      </ul>
     </div>
 
     <div id="games" class="card" style="display:none;">
       <h2>🎮 Mini Juegos</h2>
-      <p>Entrena tu mente con desafíos rápidos y divertidos.</p>
+      <p>Selecciona un juego para comenzar:</p>
+      <button onclick="alert('Juego de Memoria próximamente...')">🧠 Juego de Memoria</button>
+      <button onclick="alert('Puzzle de lógica próximamente...')">🧩 Puzzle de lógica</button>
     </div>
 
     <div id="emotions" class="card" style="display:none;">
       <h2>💭 Registro Emocional</h2>
-      <textarea id="emotionNotes" placeholder="Describe cómo te sientes hoy..." rows="5"></textarea>
+      <select id="moodSelect">
+        <option value="">Selecciona tu estado de ánimo</option>
+        <option>😄 Feliz</option>
+        <option>😔 Triste</option>
+        <option>😤 Enojado</option>
+        <option>😌 Relajado</option>
+        <option>😐 Neutral</option>
+      </select>
+      <textarea id="emotionNotes" placeholder="Describe tu día..." rows="5"></textarea>
       <button onclick="saveEmotion()">Guardar emoción</button>
       <div id="emotionSaved"></div>
     </div>
 
     <div id="profile" class="card" style="display:none;">
-      <h2>👤 Perfil del Usuario</h2>
-      <p>Aquí podrás ver tus datos, estadísticas y códigos de invitación.</p>
+      <h2>👤 Perfil</h2>
+      <input id="profileName" placeholder="Nombre completo">
+      <input id="profileBirth" type="date" placeholder="Fecha de nacimiento">
+      <input id="profileCountry" placeholder="País">
+      <input id="profileWeight" placeholder="Peso (kg)">
+      <input id="profileHeight" placeholder="Altura (cm)">
+      <p><b>Tu código de invitación:</b> <span id="inviteCode"></span></p>
+      <button onclick="saveProfile()">Guardar perfil</button>
     </div>
 
     <div id="users" class="card" style="display:none;">
@@ -148,60 +119,53 @@
     </div>
   </div>
 
-  <!-- Login -->
-  <div id="loginCard">
-    <div class="login-box">
+  <div id="loginCard" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);backdrop-filter:blur(10px);display:flex;justify-content:center;align-items:center;">
+    <div style="background:rgba(255,255,255,0.1);padding:30px;border-radius:15px;text-align:center;width:350px;">
       <h2>Iniciar Sesión</h2>
-      <input type="text" id="loginUser" placeholder="Usuario">
+      <input id="loginUser" placeholder="Usuario">
       <input type="password" id="loginPass" placeholder="Contraseña">
       <button onclick="login()">Entrar</button>
-      <div class="link" onclick="toggleLogin(false)">Crear cuenta</div>
+      <p style="margin-top:10px;cursor:pointer;text-decoration:underline;" onclick="showRegister()">Crear cuenta</p>
     </div>
   </div>
 
-  <!-- Registro -->
-  <div id="registerCard" style="display:none;">
-    <div class="login-box">
+  <div id="registerCard" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);backdrop-filter:blur(10px);display:flex;justify-content:center;align-items:center;">
+    <div style="background:rgba(255,255,255,0.1);padding:30px;border-radius:15px;text-align:center;width:350px;">
       <h2>Registro</h2>
-      <input type="text" id="regUser" placeholder="Nuevo usuario">
+      <input id="regUser" placeholder="Nuevo usuario">
       <input type="password" id="regPass" placeholder="Contraseña">
       <button onclick="register()">Registrar</button>
-      <div class="link" onclick="toggleLogin(true)">Volver</div>
+      <p style="margin-top:10px;cursor:pointer;text-decoration:underline;" onclick="showLogin()">Volver</p>
     </div>
   </div>
 
   <script>
-    // Animación de pestaña
-    const titles = ["💫 Brisa 2025", "🌌 Bienestar Emocional", "💭 Conecta contigo"];
-    let i = 0;
-    setInterval(() => { document.title = titles[i++ % titles.length]; }, 2000);
-
-    function toggleLogin(showLogin){
-      loginCard.style.display = showLogin ? 'flex':'none';
-      registerCard.style.display = showLogin ? 'none':'flex';
-    }
+    function showRegister(){ loginCard.style.display='none'; registerCard.style.display='flex'; }
+    function showLogin(){ loginCard.style.display='flex'; registerCard.style.display='none'; }
 
     function register(){
-      const user = regUser.value.trim(), pass = regPass.value.trim();
-      if(!user || !pass){ alert("Completa los campos"); return; }
-      const users = JSON.parse(localStorage.getItem("brisaUsers")||"[]");
-      users.push({user, pass});
-      localStorage.setItem("brisaUsers", JSON.stringify(users));
-      alert("Usuario registrado correctamente");
-      toggleLogin(true);
+      const user=regUser.value.trim(),pass=regPass.value.trim();
+      if(!user||!pass){alert("Completa los campos");return;}
+      const users=JSON.parse(localStorage.getItem("brisaUsers")||"[]");
+      const invite=Math.random().toString(36).substring(2,8).toUpperCase();
+      users.push({user,pass,invite,invited:[]});
+      localStorage.setItem("brisaUsers",JSON.stringify(users));
+      alert("Usuario registrado. Código: "+invite);
+      showLogin();
     }
 
     function login(){
-      const user = loginUser.value.trim(), pass = loginPass.value.trim();
-      const users = JSON.parse(localStorage.getItem("brisaUsers")||"[]");
-      const found = users.find(u=>u.user===user && u.pass===pass);
+      const user=loginUser.value.trim(),pass=loginPass.value.trim();
+      const users=JSON.parse(localStorage.getItem("brisaUsers")||"[]");
+      const found=users.find(u=>u.user===user&&u.pass===pass);
       if(found){
-        loginCard.style.opacity='0';
-        setTimeout(()=>loginCard.style.display='none',400);
-      } else alert("Usuario o contraseña incorrectos.");
+        localStorage.setItem("brisaActive",user);
+        loginCard.style.display='none';
+        document.getElementById('inviteCode').innerText=found.invite;
+      } else alert("Credenciales incorrectas");
     }
 
-    function logout(){ loginCard.style.display='flex'; loginCard.style.opacity='1'; }
+    function logout(){ loginCard.style.display='flex'; }
 
     function showSection(id){
       document.querySelectorAll(".card").forEach(c=>c.style.display="none");
@@ -209,13 +173,23 @@
     }
 
     function saveEmotion(){
-      const emotion = emotionNotes.value.trim();
-      if(!emotion){alert("Escribe algo primero");return;}
-      const logs = JSON.parse(localStorage.getItem("brisaEmotions")||"[]");
-      logs.push({text:emotion, date:new Date().toLocaleString()});
-      localStorage.setItem("brisaEmotions", JSON.stringify(logs));
-      emotionSaved.innerHTML = "<p>💖 Emoción guardada correctamente.</p>";
+      const mood=moodSelect.value,notes=emotionNotes.value.trim();
+      if(!mood||!notes){alert("Completa todos los campos");return;}
+      const logs=JSON.parse(localStorage.getItem("brisaEmotions")||"[]");
+      logs.push({mood,notes,date:new Date().toLocaleString()});
+      localStorage.setItem("brisaEmotions",JSON.stringify(logs));
+      emotionSaved.innerHTML="<p>💖 Emoción guardada correctamente.</p>";
       emotionNotes.value="";
+    }
+
+    function saveProfile(){
+      const name=profileName.value,birth=profileBirth.value,country=profileCountry.value,weight=profileWeight.value,height=profileHeight.value;
+      const user=localStorage.getItem("brisaActive");
+      if(!user){alert("Inicia sesión");return;}
+      const profiles=JSON.parse(localStorage.getItem("brisaProfiles")||"{}");
+      profiles[user]={name,birth,country,weight,height};
+      localStorage.setItem("brisaProfiles",JSON.stringify(profiles));
+      alert("Perfil guardado correctamente");
     }
   </script>
 </body>
