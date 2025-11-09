@@ -3,585 +3,579 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Brisa — Bienestar Emocional (funcional)</title>
+<title>Brisa • Dashboard</title>
 <style>
   :root{
-    --bg1:#07101a; --glass: rgba(255,255,255,0.03);
-    --accent:#ff4d7a; --accent-2:#7be2ff; --muted:rgba(230,238,246,0.75);
-    --success:#44d69e; --panel-bg: rgba(255,255,255,0.02);
+    --bg:#071017;
+    --panel: rgba(255,255,255,0.03);
+    --muted: rgba(230,238,246,0.7);
+    --accent:#ff4d7a;
+    --accent2:#7be2ff;
+    --success:#44d69e;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%}
   body{
-    font-family:Inter, system-ui, -apple-system, "Helvetica Neue", Arial;
-    background:var(--bg1); color:#e6eef6; overflow:hidden;
+    font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    color:#eaf0f8; background:var(--bg); overflow:hidden;
   }
 
-  /* canvas bg */
-  canvas.bgLayer{ position:fixed; inset:0; width:100%; height:100%; z-index:0; display:block; }
+  /* Background canvas */
+  canvas#bg { position:fixed; inset:0; width:100%; height:100%; z-index:0; display:block; }
 
-  /* App layout */
-  .app {
-    position:relative; z-index:2;
-    display:grid; grid-template-columns:260px 1fr 320px;
-    gap:20px; padding:24px; height:100vh;
-    align-items:start;
+  /* Layout */
+  .app { position:relative; z-index:2; display:grid; grid-template-columns: 84px 1fr; height:100vh; }
+  .sidebar {
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-right: 1px solid rgba(255,255,255,0.03);
+    display:flex; flex-direction:column; align-items:center; gap:10px; padding:18px 8px;
   }
+  .logo { width:54px;height:54px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#9f6bff);display:flex;align-items:center;justify-content:center;font-weight:900;color:white;font-size:18px;box-shadow:0 8px 20px rgba(0,0,0,0.6); }
+  .sideBtn { width:100%; display:flex; flex-direction:column; align-items:center; gap:6px; padding:8px; cursor:pointer; border-radius:10px; background:transparent; border:none; color:inherit; }
+  .sideBtn:hover{ background: rgba(255,255,255,0.02); transform:translateX(6px); }
+  .sideBtn.active{ background: linear-gradient(90deg, rgba(255,77,122,0.08), rgba(123,226,255,0.03)); }
 
-  /* Remove heavy borders/lines: subtle glass panels */
+  /* label under icon */
+  .iconLabel { font-size:11px; color:var(--muted); }
+
+  /* Top bar inside main */
+  .main {
+    padding:18px; overflow:auto;
+  }
+  .topBar { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:16px; }
+  .title { font-size:20px; font-weight:700; }
+  .subtitle { color:var(--muted); font-size:13px; }
+
+  /* content area */
+  .content { display:grid; grid-template-columns: 1fr 360px; gap:16px; align-items:start; }
   .panel {
-    background: linear-gradient(180deg,var(--panel-bg), rgba(255,255,255,0.01));
-    border-radius:14px; padding:16px; box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-    border: 1px solid rgba(255,255,255,0.02);
-    backdrop-filter: blur(6px);
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-radius:12px; padding:14px; box-shadow:0 12px 30px rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.02);
   }
+  .wide { grid-column: 1 / -1; }
 
-  /* Sidebar */
-  .sidebar .brand { display:flex; gap:10px; align-items:center; margin-bottom:10px }
-  .logo { width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;
-         background:linear-gradient(135deg,var(--accent),#9f6bff); color:white; box-shadow:0 6px 18px rgba(0,0,0,0.4); }
-  .brand h1{font-size:16px}
-  .brand p{font-size:12px;color:var(--muted)}
+  /* controls */
+  input, select { background: rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.03); color:inherit; padding:10px; border-radius:8px; width:100%; }
+  button.btn { padding:10px 14px; border-radius:10px; background:var(--accent); color:white; border:none; cursor:pointer; font-weight:700; }
+  button.btn.alt { background:transparent; border:1px solid rgba(255,255,255,0.04); color:var(--muted); }
 
-  .nav { display:flex; flex-direction:column; gap:8px; margin-top:12px }
-  .nav button { background:transparent; color:inherit; border:none; padding:10px; text-align:left; border-radius:8px; cursor:pointer; transition:.12s }
-  .nav button:hover{ transform:translateX(6px); background: rgba(255,255,255,0.02) }
-  .nav button.active{ background: linear-gradient(90deg, rgba(255,77,122,0.08), rgba(123,226,255,0.03)); box-shadow: inset 0 0 30px rgba(255,255,255,0.01) }
+  /* games */
+  .gameArea { min-height:180px; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:10px; }
 
-  /* Main area */
-  .main { height:calc(100vh - 48px); overflow:auto; padding:18px; }
-  .header { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:12px; }
-  .title { font-size:20px; font-weight:700 }
-  .subtitle { font-size:13px; color:var(--muted) }
+  /* memory grid */
+  .mem-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-top:12px; }
+  .mem-card { background: rgba(255,255,255,0.02); border-radius:8px; padding:18px; text-align:center; font-size:20px; cursor:pointer; user-select:none; transition: transform .12s; }
+  .mem-card.revealed { transform:scale(1.04); background: linear-gradient(135deg, rgba(255,77,122,0.12), rgba(123,226,255,0.06)); }
 
-  .grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
-  .wide { grid-column:1 / -1 }
+  /* right column */
+  .stat { display:flex; justify-content:space-between; padding:10px; border-radius:8px; background: rgba(255,255,255,0.01); margin-bottom:8px; }
 
-  /* Clean controls */
-  input, select { background: rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.03); color:inherit; padding:10px; border-radius:8px; }
-  .btn { padding:10px 14px; border-radius:10px; border:none; cursor:pointer; background:var(--accent); color:white; font-weight:700; }
-  .btn.alt { background:transparent; border:1px solid rgba(255,255,255,0.04); color:var(--muted) }
+  /* footer small */
+  .footerMini { position:fixed; left:50%; transform:translateX(-50%); bottom:10px; background:rgba(0,0,0,0.45); padding:8px 12px; border-radius:12px; font-size:13px; color:var(--muted); z-index:4; }
 
-  /* games & big area */
-  .big { display:flex; gap:12px; align-items:flex-start; }
-  .leftCol { flex:1 }
-  .rightCol { width:300px }
+  /* login modal */
+  .modalBg { position:fixed; inset:0; background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; z-index:30; }
+  .modal { background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)); padding:20px; border-radius:12px; width:420px; box-shadow:0 20px 60px rgba(0,0,0,0.7); border:1px solid rgba(255,255,255,0.02); }
+  .modal h2{ margin-bottom:8px }
+  .modal .switch { font-size:13px; color:var(--muted); margin-top:8px; cursor:pointer; text-decoration:underline; }
 
-  /* memory cards */
-  .mem-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px }
-  .card { background: rgba(255,255,255,0.02); border-radius:10px; padding:18px; text-align:center; font-size:20px; cursor:pointer; user-select:none; transition:.12s }
-  .card.revealed { transform:scale(1.02); background:linear-gradient(135deg, rgba(255,77,122,0.12), rgba(123,226,255,0.06)) }
-
-  /* right column small */
-  .stat { display:flex; justify-content:space-between; gap:12px; padding:10px; border-radius:8px; background: rgba(255,255,255,0.01) }
-
-  /* footer mini */
-  .miniFooter { position:fixed; left:50%; transform:translateX(-50%); bottom:12px; background: rgba(0,0,0,0.45); padding:8px 12px; border-radius:12px; font-size:13px; color:var(--muted); z-index:6; }
-
-  /* hide ugly scrollbars but keep usability */
-  ::-webkit-scrollbar{height:10px;width:10px;background:transparent}
-  ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.06);border-radius:10px}
-  /* mobile */
-  @media (max-width:1000px){ .app{ grid-template-columns:1fr; padding:12px } .rightCol{ width:100% } .grid{ grid-template-columns:1fr } .miniFooter{ left:12px; transform:none } }
+  /* small responsive */
+  @media (max-width:900px){
+    .app { grid-template-columns: 72px 1fr; }
+    .content { grid-template-columns: 1fr; }
+    .mem-grid { grid-template-columns: repeat(2,1fr); }
+  }
 </style>
 </head>
 <body>
 
-<!-- Background -->
-<canvas id="bg" class="bgLayer"></canvas>
+<canvas id="bg"></canvas>
 
-<div class="app" id="app">
+<div class="app">
   <!-- SIDEBAR -->
-  <aside class="panel sidebar">
-    <div class="brand">
-      <div class="logo">B+</div>
-      <div>
-        <h1>Brisa 2.0</h1>
-        <p>Bienestar • Juegos • Comunidad</p>
-      </div>
-    </div>
+  <aside class="sidebar">
+    <div class="logo">B+</div>
+    <button class="sideBtn active" data-view="home" title="Inicio">
+      <!-- simple home icon -->
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M3 10.5L12 4l9 6.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div class="iconLabel">Inicio</div>
+    </button>
 
-    <nav class="nav" id="nav">
-      <button data-view="home" class="active">Inicio</button>
-      <button data-view="play">Juegos</button>
-      <button data-view="journal">Historial</button>
-      <button data-view="invites">Invitaciones</button>
-      <button data-view="settings">Ajustes</button>
-      <button data-view="about">Acerca</button>
-    </nav>
+    <button class="sideBtn" data-view="games" title="Juegos">
+      <svg width="24" height="24" viewBox="0 0 24 24"><path d="M6 12h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <div class="iconLabel">Juegos</div>
+    </button>
 
-    <div style="margin-top:12px;font-size:13px;color:var(--muted)">
-      Usuario: <strong id="sidebarUser">Invitado</strong><br>
-      <span id="sidebarStats">Sin sesión • 0 registros</span>
-    </div>
+    <button class="sideBtn" data-view="journal" title="Historial">
+      <svg width="24" height="24" viewBox="0 0 24 24"><path d="M7 11h10" stroke="currentColor" stroke-width="1.5"/></svg>
+      <div class="iconLabel">Historial</div>
+    </button>
 
-    <div style="margin-top:14px">
-      <a href="https://www.instagram.com/sa_mejia.e/" target="_blank" style="color:var(--accent);text-decoration:none">Instagram</a>
-    </div>
+    <button class="sideBtn" data-view="invites" title="Invitaciones">
+      <svg width="24" height="24" viewBox="0 0 24 24"><path d="M3 8h18" stroke="currentColor" stroke-width="1.5"/></svg>
+      <div class="iconLabel">Invites</div>
+    </button>
+
+    <div style="flex:1"></div>
+
+    <button class="sideBtn" id="profileBtn" title="Perfil">
+      <svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M4 20c1.7-4 6-6 8-6s6.3 2 8 6" stroke="currentColor" stroke-width="1.5"/></svg>
+      <div class="iconLabel">Perfil</div>
+    </button>
+
   </aside>
 
   <!-- MAIN -->
-  <main class="panel main">
-    <div class="header">
+  <main class="main">
+    <div class="topBar">
       <div>
         <div class="title" id="pageTitle">Inicio</div>
-        <div class="subtitle" id="pageSub">Un espacio grande — diseñado para ser bacano.</div>
+        <div class="subtitle" id="pageSub">Un espacio grande — diseñado para ser bacano. (Inicia sesión o regístrate)</div>
       </div>
-
-      <div style="display:flex;gap:8px;align-items:center;">
-        <label style="font-size:13px;color:var(--muted)">Sonido <input id="soundToggle" type="checkbox" checked /></label>
-        <button id="logoutBtn" class="btn alt" style="display:none">Cerrar sesión</button>
+      <div style="display:flex;align-items:center;gap:10px">
+        <label style="color:var(--muted);font-size:13px">Sonido <input id="soundToggle" type="checkbox" checked style="margin-left:6px" /></label>
+        <button id="logout" class="btn alt" style="display:none">Cerrar sesión</button>
       </div>
     </div>
 
-    <div class="grid">
-      <div class="panel">
-        <div style="font-weight:700;margin-bottom:8px">Resumen rápido</div>
-        <div style="display:flex;gap:8px;align-items:center">
-          <div style="flex:1" class="stat"><div style="font-weight:800" id="statUsers">0</div><div class="small">Usuarios</div></div>
-          <div style="flex:1" class="stat"><div style="font-weight:800" id="statRecords">0</div><div class="small">Registros</div></div>
-        </div>
-        <div style="margin-top:10px" class="stat"><div style="font-weight:800" id="statCodes">0</div><div class="small">Invitaciones</div></div>
-      </div>
-
-      <div class="panel">
-        <div style="font-weight:700;margin-bottom:8px">Actividad reciente</div>
-        <div id="recent" style="color:var(--muted);font-size:13px">— Ninguna actividad todavía —</div>
-      </div>
-
-      <!-- BIG interactive area -->
-      <div class="panel wide big">
-        <div class="leftCol">
-          <div style="font-weight:700" id="welcomeTitle">¡Bienvenido a Brisa!</div>
-          <div class="subtitle" id="welcomeSub">Inicia sesión para usar todas las funciones.</div>
-
-          <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
-            <input id="inpUser" type="text" placeholder="Usuario (min 3)" />
-            <input id="inpPass" type="password" placeholder="Contraseña (min 3)" />
-            <button id="btnLogin" class="btn">Entrar</button>
-            <button id="btnRegister" class="btn alt">Registrar</button>
-          </div>
-
-          <div style="margin-top:12px;display:flex;gap:8px">
-            <button id="btnDemo" class="btn alt">Demo: llenar datos</button>
-            <button id="btnExport" class="btn">Exportar datos</button>
-          </div>
-
-          <div style="margin-top:14px">
-            <label class="small">Registrar emoción rápida</label>
-            <div style="display:flex;gap:8px;margin-top:8px">
-              <select id="quickEmotion" style="min-width:160px">
-                <option>Feliz</option><option>Triste</option><option>Ansioso</option><option>Calmado</option><option>Motivado</option>
-              </select>
-              <button id="btnSaveEmotion" class="btn">Guardar</button>
+    <div class="content">
+      <!-- Left column -->
+      <div>
+        <div class="panel">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <div style="font-weight:800;font-size:16px">Resumen rápido</div>
+              <div style="color:var(--muted);font-size:13px">Estadísticas y actividad</div>
             </div>
+            <div style="text-align:right;color:var(--muted);font-size:13px" id="userInfoSmall">Invitado</div>
           </div>
 
-        </div>
-
-        <div class="rightCol">
-          <div style="font-weight:700;margin-bottom:8px">Control rápido</div>
-          <div style="display:flex;gap:8px;margin-bottom:10px">
-            <button data-game="reaction" class="btn alt">Reacción</button>
-            <button data-game="memory" class="btn alt">Memoria</button>
-            <button data-game="breath" class="btn alt">Respiración</button>
-          </div>
-          <div style="margin-top:8px">
-            <div style="font-weight:700">Invitaciones</div>
-            <div style="margin-top:8px;display:flex;gap:8px">
-              <button id="btnGen" class="btn">Generar código</button>
-              <button id="btnShowCodes" class="btn alt">Ver códigos</button>
+          <div style="display:flex;gap:12px;margin-top:12px">
+            <div style="flex:1;padding:12px;border-radius:10px;background:rgba(255,255,255,0.01)">
+              <div style="font-size:22px;font-weight:800" id="statUsers">0</div><div style="font-size:12px;color:var(--muted)">Usuarios</div>
+            </div>
+            <div style="flex:1;padding:12px;border-radius:10px;background:rgba(255,255,255,0.01)">
+              <div style="font-size:22px;font-weight:800" id="statRecords">0</div><div style="font-size:12px;color:var(--muted)">Registros</div>
+            </div>
+            <div style="flex:1;padding:12px;border-radius:10px;background:rgba(255,255,255,0.01)">
+              <div style="font-size:22px;font-weight:800" id="statCodes">0</div><div style="font-size:12px;color:var(--muted)">Invitaciones</div>
             </div>
           </div>
 
           <div style="margin-top:12px">
-            <div style="font-weight:700">Preferencias</div>
-            <div style="margin-top:8px">
-              <label class="small"><input type="checkbox" id="ambientToggle" checked/> Música ambiental</label><br>
-              <label class="small"><input type="checkbox" id="fancyBG" checked/> Fondo dinámico</label>
-            </div>
+            <div style="font-weight:700">Actividad reciente</div>
+            <div id="recent" style="margin-top:8px;color:var(--muted);font-size:13px">— ninguna —</div>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-top:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div style="font-weight:800">Panel rápido</div>
+            <div style="color:var(--muted);font-size:13px">Acciones</div>
           </div>
 
+          <div style="display:flex;gap:8px;margin-top:12px">
+            <input id="quickUser" type="text" placeholder="Usuario" />
+            <input id="quickPass" type="password" placeholder="Contraseña" style="width:160px"/>
+            <button id="quickLogin" class="btn">Entrar</button>
+            <button id="quickReg" class="btn alt">Registrar</button>
+          </div>
+
+          <div style="display:flex;gap:8px;margin-top:12px">
+            <button id="demoBtn" class="btn alt">Demo</button>
+            <button id="exportBtn" class="btn">Exportar</button>
+            <button id="redeemBtn" class="btn alt">Canjear</button>
+          </div>
+
+          <div style="margin-top:12px">
+            <div style="font-weight:700">Guardar emoción rápida</div>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <select id="fastEmotion"><option>Feliz</option><option>Triste</option><option>Ansioso</option><option>Calmado</option><option>Motivado</option></select>
+              <button id="saveEmotion" class="btn">Guardar</button>
+            </div>
+          </div>
         </div>
+
+        <!-- area where pages render -->
+        <div id="pageArea" style="margin-top:12px"></div>
+
       </div>
 
-      <div class="panel">
-        <div style="font-weight:700">Distribución de emociones</div>
-        <div id="bars" style="margin-top:10px;color:var(--muted)">— sin datos —</div>
-      </div>
+      <!-- Right column -->
+      <aside class="panel">
+        <div style="font-weight:800">Mini-juegos</div>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button class="btn alt gameBtn" data-game="reaction">Reacción</button>
+          <button class="btn alt gameBtn" data-game="memory">Memoria</button>
+          <button class="btn alt gameBtn" data-game="breath">Respiración</button>
+        </div>
 
-      <div class="panel">
-        <div style="font-weight:700">Tus códigos</div>
-        <div id="codesBox" style="margin-top:10px;color:var(--muted)">— ninguno —</div>
-      </div>
+        <div style="margin-top:12px">
+          <div style="font-weight:800">Invitaciones</div>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button id="genCode" class="btn">Generar</button>
+            <button id="showCodes" class="btn alt">Ver</button>
+          </div>
+          <div id="codesList" style="margin-top:8px;color:var(--muted)">— ninguno —</div>
+        </div>
+
+        <div style="margin-top:12px">
+          <div style="font-weight:800">Sesión</div>
+          <div style="margin-top:6px">Usuario: <strong id="activeUser">—</strong></div>
+          <div style="margin-top:6px;color:var(--muted)" id="createdAt">—</div>
+        </div>
+
+      </aside>
+
     </div>
+
   </main>
-
-  <!-- RIGHT -->
-  <aside class="panel right">
-    <div style="font-weight:700">Panel rápido</div>
-    <div style="margin-top:10px" id="miniRoot">Selecciona un juego para empezar</div>
-    <div style="margin-top:12px">
-      <div style="font-weight:700">Sesión</div>
-      <div style="margin-top:6px">Usuario: <strong id="activeUser">—</strong></div>
-      <div class="small" id="actCreated">—</div>
-    </div>
-
-    <div style="margin-top:12px">
-      <div style="font-weight:700">Historial reciente</div>
-      <div id="miniHistory" style="margin-top:8px;color:var(--muted);max-height:220px;overflow:auto"></div>
-    </div>
-  </aside>
 </div>
 
-<div class="miniFooter" id="miniFooter">© Brisa • Derechos reservados • <span style="color:var(--accent)">@sa_mejia.e</span></div>
+<div class="footerMini" id="miniFooter">© Brisa • Derechos reservados • <span style="color:var(--accent)">@sa_mejia.e</span></div>
+
+<!-- LOGIN / REGISTER MODAL (shows on load if not logged) -->
+<div id="loginModal" class="modalBg" style="display:none;">
+  <div class="modal">
+    <h2 id="modalTitle">Iniciar sesión</h2>
+    <input id="modalUser" type="text" placeholder="Usuario" />
+    <input id="modalPass" type="password" placeholder="Contraseña" style="margin-top:8px" />
+    <div style="display:flex;gap:8px;margin-top:12px">
+      <button id="modalLogin" class="btn">Entrar</button>
+      <button id="modalToRegister" class="btn alt">Registrar</button>
+    </div>
+    <div id="modalMsg" style="margin-top:10px;color:var(--muted)"></div>
+    <div class="switch" id="modalSwitch">¿No tienes cuenta? Regístrate</div>
+  </div>
+</div>
 
 <script>
 /* ---------------------------
-   Lightweight single-file app
-   --------------------------- */
+  Brisa final — one-file app
+   - sidebar left
+   - animated camuflaje bg
+   - login/register modal mandatory
+   - games, invites, history
+   - localStorage persistence
+---------------------------- */
 
-/* Helpers */
 const $ = id => document.getElementById(id);
-const qsa = s => document.querySelectorAll(s);
-const storeKey = 'brisa_v2_store';
+const q = sel => document.querySelector(sel);
+const qAll = sel => document.querySelectorAll(sel);
 
-function readStore(){ return JSON.parse(localStorage.getItem(storeKey) || '[]'); }
-function writeStore(data){ localStorage.setItem(storeKey, JSON.stringify(data)); updateStats(); }
+const STORE = 'brisa_final_v1';
 
-function currentUser(){ return localStorage.getItem('brisa_v2_active') || ''; }
-function setActive(u){ if(u) localStorage.setItem('brisa_v2_active', u); else localStorage.removeItem('brisa_v2_active'); refreshSession(); }
+// Background canvas (single layered but damasco vibe)
+const canvas = $('bg'); const ctx = canvas.getContext('2d');
+function resize() {
+  canvas.width = innerWidth * devicePixelRatio;
+  canvas.height = innerHeight * devicePixelRatio;
+  canvas.style.width = innerWidth+'px';
+  canvas.style.height = innerHeight+'px';
+  ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+}
+resize(); window.addEventListener('resize', resize);
 
-/* init UI references */
-const navBtns = qsa('#nav button');
-navBtns.forEach(b => b.addEventListener('click', ()=>{ navBtns.forEach(x=>x.classList.remove('active')); b.classList.add('active'); changePage(b.dataset.view); }));
+// blobs
+const blobs = [];
+const palette = ['#37202b','#7a263f','#b43b5a','#12202a'];
+for(let i=0;i<20;i++){
+  blobs.push({ x: Math.random()*innerWidth, y: Math.random()*innerHeight, r: 80 + Math.random()*220, vx:(Math.random()-0.5)*0.25, vy:(Math.random()-0.5)*0.25, c: palette[i%palette.length] });
+}
+let t0 = performance.now();
+function draw(now){
+  const t = (now - t0) * 0.0006;
+  ctx.clearRect(0,0,innerWidth,innerHeight);
+  // radial blobs
+  blobs.forEach((b, i)=>{
+    b.x += b.vx * Math.cos(t*(0.4 + i*0.02));
+    b.y += b.vy * Math.sin(t*(0.3 + i*0.02));
+    const g = ctx.createRadialGradient(b.x, b.y, b.r*0.05, b.x, b.y, b.r);
+    g.addColorStop(0, hexRgba(b.c, 0.16));
+    g.addColorStop(1, hexRgba(b.c, 0.02));
+    ctx.beginPath(); ctx.fillStyle = g; ctx.arc(b.x, b.y, b.r, 0, Math.PI*2); ctx.fill();
+  });
+  // subtle grain
+  for(let i=0;i<600;i++){
+    ctx.fillStyle = `rgba(255,255,255,${(Math.random()-0.97)*0.02})`;
+    ctx.fillRect(Math.random()*innerWidth, Math.random()*innerHeight, 1,1);
+  }
+  requestAnimationFrame(draw);
+}
+requestAnimationFrame(draw);
+function hexRgba(hex,a){ const c = hex.replace('#',''); const n = parseInt(c,16); const r=(n>>16)&255,g=(n>>8)&255,b=n&255; return `rgba(${r},${g},${b},${a})`; }
 
-$('logoutBtn').addEventListener('click', ()=>{ setActive(''); setMsg('Sesion cerrada','info'); });
+/* Storage helpers */
+function readStore(){ return JSON.parse(localStorage.getItem(STORE) || '[]'); }
+function writeStore(data){ localStorage.setItem(STORE, JSON.stringify(data)); refreshStats(); }
 
-/* basic messages */
-function setMsg(t, type='info'){
-  const el = $('miniFooter');
-  el.textContent = t;
-  el.style.background = type==='error' ? 'rgba(120,20,20,0.7)' : type==='success' ? 'rgba(20,80,40,0.7)' : 'rgba(0,0,0,0.45)';
-  setTimeout(()=> el.textContent = '© Brisa • Derechos reservados • @sa_mejia.e', 2500);
+/* Auth & UI wiring */
+let current = localStorage.getItem('brisa_final_active') || '';
+
+function requireAuthModal(){
+  if(!current){
+    $('loginModal').style.display='flex';
+    $('modalTitle').textContent='Iniciar sesión';
+    $('modalMsg').textContent='Debes iniciar sesión o registrarte para usar Brisa.';
+  } else {
+    $('loginModal').style.display='none';
+  }
+}
+requireAuthModal();
+
+function setActive(u){
+  if(u){ localStorage.setItem('brisa_final_active', u); current = u; } else { localStorage.removeItem('brisa_final_active'); current=''; }
+  refreshSession();
+  requireAuthModal();
 }
 
-/* Events: login/register */
-$('btnLogin').addEventListener('click', ()=>{
-  const u=$('inpUser').value.trim(), p=$('inpPass').value.trim();
-  if(u.length<3||p.length<3){ setMsg('Usuario y contraseña de 3+ caracteres','error'); return; }
-  const users = readStore();
-  const found = users.find(x=>x.user===u && x.pass===p);
-  if(found){ setActive(u); setMsg('Bienvenido '+u,'success'); $('inpUser').value=''; $('inpPass').value=''; } else setMsg('Usuario/contraseña incorrectos','error');
+/* modal events */
+$('modalSwitch').addEventListener('click', ()=>{
+  if($('modalTitle').textContent.includes('Iniciar')) {
+    $('modalTitle').textContent='Registrar cuenta';
+    $('modalToRegister').style.display='none';
+    $('modalLogin').textContent='Registrar';
+    $('modalSwitch').textContent = '¿Ya tienes cuenta? Iniciar sesión';
+  } else {
+    $('modalTitle').textContent='Iniciar sesión';
+    $('modalToRegister').style.display='inline-block';
+    $('modalLogin').textContent='Entrar';
+    $('modalSwitch').textContent = '¿No tienes cuenta? Regístrate';
+  }
 });
 
-$('btnRegister').addEventListener('click', ()=>{
-  const u=$('inpUser').value.trim(), p=$('inpPass').value.trim();
-  if(u.length<3||p.length<3){ setMsg('Usuario y contraseña de 3+ caracteres','error'); return; }
+/* modal primary button handles both login and register depending title */
+$('modalLogin').addEventListener('click', ()=>{
+  const u = $('modalUser').value.trim(); const p = $('modalPass').value.trim();
+  if(u.length<3 || p.length<3){ $('modalMsg').textContent='Usuario/contraseña mínimo 3 caracteres'; return; }
   const users = readStore();
-  if(users.find(x=>x.user===u)){ setMsg('Usuario ya existe','error'); return; }
-  users.push({ user:u, pass:p, created:new Date().toISOString(), history:[], invites:[] });
-  writeStore(users); setActive(u); setMsg('Usuario creado y sesión iniciada','success'); $('inpUser').value=''; $('inpPass').value='';
+  if($('modalTitle').textContent.includes('Iniciar')){
+    const found = users.find(x=>x.user===u && x.pass===p);
+    if(found){ setActive(u); $('modalMsg').textContent='Bienvenido '+u; $('loginModal').style.display='none'; $('modalUser').value=''; $('modalPass').value=''; } else { $('modalMsg').textContent='Usuario o contraseña incorrectos'; }
+  } else {
+    if(users.find(x=>x.user===u)){ $('modalMsg').textContent='Usuario ya existe'; return; }
+    users.push({ user:u, pass:p, created:new Date().toISOString(), history:[], invites:[] });
+    writeStore(users); setActive(u); $('modalMsg').textContent='Registrado ✓'; $('loginModal').style.display='none'; $('modalUser').value=''; $('modalPass').value=''; }
 });
 
-$('btnDemo').addEventListener('click', ()=>{
+/* optional quick register button */
+$('modalToRegister').addEventListener('click', ()=>{ $('modalTitle').textContent='Registrar cuenta'; $('modalLogin').textContent='Registrar'; $('modalToRegister').style.display='none'; $('modalSwitch').textContent='¿Ya tienes cuenta? Iniciar sesión'; });
+
+/* quick panel login/register */
+$('quickLogin').addEventListener('click', ()=>{
+  const u = $('quickUser').value.trim(), p = $('quickPass').value.trim();
+  if(u.length<3||p.length<3){ setMsg('Usuario/contraseña 3+','error'); return; }
+  const users = readStore(); const f = users.find(x=>x.user===u && x.pass===p);
+  if(f){ setActive(u); setMsg('Bienvenido '+u,'success'); $('quickUser').value=''; $('quickPass').value=''; } else setMsg('Credenciales inválidas','error');
+});
+$('quickReg').addEventListener('click', ()=>{
+  const u = $('quickUser').value.trim(), p = $('quickPass').value.trim();
+  if(u.length<3||p.length<3){ setMsg('Usuario/contraseña 3+','error'); return; }
+  const users = readStore(); if(users.find(x=>x.user===u)){ setMsg('Usuario ya existe','error'); return; }
+  users.push({ user:u, pass:p, created:new Date().toISOString(), history:[], invites:[] }); writeStore(users); setActive(u); setMsg('Registrado y conectado','success'); $('quickUser').value=''; $('quickPass').value='';
+});
+
+/* logout */
+$('logout').addEventListener('click', ()=>{ setActive(''); setMsg('Sesión cerrada','info'); });
+
+/* demo */
+$('demoBtn').addEventListener('click', ()=>{
   const users = readStore();
   if(users.length===0){
-    users.push({user:'alice',pass:'1234',created:new Date().toISOString(),history:[{emotion:'Feliz',date:new Date().toISOString()}],invites:['ABC123']});
-    users.push({user:'santiago',pass:'abc',created:new Date().toISOString(),history:[{emotion:'Ansioso',date:new Date().toISOString()}],invites:[]});
+    users.push({ user:'alice', pass:'123', created:new Date().toISOString(), history:[{emotion:'Feliz',date:new Date().toISOString()}], invites:['ABC123']});
+    users.push({ user:'santi', pass:'123', created:new Date().toISOString(), history:[{emotion:'Ansioso',date:new Date().toISOString()}], invites:[]});
     writeStore(users); setMsg('Demo cargada','success');
-  } else setMsg('Ya hay datos','info');
+  } else setMsg('Datos ya existen','info');
 });
 
 /* export */
-$('btnExport').addEventListener('click', ()=>{
-  const data = JSON.stringify(readStore(), null, 2);
-  const blob = new Blob([data], {type:'application/json'}); const url=URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href=url; a.download='brisa_data.json'; a.click(); URL.revokeObjectURL(url);
-  setMsg('Snapshot descargado','info');
-});
+$('exportBtn').addEventListener('click', ()=>{ const d = JSON.stringify(readStore(),null,2); const b = new Blob([d],{type:'application/json'}); const url = URL.createObjectURL(b); const a = document.createElement('a'); a.href=url; a.download='brisa_data.json'; a.click(); URL.revokeObjectURL(url); setMsg('Exportado','info'); });
 
-/* quick save emotion */
-$('btnSaveEmotion').addEventListener('click', ()=>{
-  const emo = $('quickEmotion').value;
-  const u = currentUser();
-  if(!u){ setMsg('Inicia sesión para guardar emociones','error'); return; }
+/* redeem prompt */
+$('redeemBtn').addEventListener('click', ()=>{ const code = prompt('Código a canjear:'); if(!code) return; const users = readStore(); const owner = users.find(u=> (u.invites||[]).includes(code.trim().toUpperCase())); if(owner){ setMsg('Código válido — Bienvenido','success'); } else setMsg('Código inválido','error'); });
+
+/* save emotion quick */
+$('saveEmotion').addEventListener('click', ()=>{
+  const emo = $('fastEmotion').value;
+  const u = localStorage.getItem('brisa_final_active') || '';
+  if(!u){ setMsg('Inicia sesión para guardar','error'); return; }
   const users = readStore(); const user = users.find(x=>x.user===u);
-  user.history = user.history || []; user.history.push({ emotion: emo, date: new Date().toISOString() });
-  writeStore(users); setMsg('Emoción guardada','success'); refreshSession();
+  user.history = user.history || []; user.history.push({ emotion: emo, date: new Date().toISOString() }); writeStore(users); setMsg('Emoción guardada','success');
 });
 
-/* generate code */
-$('btnGen').addEventListener('click', ()=>{
-  const u = currentUser(); if(!u){ setMsg('Inicia sesión para generar códigos','error'); return; }
+/* invite generation & show */
+$('genCode').addEventListener('click', ()=>{
+  const u = localStorage.getItem('brisa_final_active') || ''; if(!u){ setMsg('Inicia sesión para generar','error'); return; }
   const users = readStore(); const user = users.find(x=>x.user===u);
   const code = Math.random().toString(36).substring(2,9).toUpperCase();
-  user.invites = user.invites || []; user.invites.push(code); writeStore(users);
-  setMsg('Código generado: '+code,'success'); renderCodes();
+  user.invites = user.invites || []; user.invites.push(code); writeStore(users); setMsg('Código: '+code,'success'); renderCodes();
 });
-
-/* show codes */
-$('btnShowCodes').addEventListener('click', renderCodes);
-
-/* view change */
-function changePage(view){
-  $('pageTitle').textContent = {home:'Inicio', play:'Juegos', journal:'Historial', invites:'Invitaciones', settings:'Ajustes', about:'Acerca'}[view] || 'Inicio';
-  // focus different places - simply update big/mini panels
-  if(view==='play'){ openGameSelection(); }
-  if(view==='journal'){ openJournalView(); }
-  if(view==='invites'){ openInvitesView(); }
-  if(view==='settings'){ openSettings(); }
-  if(view==='about'){ openAbout(); }
-}
-
-/* initial view */
-changePage('home');
-
-/* render stats & recent */
-function updateStats(){
-  const users = readStore();
-  $('statUsers').textContent = users.length;
-  $('statRecords').textContent = users.reduce((s,u)=>s + (u.history?u.history.length:0), 0);
-  $('statCodes').textContent = users.reduce((s,u)=>s + (u.invites?u.invites.length:0), 0);
-
-  // recent activity:
-  const recent = [];
-  users.forEach(u=> (u.history||[]).slice(-3).forEach(h=> recent.push({user:u.user, h})));
-  recent.sort((a,b)=> new Date(b.h.date) - new Date(a.h.date));
-  if(recent.length===0) $('recent').innerHTML = '— Ninguna actividad todavía —';
-  else $('recent').innerHTML = recent.slice(0,6).map(r=>`<div style="padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.02)"><strong>${r.user}</strong> • ${r.h.emotion} <div style="font-size:12px;color:var(--muted)">${new Date(r.h.date).toLocaleString()}</div></div>`).join('');
-  renderBars();
-}
-
-/* render emotion bars */
-function renderBars(){
-  const users = readStore();
-  const counts = {};
-  users.forEach(u=> (u.history||[]).forEach(h=> counts[h.emotion] = (counts[h.emotion]||0)+1 ));
-  const container = $('bars'); container.innerHTML = '';
-  const keys = Object.keys(counts); if(keys.length===0){ container.textContent='— sin datos —'; return; }
-  const max = Math.max(...Object.values(counts));
-  keys.forEach(k=>{
-    const v = counts[k]; const pct = Math.round(v/max*100);
-    const el = document.createElement('div'); el.style.display='flex'; el.style.alignItems='center'; el.style.gap='8px';
-    el.innerHTML = `<div style="width:30%">${k}</div><div style="flex:1;background:rgba(255,255,255,0.02);height:12px;border-radius:6px;overflow:hidden"><div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--accent),var(--accent-2))"></div></div><div style="width:36px;text-align:right">${v}</div>`;
-    container.appendChild(el);
-  });
-}
-
-/* render codes list */
+$('showCodes').addEventListener('click', renderCodes);
 function renderCodes(){
-  const u = currentUser();
-  if(!u){ $('codesBox').textContent='Inicia sesión para ver tus códigos'; return; }
-  const users = readStore(); const user = users.find(x=>x.user===u);
-  $('codesBox').innerHTML = (user.invites||[]).length ? (user.invites||[]).slice().reverse().map(c=>`<div style="padding:6px;border-bottom:1px solid rgba(255,255,255,0.02)"><strong>${c}</strong></div>`).join('') : '— ninguno —';
+  const all = readStore().flatMap(u => (u.invites||[]).map(c=>({c, by:u.user})));
+  if(all.length===0) $('codesList').textContent='— ninguno —';
+  else $('codesList').innerHTML = all.map(x=>`<div style="padding:6px;border-bottom:1px solid rgba(255,255,255,0.02)"><strong>${x.c}</strong> • ${x.by}</div>`).join('');
 }
 
-/* refresh session display */
-function refreshSession(){
-  const u = currentUser();
-  $('sidebarUser').textContent = u || 'Invitado';
-  $('activeUser').textContent = u || '—';
-  if(u){
-    $('logoutBtn').style.display = 'inline-block';
-    const users = readStore(); const user = users.find(x=>x.user===u);
-    $('actCreated').textContent = user ? `creado: ${new Date(user.created).toLocaleDateString()}` : '';
-  } else {
-    $('logoutBtn').style.display = 'none';
-    $('actCreated').textContent = '';
-  }
-  $('sidebarStats').textContent = (u ? 'Sesión activa' : 'Sin sesión') + ' • ' + (readStore().find(x=>x.user===u)?.history?.length || 0) + ' registros';
-  updateStats();
-  renderCodes();
-}
-refreshSession();
-
-/* -------------------------
-   Games: reaction, memory, breathing
-   ------------------------- */
-function openGameSelection(){
-  $('miniRoot').innerHTML = `<div style="font-weight:700">Elige un minijuego</div><div style="margin-top:8px;display:flex;gap:8px"><button class="btn" onclick="startReaction()">Reacción</button><button class="btn" onclick="startMemory()">Memoria</button><button class="btn" onclick="startBreath()">Respiración</button></div>`;
+/* games (buttons on right + nav) */
+qAll('.gameBtn').forEach(b=> b.addEventListener('click', ()=> startGame(b.dataset.game)));
+function startGame(name){
+  if(!localStorage.getItem('brisa_final_active')){ setMsg('Inicia sesión para jugar','error'); return; }
+  if(name==='reaction') startReaction();
+  if(name==='memory') startMemory();
+  if(name==='breath') startBreath();
 }
 
-/* Reaction */
+/* reaction */
 function startReaction(){
-  $('miniRoot').innerHTML = `<div style="font-weight:700">Reacción</div><div style="margin-top:10px"><button id="reBtn" class="btn" style="padding:16px 32px">Preparar</button></div><div id="reRes" style="margin-top:8px;color:var(--muted)"></div>`;
-  const btn = $('reBtn'), res = $('reRes');
-  let start=null, timeoutId=null;
+  $('pageArea').innerHTML = `<div class="panel"><div style="font-weight:800">Juego: Reacción</div><div class="gameArea" style="margin-top:12px"><button id="reactBtn" class="btn" style="padding:18px 30px">Preparar</button><div id="reactRes" style="color:var(--muted);margin-top:8px"></div></div></div>`;
+  const btn = $('reactBtn'), res = $('reactRes');
+  let start = null, timeoutId = null;
   btn.addEventListener('click', ()=>{
     btn.disabled=true; btn.textContent='Espera...'; btn.style.background='#333';
-    timeoutId = setTimeout(()=>{ start = performance.now(); btn.disabled=false; btn.textContent='¡Presiona!'; btn.style.background= 'var(--success)'; }, Math.random()*1800 + 800);
+    timeoutId = setTimeout(()=>{ start = performance.now(); btn.disabled=false; btn.textContent='¡Presiona!'; btn.style.background='var(--success)'; }, Math.random()*1800 + 700);
   });
-  btn.addEventListener('click', ()=>{
-    if(!start){ // was a false click handled above when disabled reset
-      if(timeoutId) clearTimeout(timeoutId);
-      btn.textContent='Preparar'; btn.style.background='var(--accent)';
-      res.textContent='Falso inicio';
-      addMiniHistory('Falso inicio (Reacción)');
-      return;
-    }
-    const elapsed = Math.round(performance.now() - start);
-    res.textContent = 'Tiempo: ' + elapsed + ' ms';
-    addMiniHistory('Reacción: ' + elapsed + ' ms');
-    storeMiniResult({type:'reaction', value:elapsed, date:new Date().toISOString()});
-    start=null; btn.textContent='Preparar'; btn.style.background='var(--accent)';
-  }, { once:false });
+  btn.addEventListener('click', ()=> {
+    if(!start){ if(timeoutId) clearTimeout(timeoutId); btn.textContent='Preparar'; btn.style.background='var(--accent)'; res.textContent='Falso inicio'; addMiniHistory('Falso inicio (reacción)'); return; }
+    const elapsed = Math.round(performance.now() - start); res.textContent = 'Tiempo: ' + elapsed + ' ms'; addMiniHistory('Reacción: '+elapsed+' ms'); storeMini({type:'reaction',value:elapsed}); start=null; btn.textContent='Preparar'; btn.style.background='var(--accent)';
+  });
 }
 
-/* Memory */
+/* memory */
 function startMemory(){
   const colors = ['🍀','🌸','🌙','🔥','💧','⭐','🍎','⚡'];
   const deck = shuffle([...colors,...colors]);
   let first=null, second=null, locked=false, matched=0;
-  const gridHtml = deck.map((v,i)=>`<div class="card" data-i="${i}" data-val="${v}">?</div>`).join('');
-  $('miniRoot').innerHTML = `<div style="font-weight:700">Memoria</div><div style="margin-top:10px" class="mem-grid">${gridHtml}</div><div id="memMsg" style="margin-top:8px;color:var(--muted)"></div>`;
-  const cards = document.querySelectorAll('.mem-grid .card');
-  cards.forEach(c=> c.addEventListener('click', ()=>{
-    if(locked || c.classList.contains('revealed')) return;
-    c.classList.add('revealed'); c.textContent = c.dataset.val;
-    if(!first) first = c;
-    else { second = c; locked=true;
-      setTimeout(()=>{
-        if(first.dataset.val === second.dataset.val){ matched+=2; first.classList.add('matched'); second.classList.add('matched'); addMiniHistory('Pareja encontrada '+first.dataset.val); storeMiniResult({type:'memory', value:'match', date:new Date().toISOString()}); }
-        else { first.classList.remove('revealed'); first.textContent='?'; second.classList.remove('revealed'); second.textContent='?'; addMiniHistory('Pareja fallida'); }
-        first=null; second=null; locked=false;
-        if(matched === deck.length) { $('memMsg').textContent='¡Completado!'; setMsg('Memoria completada','success'); }
-      },600);
-    }
-  }));
-}
-
-/* Breath (simple) */
-let breathInterval=null;
-function startBreath(){
-  $('miniRoot').innerHTML = `<div style="font-weight:700">Respiración</div><div style="margin-top:12px"><div id="breathCircle" style="width:120px;height:120px;border-radius:999px;background:linear-gradient(135deg, rgba(123,226,255,0.06), rgba(255,77,122,0.04));display:flex;align-items:center;justify-content:center;font-weight:700;margin:auto">Respira</div></div><div style="margin-top:12px;display:flex;gap:8px"><button id="startB" class="btn">Iniciar</button><button id="stopB" class="btn alt">Detener</button></div>`;
-  $('startB').addEventListener('click', ()=>{
-    if(breathInterval) clearInterval(breathInterval);
-    const circle = $('breathCircle'); const hint = $('miniRoot');
-    let s=0;
-    breathInterval = setInterval(()=>{
-      if(s===0){ circle.style.transform='scale(1.4)'; } else if(s===1){ circle.style.transform='scale(1.6)'; } else { circle.style.transform='scale(1)'; }
-      s=(s+1)%3;
-    },4000);
-    addMiniHistory('Breathing started');
+  $('pageArea').innerHTML = `<div class="panel"><div style="font-weight:800">Juego: Memoria</div><div class="mem-grid" id="memGrid" style="margin-top:12px"></div><div id="memMsg" style="margin-top:8px;color:var(--muted)"></div></div>`;
+  const grid = $('memGrid');
+  deck.forEach((v,i)=>{
+    const d = document.createElement('div'); d.className='mem-card mem-card-inner mem-card-'+i; d.textContent='?'; d.dataset.val=v; d.style.padding='18px'; d.style.textAlign='center';
+    d.addEventListener('click', ()=>{
+      if(locked || d.classList.contains('revealed')) return;
+      d.classList.add('revealed'); d.textContent = v;
+      if(!first) first=d; else { second=d; locked=true;
+        setTimeout(()=>{ if(first.dataset.val===second.dataset.val){ matched+=2; addMiniHistory('Pareja: '+first.dataset.val); storeMini({type:'memory',value:'match'}); } else { first.classList.remove('revealed'); first.textContent='?'; second.classList.remove('revealed'); second.textContent='?'; addMiniHistory('Pareja fallida'); } first=null; second=null; locked=false; if(matched===deck.length){ $('memMsg').textContent='¡Completado!'; setMsg('Memoria completada','success'); } }, 600);
+      }
+    });
+    grid.appendChild(d);
   });
-  $('stopB').addEventListener('click', ()=>{ if(breathInterval) clearInterval(breathInterval); setMsg('Respiración detenida','info'); addMiniHistory('Breathing stopped'); });
 }
 
-/* Mini history helper */
-function addMiniHistory(txt){
-  const el = document.createElement('div'); el.style.padding='6px 0'; el.style.borderBottom='1px solid rgba(255,255,255,0.02)'; el.style.fontSize='13px';
-  el.textContent = new Date().toLocaleTimeString() + ' — ' + txt;
-  const box = $('miniHistory'); box.prepend(el);
+/* breathing */
+let breathInt=null;
+function startBreath(){
+  $('pageArea').innerHTML = `<div class="panel"><div style="font-weight:800">Guía de respiración</div><div class="gameArea" style="margin-top:12px"><div id="breathCircle" style="width:120px;height:120px;border-radius:999px;background:linear-gradient(135deg, rgba(123,226,255,0.06), rgba(255,77,122,0.04));display:flex;align-items:center;justify-content:center;font-weight:700">Respira</div><div style="margin-top:12px"><button id="startB" class="btn">Iniciar</button><button id="stopB" class="btn alt">Detener</button></div></div></div>`;
+  $('startB').addEventListener('click', ()=>{
+    if(breathInt) clearInterval(breathInt);
+    const c = $('breathCircle'); let s=0;
+    breathInt = setInterval(()=>{ if(s===0){ c.style.transform='scale(1.4)'; } else if(s===1){ c.style.transform='scale(1.6)'; } else { c.style.transform='scale(1)'; } s=(s+1)%3; }, 4000);
+    addMiniHistory('Respiración iniciada'); setMsg('Empezó respiración','info');
+  });
+  $('stopB').addEventListener('click', ()=>{ if(breathInt) clearInterval(breathInt); setMsg('Respiración detenida','info'); addMiniHistory('Respiración detenida'); });
 }
 
-/* store mini result in user's history */
-function storeMiniResult(obj){
-  const u = currentUser(); if(!u) return;
+/* mini history and store */
+function addMiniHistory(text){
+  const box = $('miniHistory'); if(!box) return;
+  const e = document.createElement('div'); e.style.padding='6px 0'; e.style.borderBottom='1px solid rgba(255,255,255,0.02)'; e.style.fontSize='13px';
+  e.textContent = new Date().toLocaleTimeString() + ' — ' + text; box.prepend(e);
+}
+function storeMini(obj){
+  const u = localStorage.getItem('brisa_final_active') || ''; if(!u) return;
   const users = readStore(); const user = users.find(x=>x.user===u);
-  user.history = user.history || []; user.history.push({ emotion: obj.type || 'Juego', detail: obj.value, date: obj.date || new Date().toISOString() });
+  user.history = user.history || []; user.history.push({ emotion: obj.type || 'Juego', detail: obj.value || '', date: new Date().toISOString(), game: obj.type });
   writeStore(users);
 }
 
-/* Journal view */
-function openJournalView(){
-  const user = currentUser(); if(!user){ setMsg('Inicia sesión para ver historial','error'); return; }
-  const users = readStore(); const u = users.find(x=>x.user===user);
-  const leftHtml = `<div style="font-weight:700">Historial de ${user}</div><div style="margin-top:10px;max-height:380px;overflow:auto">${(u.history||[]).slice().reverse().map(h=>`<div style="padding:8px;border-bottom:1px solid rgba(255,255,255,0.02)"><strong>${h.emotion||h.detail||'Registro'}</strong><div style="font-size:12px;color:var(--muted)">${new Date(h.date).toLocaleString()}</div></div>`).join('') || '<div class="small">Sin registros</div>'}</div>`;
-  const panel = $('bigPanel'); // not present; we'll update miniRoot instead
-  $('miniRoot').innerHTML = leftHtml;
+/* journal view (list) */
+function startJournal(){
+  if(!localStorage.getItem('brisa_final_active')){ setMsg('Inicia sesión para historial','error'); return; }
+  const u = localStorage.getItem('brisa_final_active'); const users=readStore(); const user = users.find(x=>x.user===u);
+  $('pageArea').innerHTML = `<div class="panel"><div style="font-weight:800">Historial de ${u}</div><div style="margin-top:12px;max-height:420px;overflow:auto">${(user.history||[]).slice().reverse().map(h=>`<div style="padding:8px;border-bottom:1px solid rgba(255,255,255,0.02)"><strong>${h.emotion || h.detail || 'Registro'}</strong><div style="font-size:12px;color:var(--muted)">${new Date(h.date).toLocaleString()}</div></div>`).join('')||'<div class="small">Sin registros</div>'}</div></div>`;
 }
 
-/* Invites view */
-function openInvitesView(){
-  const u = currentUser(); if(!u){ setMsg('Inicia sesión para administrar invitaciones','error'); return; }
-  const users = readStore(); const user = users.find(x=>x.user===u);
-  $('miniRoot').innerHTML = `<div style="font-weight:700">Invitaciones de ${u}</div><div style="margin-top:10px">${(user.invites||[]).slice().reverse().map(c=>`<div style="padding:8px;border-bottom:1px solid rgba(255,255,255,0.02)">${c}</div>`).join('') || '<div class="small">No hay códigos</div>'}</div>`;
+/* invites view */
+function startInvites(){
+  if(!localStorage.getItem('brisa_final_active')){ setMsg('Inicia sesión para invites','error'); return; }
+  const u = localStorage.getItem('brisa_final_active'); const users = readStore(); const user = users.find(x=>x.user===u);
+  $('pageArea').innerHTML = `<div class="panel"><div style="font-weight:800">Invitaciones de ${u}</div><div style="margin-top:12px">${(user.invites||[]).slice().reverse().map(c=>`<div style="padding:8px;border-bottom:1px solid rgba(255,255,255,0.02)">${c}</div>`).join('')||'<div class="small">No hay códigos</div>'}</div></div>`;
 }
 
-/* settings/about */
-function openSettings(){ $('miniRoot').innerHTML = `<div style="font-weight:700">Ajustes</div><div style="margin-top:8px" class="small">Preferencias locales (temporal)</div>`; }
-function openAbout(){ $('miniRoot').innerHTML = `<div style="font-weight:700">Acerca de Brisa</div><div style="margin-top:8px" class="small">Versión funcional. Autor: Santiago Núñez</div>`; }
+/* nav buttons */
+qAll('.sideBtn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    qAll('.sideBtn').forEach(b=>b.classList.remove('active')); btn.classList.add('active');
+    const view = btn.dataset.view || 'home';
+    $('pageTitle').textContent = view==='home' ? 'Inicio' : view==='games' ? 'Juegos' : view==='journal' ? 'Historial' : view==='invites' ? 'Invitaciones' : 'Brisa';
+    $('pageSub').textContent = view==='home' ? 'Un espacio grande — diseñado para ser bacano.' : '';
+    if(view==='home'){ $('pageArea').innerHTML=''; }
+    if(view==='games'){ startGameSelection(); }
+    if(view==='journal'){ startJournal(); }
+    if(view==='invites'){ startInvites(); }
+  });
+});
 
-/* shuffle */
+/* show games selection inside pageArea */
+function startGameSelection(){
+  $('pageArea').innerHTML = `<div class="panel"><div style="font-weight:800">Juegos</div><div style="margin-top:12px;display:flex;gap:8px"><button class="btn" onclick="startReaction()">Reacción</button><button class="btn" onclick="startMemory()">Memoria</button><button class="btn" onclick="startBreath()">Respiración</button></div></div>`;
+}
+
+/* stats & UI refresh */
+function refreshStats(){
+  const users = readStore();
+  $('statUsers').textContent = users.length;
+  $('statRecords').textContent = users.reduce((s,u)=>s + (u.history ? u.history.length : 0), 0);
+  $('statCodes').textContent = users.reduce((s,u)=>s + (u.invites ? u.invites.length : 0), 0);
+  // recent
+  const recent = [];
+  users.forEach(u=> (u.history||[]).slice(-3).forEach(h=> recent.push({user:u.user, h})));
+  recent.sort((a,b)=> new Date(b.h.date) - new Date(a.h.date));
+  if(recent.length===0) $('recent').textContent='— ninguna —';
+  else $('recent').innerHTML = recent.slice(0,6).map(r=>`<div style="padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.02)"><strong>${r.user}</strong> • ${r.h.emotion || r.h.detail} <div style="font-size:12px;color:var(--muted)">${new Date(r.h.date).toLocaleString()}</div></div>`).join('');
+}
+
+/* session refresh */
+function refreshSession(){
+  const u = localStorage.getItem('brisa_final_active') || '';
+  $('activeUser').textContent = u || '—';
+  $('userInfoSmall').textContent = u || 'Invitado';
+  $('createdAt').textContent = u ? `creado: ${ (readStore().find(x=>x.user===u)?.created ? new Date(readStore().find(x=>x.user===u).created).toLocaleDateString() : '') }` : '';
+  $('logout').style.display = u ? 'inline-block' : 'none';
+  renderCodes();
+  refreshStats();
+}
+refreshSession();
+
+/* helper: messages */
+function setMsg(txt, type='info'){
+  const el = $('miniFooter');
+  el.textContent = txt;
+  el.style.background = type==='error' ? 'rgba(120,20,20,0.7)' : type==='success' ? 'rgba(20,80,40,0.7)' : 'rgba(0,0,0,0.45)';
+  setTimeout(()=> el.textContent = '© Brisa • Derechos reservados • @sa_mejia.e', 2600);
+}
+
+/* utility shuffle */
 function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]] } return arr; }
 
-/* invite redeem (global simple prompt) */
-function redeemCodePrompt(){
-  const code = prompt('Ingresa el código a canjear:').trim().toUpperCase();
-  if(!code) return;
-  const users = readStore();
-  const owner = users.find(u => (u.invites||[]).includes(code));
-  if(!owner){ setMsg('Código inválido','error'); return; }
-  setMsg('Código válido - bienvenido','success');
-}
+/* store helper (writes and refreshes) */
+function writeStoreAndRefresh(users){ localStorage.setItem(STORE, JSON.stringify(users)); refreshStats(); }
 
-/* render codes on right and stats */
-function renderCodes(){
-  const all = readStore().flatMap(u => (u.invites||[]).map(c=>({c,by:u.user})));
-  $('codesBox').innerHTML = all.length ? all.map(x=>`<div style="padding:6px;border-bottom:1px solid rgba(255,255,255,0.02)">${x.c} — ${x.by}</div>`).join('') : '— ninguno —';
-}
+/* quick functions used earlier that reference global scope */
+function startReaction(){ startReaction(); } // placeholder to avoid errors when called inline (we already have startReaction defined)
+function startMemory(){ startMemory(); }
+function startBreath(){ startBreath(); }
 
-/* initialize: wired control buttons for quick game buttons */
-document.querySelectorAll('[data-game]').forEach(b => b.addEventListener('click', (ev)=>{
-  const g = b.dataset.game;
-  if(g==='reaction') startReaction();
-  if(g==='memory') startMemory();
-  if(g==='breath') startBreath();
-}));
+/* redeem prompt available globally */
+window.redeemCode = function(){ const code = prompt('Ingresa código:'); if(!code) return; const owner = readStore().find(u=> (u.invites||[]).includes(code.trim().toUpperCase())); if(owner) setMsg('Código válido — Bienvenido','success'); else setMsg('Código inválido','error'); };
 
-/* quick keyboard shortcuts */
-window.addEventListener('keydown', e=>{
-  if(e.key==='g'){ $('btnGen').click(); setMsg('Generar código (G)','info'); }
-  if(e.key==='r'){ startReaction(); setMsg('Abrir Reacción (R)','info'); }
+/* keyboard shortcuts example */
+window.addEventListener('keydown', (e)=> {
+  if(e.key==='g'){ $('genCode').click(); }
+  if(e.key==='r'){ startReaction(); }
 });
 
-/* render initial stats */
-updateStats();
-
-/* wire codes show */
-$('btnShowCodes').addEventListener('click', ()=>{
-  const all = readStore().flatMap(u => (u.invites||[]).map(c=> `${c} — ${u.user}`));
-  alert(all.length ? all.join('\\n') : 'No hay códigos');
-});
-
-/* redeem example: attach to some button if wanted */
-window.redeemCodePrompt = redeemCodePrompt;
-
-/* ---------- Background: damasco-ish dynamic (canvas) ---------- */
-const canvas = $('bg'); const ctx = canvas.getContext('2d');
-function resizeCanvas(){ canvas.width = innerWidth * devicePixelRatio; canvas.height = innerHeight * devicePixelRatio; canvas.style.width = innerWidth + 'px'; canvas.style.height = innerHeight + 'px'; ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0); }
-resizeCanvas(); window.addEventListener('resize', resizeCanvas);
-
-const blobs = [];
-for(let i=0;i<18;i++){
-  blobs.push({ x: Math.random()*innerWidth, y: Math.random()*innerHeight, r: 80 + Math.random()*220, vx:(Math.random()-0.5)*0.3, vy:(Math.random()-0.5)*0.3, color: ['#23182a','#7a263f','#b43b5a','#12202a'][i%4] });
-}
-let t0 = performance.now();
-(function draw(now){
-  const t = (now - t0) * 0.0006;
-  ctx.clearRect(0,0,innerWidth,innerHeight);
-  // layer blobs
-  blobs.forEach((b,idx)=>{
-    b.x += b.vx * Math.cos(t*(0.4+idx*0.02));
-    b.y += b.vy * Math.sin(t*(0.3+idx*0.02));
-    const g = ctx.createRadialGradient(b.x,b.y,b.r*0.05,b.x,b.y,b.r);
-    g.addColorStop(0, hexRgba(b.color, 0.18));
-    g.addColorStop(1, hexRgba(b.color, 0.03));
-    ctx.beginPath(); ctx.fillStyle = g; ctx.arc(b.x,b.y,b.r,0,Math.PI*2); ctx.fill();
-  });
-  // soft overlay particles
-  for(let i=0;i<600;i++){
-    ctx.fillStyle = `rgba(255,255,255,${(Math.random()-0.96)*0.02})`;
-    ctx.fillRect(Math.random()*innerWidth, Math.random()*innerHeight, 1,1);
-  }
-  requestAnimationFrame(draw);
-})(performance.now());
-
-function hexRgba(hex,a){ const c = hex.replace('#',''); const n = parseInt(c,16); const r=(n>>16)&255,g=(n>>8)&255,b=n&255; return `rgba(${r},${g},${b},${a})`; }
-
-/* make sure UI stays updated every 2s */
-setInterval(()=>{ updateStats(); refreshSession(); }, 2000);
+/* periodically refresh stats */
+setInterval(()=>{ refreshStats(); refreshSession(); }, 2000);
 
 </script>
 </body>
