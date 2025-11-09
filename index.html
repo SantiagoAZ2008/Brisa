@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Brisa 2025</title>
 
-  <!-- 🌈 Favicon animado SVG -->
+  <!-- 🌈 Favicon animado -->
   <link rel="icon" href="data:image/svg+xml,
   <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>
     <defs>
@@ -18,164 +18,94 @@
   </svg>" type="image/svg+xml">
 
   <style>
-    * {margin:0;padding:0;box-sizing:border-box;font-family:"Poppins",sans-serif;}
-
+    * {margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
     body {
-      height:100vh;
-      background: radial-gradient(circle at 20% 20%, #2a0034, #000);
-      overflow:hidden;
-      color:white;
+      height:100vh;overflow:hidden;color:white;
+      background: radial-gradient(circle at 25% 25%, #1a001f, #000);
     }
 
-    /* 🌌 Fondo animado tipo camuflaje */
+    /* Fondo animado tipo neón */
     body::before {
       content:'';
-      position:fixed;
-      top:0;left:0;width:100%;height:100%;
-      background: radial-gradient(circle at 50% 50%, #5e1f7c44, transparent 40%),
-                  radial-gradient(circle at 20% 80%, #431a6b55, transparent 40%),
-                  radial-gradient(circle at 80% 20%, #7a1b6f55, transparent 40%);
-      animation: moveBg 10s ease-in-out infinite alternate;
-      z-index:-1;
+      position:fixed;top:0;left:0;width:100%;height:100%;
+      background: radial-gradient(circle at 10% 20%, #5f2b8b44, transparent 40%),
+                  radial-gradient(circle at 90% 70%, #b0306066, transparent 40%),
+                  radial-gradient(circle at 50% 90%, #5f2b8b44, transparent 40%);
       filter:blur(80px);
+      animation:bgMove 12s ease-in-out infinite alternate;
+      z-index:-1;
     }
 
-    @keyframes moveBg {
-      0% {background-position: 0% 50%;}
-      50% {background-position: 100% 50%;}
-      100% {background-position: 0% 50%;}
+    @keyframes bgMove {
+      0%{background-position:0% 50%;}
+      100%{background-position:100% 50%;}
     }
 
-    /* 🔮 Panel lateral */
+    /* Panel lateral */
     nav {
-      position:fixed;
-      left:0;top:0;
-      width:220px;
-      height:100%;
-      background:rgba(255,255,255,0.06);
-      backdrop-filter:blur(12px);
+      position:fixed;top:0;left:0;width:230px;height:100%;
+      background:rgba(255,255,255,0.07);backdrop-filter:blur(10px);
       border-right:1px solid rgba(255,255,255,0.1);
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      padding-top:40px;
-      transition:0.3s;
+      display:flex;flex-direction:column;align-items:center;padding-top:40px;
     }
 
     nav h2 {
-      font-size:1.4em;
-      color:#fff;
-      text-align:center;
-      margin-bottom:30px;
-      animation: glowText 4s ease-in-out infinite alternate;
+      font-size:1.5em;text-align:center;
+      text-shadow:0 0 15px #a020f0,0 0 25px #00b3ff;
+      animation:glowText 4s ease-in-out infinite alternate;
     }
 
     @keyframes glowText {
-      0% {text-shadow:0 0 10px #7f00ff,0 0 25px #00b3ff;}
-      100% {text-shadow:0 0 25px #ff00ff,0 0 35px #0099ff;}
+      0%{text-shadow:0 0 10px #7f00ff,0 0 25px #00b3ff;}
+      100%{text-shadow:0 0 25px #ff00ff,0 0 35px #0099ff;}
     }
 
     .menu-btn {
-      width:180px;
-      margin:10px 0;
-      padding:12px;
-      background:rgba(255,255,255,0.08);
-      border:none;
-      border-radius:12px;
-      color:white;
-      cursor:pointer;
-      transition:0.3s;
+      width:180px;margin:10px 0;padding:12px;border:none;border-radius:12px;
+      background:rgba(255,255,255,0.1);color:white;cursor:pointer;transition:0.3s;
     }
+    .menu-btn:hover {background:rgba(255,255,255,0.25);transform:scale(1.05);}
 
-    .menu-btn:hover {
-      background:rgba(255,255,255,0.25);
-      transform:scale(1.05);
-    }
-
-    /* 🧊 Contenido principal */
-    .content {
-      margin-left:220px;
-      padding:40px;
-      transition:0.4s;
-    }
-
+    .content {margin-left:230px;padding:40px;transition:0.4s;}
     .card {
-      background:rgba(255,255,255,0.08);
-      backdrop-filter:blur(15px);
-      border-radius:25px;
-      padding:30px;
-      box-shadow:0 0 30px rgba(0,0,0,0.4);
-      animation: fadeIn 0.6s ease-in-out;
+      background:rgba(255,255,255,0.07);backdrop-filter:blur(15px);
+      border-radius:25px;padding:30px;box-shadow:0 0 25px rgba(0,0,0,0.5);
+      animation:fadeIn 0.7s ease-in-out;
     }
 
-    @keyframes fadeIn {
-      from {opacity:0; transform:translateY(20px);}
-      to {opacity:1; transform:translateY(0);}
-    }
+    @keyframes fadeIn {from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
 
-    /* Login/Registro */
-    #loginCard, #registerCard {
-      position:fixed;
-      top:0;left:0;width:100%;height:100%;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      background:rgba(0,0,0,0.6);
-      backdrop-filter:blur(10px);
-      transition:opacity 0.5s;
+    /* Login / Registro */
+    #loginCard,#registerCard {
+      position:fixed;top:0;left:0;width:100%;height:100%;
+      display:flex;justify-content:center;align-items:center;
+      background:rgba(0,0,0,0.6);backdrop-filter:blur(10px);transition:0.5s;
     }
 
     .login-box {
-      background:rgba(255,255,255,0.08);
-      padding:40px;
-      border-radius:20px;
-      text-align:center;
-      width:360px;
-      box-shadow:0 0 25px rgba(0,0,0,0.5);
-      animation: scaleIn 0.8s ease;
+      background:rgba(255,255,255,0.08);padding:40px;border-radius:20px;text-align:center;
+      width:360px;box-shadow:0 0 25px rgba(0,0,0,0.5);animation:scaleIn 0.8s ease;
     }
 
-    @keyframes scaleIn {
-      from {transform:scale(0.9);opacity:0;}
-      to {transform:scale(1);opacity:1;}
-    }
+    @keyframes scaleIn {from{transform:scale(0.9);opacity:0;}to{transform:scale(1);opacity:1;}}
 
-    input {
-      width:100%;
-      padding:12px;
-      margin:10px 0;
-      border:none;
-      border-radius:10px;
-      background:rgba(255,255,255,0.15);
-      color:white;
+    input, textarea {
+      width:100%;padding:12px;margin:10px 0;border:none;border-radius:10px;
+      background:rgba(255,255,255,0.15);color:white;
     }
 
     button {
-      width:100%;
-      padding:12px;
-      border:none;
-      border-radius:10px;
-      background:#7b2cbf;
-      color:white;
-      cursor:pointer;
-      transition:0.3s;
-      margin-top:10px;
+      width:100%;padding:12px;border:none;border-radius:10px;
+      background:#7b2cbf;color:white;cursor:pointer;transition:0.3s;
     }
 
     button:hover {background:#9d4edd;}
-
-    .link {
-      margin-top:10px;
-      font-size:14px;
-      text-decoration:underline;
-      cursor:pointer;
-      color:#ddd;
-    }
-
+    .link {margin-top:10px;font-size:14px;text-decoration:underline;cursor:pointer;color:#ddd;}
   </style>
 </head>
 
 <body>
+  <!-- Menú lateral -->
   <nav>
     <h2>🌌 Brisa 2025</h2>
     <button class="menu-btn" onclick="showSection('home')">Inicio</button>
@@ -186,28 +116,30 @@
     <button class="menu-btn" onclick="logout()">Cerrar sesión</button>
   </nav>
 
+  <!-- Contenido principal -->
   <div class="content">
     <div id="home" class="card">
       <h1>Bienvenido a Brisa 2025</h1>
-      <p>Tu espacio digital para gestionar emociones y bienestar emocional.</p>
-      <p>Desarrollado por <b>Santiago Nuñez Mejía</b>.</p>
+      <p>Una plataforma creada para mejorar tu bienestar emocional y conectar contigo mismo.</p>
+      <p><b>Creador:</b> Santiago Nuñez Mejía</p>
       <a href="https://www.instagram.com/sa_mejia.e/" target="_blank">Instagram del creador</a>
     </div>
 
     <div id="games" class="card" style="display:none;">
       <h2>🎮 Mini Juegos</h2>
-      <p>Juegos para entrenar tus reflejos y concentración.</p>
+      <p>Entrena tu mente con desafíos rápidos y divertidos.</p>
     </div>
 
     <div id="emotions" class="card" style="display:none;">
       <h2>💭 Registro Emocional</h2>
-      <textarea id="emotionNotes" placeholder="Describe cómo te sientes hoy..." rows="5" style="width:100%;padding:10px;border-radius:10px;"></textarea>
-      <button>Guardar Emoción</button>
+      <textarea id="emotionNotes" placeholder="Describe cómo te sientes hoy..." rows="5"></textarea>
+      <button onclick="saveEmotion()">Guardar emoción</button>
+      <div id="emotionSaved"></div>
     </div>
 
     <div id="profile" class="card" style="display:none;">
       <h2>👤 Perfil del Usuario</h2>
-      <p>Aquí verás tu información personal e invitaciones.</p>
+      <p>Aquí podrás ver tus datos, estadísticas y códigos de invitación.</p>
     </div>
 
     <div id="users" class="card" style="display:none;">
@@ -216,7 +148,7 @@
     </div>
   </div>
 
-  <!-- LOGIN -->
+  <!-- Login -->
   <div id="loginCard">
     <div class="login-box">
       <h2>Iniciar Sesión</h2>
@@ -227,10 +159,10 @@
     </div>
   </div>
 
-  <!-- REGISTRO -->
+  <!-- Registro -->
   <div id="registerCard" style="display:none;">
     <div class="login-box">
-      <h2>Crear cuenta</h2>
+      <h2>Registro</h2>
       <input type="text" id="regUser" placeholder="Nuevo usuario">
       <input type="password" id="regPass" placeholder="Contraseña">
       <button onclick="register()">Registrar</button>
@@ -239,43 +171,51 @@
   </div>
 
   <script>
-    // Animación del título en pestaña
+    // Animación de pestaña
     const titles = ["💫 Brisa 2025", "🌌 Bienestar Emocional", "💭 Conecta contigo"];
     let i = 0;
     setInterval(() => { document.title = titles[i++ % titles.length]; }, 2000);
 
     function toggleLogin(showLogin){
-      document.getElementById('loginCard').style.display = showLogin ? 'flex':'none';
-      document.getElementById('registerCard').style.display = showLogin ? 'none':'flex';
+      loginCard.style.display = showLogin ? 'flex':'none';
+      registerCard.style.display = showLogin ? 'none':'flex';
     }
 
     function register(){
-      let user = regUser.value.trim(), pass = regPass.value.trim();
-      if(!user || !pass) return alert("Completa todos los campos.");
-      let users = JSON.parse(localStorage.getItem("brisaUsers")||"[]");
+      const user = regUser.value.trim(), pass = regPass.value.trim();
+      if(!user || !pass){ alert("Completa los campos"); return; }
+      const users = JSON.parse(localStorage.getItem("brisaUsers")||"[]");
       users.push({user, pass});
       localStorage.setItem("brisaUsers", JSON.stringify(users));
-      toggleLogin(true);
       alert("Usuario registrado correctamente");
+      toggleLogin(true);
     }
 
     function login(){
-      let user = loginUser.value.trim(), pass = loginPass.value.trim();
-      let users = JSON.parse(localStorage.getItem("brisaUsers")||"[]");
-      let found = users.find(u=>u.user===user && u.pass===pass);
+      const user = loginUser.value.trim(), pass = loginPass.value.trim();
+      const users = JSON.parse(localStorage.getItem("brisaUsers")||"[]");
+      const found = users.find(u=>u.user===user && u.pass===pass);
       if(found){
-        document.getElementById("loginCard").style.display="none";
-        document.getElementById("registerCard").style.display="none";
-      }else alert("Usuario o contraseña incorrectos.");
+        loginCard.style.opacity='0';
+        setTimeout(()=>loginCard.style.display='none',400);
+      } else alert("Usuario o contraseña incorrectos.");
     }
 
-    function logout(){
-      document.getElementById("loginCard").style.display="flex";
-    }
+    function logout(){ loginCard.style.display='flex'; loginCard.style.opacity='1'; }
 
     function showSection(id){
       document.querySelectorAll(".card").forEach(c=>c.style.display="none");
       document.getElementById(id).style.display="block";
+    }
+
+    function saveEmotion(){
+      const emotion = emotionNotes.value.trim();
+      if(!emotion){alert("Escribe algo primero");return;}
+      const logs = JSON.parse(localStorage.getItem("brisaEmotions")||"[]");
+      logs.push({text:emotion, date:new Date().toLocaleString()});
+      localStorage.setItem("brisaEmotions", JSON.stringify(logs));
+      emotionSaved.innerHTML = "<p>💖 Emoción guardada correctamente.</p>";
+      emotionNotes.value="";
     }
   </script>
 </body>
