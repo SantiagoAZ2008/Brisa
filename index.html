@@ -3,901 +3,586 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Brisa — 2.0 • Bienestar Emocional (Brutal)</title>
-
+<title>Brisa — Bienestar Emocional (funcional)</title>
 <style>
   :root{
-    --bg-1:#081018;
-    --panel:#0f1720e6;
-    --accent:#ff4d7a;
-    --accent-2:#7be2ff;
-    --glass: rgba(255,255,255,0.04);
-    --glass-2: rgba(255,255,255,0.06);
-    --muted: rgba(255,255,255,0.65);
-    --success: #44d69e;
+    --bg1:#07101a; --glass: rgba(255,255,255,0.03);
+    --accent:#ff4d7a; --accent-2:#7be2ff; --muted:rgba(230,238,246,0.75);
+    --success:#44d69e; --panel-bg: rgba(255,255,255,0.02);
   }
-
-  /* Base */
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%}
   body{
-    font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-    color: #e6eef6;
-    background: var(--bg-1);
-    overflow:hidden;
+    font-family:Inter, system-ui, -apple-system, "Helvetica Neue", Arial;
+    background:var(--bg1); color:#e6eef6; overflow:hidden;
   }
 
-  /* Background canvas layers full-screen */
-  canvas.bg-layer{ position:fixed; left:0; top:0; width:100%; height:100%; z-index:0; display:block; }
+  /* canvas bg */
+  canvas.bgLayer{ position:fixed; inset:0; width:100%; height:100%; z-index:0; display:block; }
 
-  /* Layout */
+  /* App layout */
   .app {
-    position:relative;
-    z-index:10;
-    height:100vh;
-    display:grid;
-    grid-template-columns: 260px 1fr 360px;
-    gap:22px;
-    padding:28px;
+    position:relative; z-index:2;
+    display:grid; grid-template-columns:260px 1fr 320px;
+    gap:20px; padding:24px; height:100vh;
     align-items:start;
   }
 
+  /* Remove heavy borders/lines: subtle glass panels */
+  .panel {
+    background: linear-gradient(180deg,var(--panel-bg), rgba(255,255,255,0.01));
+    border-radius:14px; padding:16px; box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    border: 1px solid rgba(255,255,255,0.02);
+    backdrop-filter: blur(6px);
+  }
+
   /* Sidebar */
-  .sidebar {
-    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
-    border-radius:16px;
-    padding:18px;
-    box-shadow: 0 10px 30px rgba(2,6,23,0.6);
-    border:1px solid rgba(255,255,255,0.03);
-    height:calc(100vh - 56px);
-    overflow:auto;
-  }
-  .brand { display:flex; gap:10px; align-items:center; margin-bottom:12px; }
-  .logo {
-    width:46px; height:46px; border-radius:10px;
-    background: linear-gradient(135deg,var(--accent),#9f6bff);
-    display:flex;align-items:center;justify-content:center;font-weight:700;color:white; font-size:18px;
-    box-shadow: 0 6px 18px rgba(123,226,255,0.06), inset 0 -6px 14px rgba(0,0,0,0.25);
-  }
-  .brand h1{ font-size:16px; letter-spacing:0.4px; }
-  .brand p{ font-size:12px; color:var(--muted); margin-top:2px; }
+  .sidebar .brand { display:flex; gap:10px; align-items:center; margin-bottom:10px }
+  .logo { width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;
+         background:linear-gradient(135deg,var(--accent),#9f6bff); color:white; box-shadow:0 6px 18px rgba(0,0,0,0.4); }
+  .brand h1{font-size:16px}
+  .brand p{font-size:12px;color:var(--muted)}
 
-  .nav { margin-top:18px; display:flex; flex-direction:column; gap:8px; }
-  .nav button {
-    display:flex; align-items:center; gap:10px;
-    background:transparent; color:inherit; border:none; padding:10px; border-radius:10px; text-align:left; cursor:pointer;
-    transition: all .16s ease;
-  }
-  .nav button:hover{ background: rgba(255,255,255,0.03); transform:translateX(6px); }
-  .nav button.active{ background: linear-gradient(90deg, rgba(255,77,122,0.12), rgba(123,226,255,0.06)); box-shadow: inset 0 0 30px rgba(255,255,255,0.01) }
-
-  .meta { margin-top:18px; font-size:13px; color:var(--muted); line-height:1.5; }
-  .socials { margin-top:12px; display:flex; gap:8px; }
-  .socials a { font-size:13px; color:var(--accent); text-decoration:none; }
+  .nav { display:flex; flex-direction:column; gap:8px; margin-top:12px }
+  .nav button { background:transparent; color:inherit; border:none; padding:10px; text-align:left; border-radius:8px; cursor:pointer; transition:.12s }
+  .nav button:hover{ transform:translateX(6px); background: rgba(255,255,255,0.02) }
+  .nav button.active{ background: linear-gradient(90deg, rgba(255,77,122,0.08), rgba(123,226,255,0.03)); box-shadow: inset 0 0 30px rgba(255,255,255,0.01) }
 
   /* Main area */
-  .main {
-    height:calc(100vh - 56px);
-    overflow:auto;
-    padding:18px;
-    border-radius:16px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-    border:1px solid rgba(255,255,255,0.02);
-    box-shadow: 0 12px 40px rgba(0,0,0,0.6);
-  }
+  .main { height:calc(100vh - 48px); overflow:auto; padding:18px; }
+  .header { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:12px; }
+  .title { font-size:20px; font-weight:700 }
+  .subtitle { font-size:13px; color:var(--muted) }
 
-  .header-row { display:flex; justify-content:space-between; align-items:center; gap:12px; }
-  .page-title { font-size:20px; font-weight:700; }
-  .header-controls { display:flex; gap:10px; align-items:center; }
+  .grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
+  .wide { grid-column:1 / -1 }
 
-  /* Widgets grid */
-  .grid {
-    margin-top:18px;
-    display:grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap:14px;
-  }
+  /* Clean controls */
+  input, select { background: rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.03); color:inherit; padding:10px; border-radius:8px; }
+  .btn { padding:10px 14px; border-radius:10px; border:none; cursor:pointer; background:var(--accent); color:white; font-weight:700; }
+  .btn.alt { background:transparent; border:1px solid rgba(255,255,255,0.04); color:var(--muted) }
 
-  .panel {
-    background: linear-gradient(180deg, var(--glass), rgba(255,255,255,0.02));
-    border-radius:12px; padding:14px; min-height:120px; border:1px solid rgba(255,255,255,0.02);
-  }
-  .panel h3{ font-size:14px; margin-bottom:8px; }
+  /* games & big area */
+  .big { display:flex; gap:12px; align-items:flex-start; }
+  .leftCol { flex:1 }
+  .rightCol { width:300px }
 
-  .big-panel { grid-column: 1 / -1; min-height:320px; display:flex; gap:12px; }
+  /* memory cards */
+  .mem-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px }
+  .card { background: rgba(255,255,255,0.02); border-radius:10px; padding:18px; text-align:center; font-size:20px; cursor:pointer; user-select:none; transition:.12s }
+  .card.revealed { transform:scale(1.02); background:linear-gradient(135deg, rgba(255,77,122,0.12), rgba(123,226,255,0.06)) }
 
-  /* Right column */
-  .right {
-    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-    border-radius:16px; padding:18px; height:calc(100vh - 56px); overflow:auto; border:1px solid rgba(255,255,255,0.02);
-  }
-  .stat { display:flex; justify-content:space-between; align-items:center; margin-top:10px; padding:10px; border-radius:10px; background: rgba(255,255,255,0.02); }
+  /* right column small */
+  .stat { display:flex; justify-content:space-between; gap:12px; padding:10px; border-radius:8px; background: rgba(255,255,255,0.01) }
 
-  /* Forms & inputs */
-  .form-row{ display:flex; gap:8px; align-items:center; }
-  input[type=text], input[type=password], select {
-    background: rgba(255,255,255,0.03); color:inherit; border:1px solid rgba(255,255,255,0.03);
-    padding:10px; border-radius:8px; width:100%;
-  }
-  .btn { padding:10px 14px; border-radius:8px; border:none; cursor:pointer; background:var(--accent); color:white; font-weight:600; }
-  .btn.alt { background:transparent; border:1px solid rgba(255,255,255,0.06); color:var(--muted); }
+  /* footer mini */
+  .miniFooter { position:fixed; left:50%; transform:translateX(-50%); bottom:12px; background: rgba(0,0,0,0.45); padding:8px 12px; border-radius:12px; font-size:13px; color:var(--muted); z-index:6; }
 
-  .small { font-size:13px; color:var(--muted); }
-
-  /* Large game area style */
-  .game-area { width:100%; height:100%; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:12px; text-align:center; }
-
-  /* Memory grid */
-  .mem-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
-  .mem-card { background:rgba(255,255,255,0.03); border-radius:8px; padding:18px; font-size:22px; display:flex;align-items:center;justify-content:center; cursor:pointer; user-select:none; transition: transform .12s ease; }
-  .mem-card.revealed { background:linear-gradient(135deg, rgba(255,77,122,0.12), rgba(123,226,255,0.06)); transform:scale(1.02); }
-
-  /* breathing circle */
-  .breath-circle { width:120px; height:120px; border-radius:999px; background:linear-gradient(135deg, rgba(123,226,255,0.08), rgba(255,77,122,0.06)); display:flex; align-items:center; justify-content:center; font-weight:700; }
-
-  /* footer */
-  .footbar { position:fixed; left:50%; transform:translateX(-50%); bottom:18px; z-index:30; background: rgba(0,0,0,0.45); padding:8px 14px; border-radius:12px; border:1px solid rgba(255,255,255,0.03); font-size:13px; color:var(--muted); }
-
-  /* responsive */
-  @media (max-width:1100px){
-    .app{ grid-template-columns: 1fr; padding:18px; grid-auto-rows:auto; height:auto; }
-    .right{ order:3 }
-    .sidebar{ order:1; height:auto; }
-    .main{ order:2; height:auto }
-    .big-panel{ flex-direction:column; }
-  }
+  /* hide ugly scrollbars but keep usability */
+  ::-webkit-scrollbar{height:10px;width:10px;background:transparent}
+  ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.06);border-radius:10px}
+  /* mobile */
+  @media (max-width:1000px){ .app{ grid-template-columns:1fr; padding:12px } .rightCol{ width:100% } .grid{ grid-template-columns:1fr } .miniFooter{ left:12px; transform:none } }
 </style>
 </head>
 <body>
 
-<!-- 3 canvas layers for deep animated background -->
-<canvas id="bg1" class="bg-layer"></canvas>
-<canvas id="bg2" class="bg-layer"></canvas>
-<canvas id="bg3" class="bg-layer"></canvas>
+<!-- Background -->
+<canvas id="bg" class="bgLayer"></canvas>
 
-<div class="app" id="appRoot">
-
+<div class="app" id="app">
   <!-- SIDEBAR -->
-  <aside class="sidebar" id="sidebar">
+  <aside class="panel sidebar">
     <div class="brand">
       <div class="logo">B+</div>
       <div>
         <h1>Brisa 2.0</h1>
-        <p class="small">Bienestar • Juegos • Comunidad</p>
+        <p>Bienestar • Juegos • Comunidad</p>
       </div>
     </div>
 
-    <nav class="nav" id="navBtns">
-      <button data-view="home" class="active">🏠 Inicio</button>
-      <button data-view="play">🎮 Juegos</button>
-      <button data-view="journal">📓 Historial</button>
-      <button data-view="invites">✉️ Invitaciones</button>
-      <button data-view="settings">⚙️ Ajustes</button>
-      <button data-view="about">ℹ️ Acerca</button>
+    <nav class="nav" id="nav">
+      <button data-view="home" class="active">Inicio</button>
+      <button data-view="play">Juegos</button>
+      <button data-view="journal">Historial</button>
+      <button data-view="invites">Invitaciones</button>
+      <button data-view="settings">Ajustes</button>
+      <button data-view="about">Acerca</button>
     </nav>
 
-    <div class="meta">
-      <div><strong id="currentUser">Invitado</strong></div>
-      <div class="small" id="userStats">Sin sesión • 0 registros</div>
+    <div style="margin-top:12px;font-size:13px;color:var(--muted)">
+      Usuario: <strong id="sidebarUser">Invitado</strong><br>
+      <span id="sidebarStats">Sin sesión • 0 registros</span>
+    </div>
 
-      <div class="socials" style="margin-top:12px;">
-        <a href="https://www.instagram.com/sa_mejia.e/" target="_blank">Instagram</a>
-        <a href="#" id="creditsLink" style="margin-left:8px;color:var(--accent-2)">Créditos</a>
-      </div>
+    <div style="margin-top:14px">
+      <a href="https://www.instagram.com/sa_mejia.e/" target="_blank" style="color:var(--accent);text-decoration:none">Instagram</a>
     </div>
   </aside>
 
   <!-- MAIN -->
-  <main class="main" id="mainPane">
-    <div class="header-row">
+  <main class="panel main">
+    <div class="header">
       <div>
-        <div class="page-title" id="pageTitle">Inicio</div>
-        <div class="small" id="pageSub">Un espacio grande — diseñado para ser bacano.</div>
+        <div class="title" id="pageTitle">Inicio</div>
+        <div class="subtitle" id="pageSub">Un espacio grande — diseñado para ser bacano.</div>
       </div>
 
-      <div class="header-controls">
-        <div class="small">Modo sonido
-          <label style="margin-left:8px;">
-            <input id="soundToggle" type="checkbox" checked />
-          </label>
-        </div>
-        <button class="btn alt" id="logoutBtn" style="display:none">Cerrar sesión</button>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <label style="font-size:13px;color:var(--muted)">Sonido <input id="soundToggle" type="checkbox" checked /></label>
+        <button id="logoutBtn" class="btn alt" style="display:none">Cerrar sesión</button>
       </div>
     </div>
 
-    <!-- GRID -->
-    <div class="grid" id="gridRoot">
-
-      <!-- Quick stats -->
+    <div class="grid">
       <div class="panel">
-        <h3>Resumen rápido</h3>
-        <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
-          <div class="stat" style="flex:1">
-            <div style="font-weight:700;font-size:18px" id="statUsers">0</div>
-            <div class="small">Usuarios</div>
-          </div>
-          <div class="stat" style="flex:1">
-            <div style="font-weight:700;font-size:18px" id="statRecords">0</div>
-            <div class="small">Registros</div>
-          </div>
-          <div class="stat" style="flex:1">
-            <div style="font-weight:700;font-size:18px" id="statCodes">0</div>
-            <div class="small">Invitaciones</div>
-          </div>
+        <div style="font-weight:700;margin-bottom:8px">Resumen rápido</div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <div style="flex:1" class="stat"><div style="font-weight:800" id="statUsers">0</div><div class="small">Usuarios</div></div>
+          <div style="flex:1" class="stat"><div style="font-weight:800" id="statRecords">0</div><div class="small">Registros</div></div>
         </div>
+        <div style="margin-top:10px" class="stat"><div style="font-weight:800" id="statCodes">0</div><div class="small">Invitaciones</div></div>
       </div>
 
-      <!-- Recent activity -->
       <div class="panel">
-        <h3>Actividad reciente</h3>
-        <div id="recentList" style="margin-top:10px; max-height:150px; overflow:auto; font-size:13px; color:var(--muted)">
-          — Ninguna actividad todavía —
-        </div>
+        <div style="font-weight:700;margin-bottom:8px">Actividad reciente</div>
+        <div id="recent" style="color:var(--muted);font-size:13px">— Ninguna actividad todavía —</div>
       </div>
 
-      <!-- Big panel: games / interactive -->
-      <div class="panel big-panel" id="bigPanel">
-        <!-- left: content -->
-        <div style="flex:1; display:flex; flex-direction:column;">
-          <h3 id="bigTitle">¡Bienvenido a Brisa!</h3>
-          <div class="small" id="bigSub">Inicia sesión para usar todas las funciones. Selecciona "Juegos" para comenzar.</div>
+      <!-- BIG interactive area -->
+      <div class="panel wide big">
+        <div class="leftCol">
+          <div style="font-weight:700" id="welcomeTitle">¡Bienvenido a Brisa!</div>
+          <div class="subtitle" id="welcomeSub">Inicia sesión para usar todas las funciones.</div>
 
-          <div style="margin-top:14px; display:flex; gap:8px; align-items:center">
-            <input id="quickUser" type="text" placeholder="Usuario (ej: santiago)" style="flex:1"/>
-            <input id="quickPass" type="password" placeholder="Contraseña" style="width:160px"/>
-            <button class="btn" id="quickLoginBtn">Entrar</button>
-            <button class="btn alt" id="quickRegBtn">Registrar</button>
+          <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
+            <input id="inpUser" type="text" placeholder="Usuario (min 3)" />
+            <input id="inpPass" type="password" placeholder="Contraseña (min 3)" />
+            <button id="btnLogin" class="btn">Entrar</button>
+            <button id="btnRegister" class="btn alt">Registrar</button>
           </div>
 
-          <div style="margin-top:12px; display:flex; gap:8px;">
-            <button class="btn alt" id="demoBtn">Demo: Llenar datos</button>
-            <button class="btn" id="downloadBtn">Exportar datos</button>
+          <div style="margin-top:12px;display:flex;gap:8px">
+            <button id="btnDemo" class="btn alt">Demo: llenar datos</button>
+            <button id="btnExport" class="btn">Exportar datos</button>
           </div>
 
-          <div style="margin-top:12px;">
-            <label class="small">Estado emocional rápido</label>
-            <div style="display:flex; gap:8px; margin-top:8px;">
-              <select id="quickEmotion" style="padding:10px;border-radius:8px;background:rgba(255,255,255,0.03)">
+          <div style="margin-top:14px">
+            <label class="small">Registrar emoción rápida</label>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <select id="quickEmotion" style="min-width:160px">
                 <option>Feliz</option><option>Triste</option><option>Ansioso</option><option>Calmado</option><option>Motivado</option>
               </select>
-              <button class="btn" id="quickSaveEmotion">Guardar</button>
+              <button id="btnSaveEmotion" class="btn">Guardar</button>
             </div>
           </div>
+
         </div>
 
-        <!-- right: tall controls -->
-        <div style="width:340px; background:rgba(255,255,255,0.02); border-radius:10px; padding:12px;">
-          <h3>Control rápido</h3>
-          <div style="margin-top:8px;">
-            <div class="small">Mini-juegos</div>
-            <div style="display:flex;gap:8px;margin-top:8px;">
-              <button class="btn alt" data-game="reaction">Reacción</button>
-              <button class="btn alt" data-game="memory">Memoria</button>
-              <button class="btn alt" data-game="breath">Respiración</button>
+        <div class="rightCol">
+          <div style="font-weight:700;margin-bottom:8px">Control rápido</div>
+          <div style="display:flex;gap:8px;margin-bottom:10px">
+            <button data-game="reaction" class="btn alt">Reacción</button>
+            <button data-game="memory" class="btn alt">Memoria</button>
+            <button data-game="breath" class="btn alt">Respiración</button>
+          </div>
+          <div style="margin-top:8px">
+            <div style="font-weight:700">Invitaciones</div>
+            <div style="margin-top:8px;display:flex;gap:8px">
+              <button id="btnGen" class="btn">Generar código</button>
+              <button id="btnShowCodes" class="btn alt">Ver códigos</button>
             </div>
           </div>
 
-          <div style="margin-top:12px;">
-            <div class="small">Invitaciones</div>
-            <div style="display:flex; gap:8px; margin-top:8px;">
-              <button class="btn" id="genCodeBtn">Generar código</button>
-              <button class="btn alt" id="showCodesBtn">Ver cod.</button>
+          <div style="margin-top:12px">
+            <div style="font-weight:700">Preferencias</div>
+            <div style="margin-top:8px">
+              <label class="small"><input type="checkbox" id="ambientToggle" checked/> Música ambiental</label><br>
+              <label class="small"><input type="checkbox" id="fancyBG" checked/> Fondo dinámico</label>
             </div>
           </div>
 
-          <div style="margin-top:12px;">
-            <div class="small">Preferencias</div>
-            <div style="display:flex; gap:8px; margin-top:8px;">
-              <label class="small" style="display:flex;align-items:center;gap:8px;"><input type="checkbox" id="ambientToggle" checked/> Música</label>
-              <label class="small" style="display:flex;align-items:center;gap:8px;"><input type="checkbox" id="fancyBG" checked/> Fondo dinámico</label>
-            </div>
-          </div>
         </div>
       </div>
 
-      <!-- Panel: emotions distribution (simple bars made in DOM) -->
       <div class="panel">
-        <h3>Distribución de emociones</h3>
-        <div id="emotionBars" style="margin-top:10px;display:flex;flex-direction:column;gap:8px"></div>
+        <div style="font-weight:700">Distribución de emociones</div>
+        <div id="bars" style="margin-top:10px;color:var(--muted)">— sin datos —</div>
       </div>
 
-      <!-- Panel: invites -->
       <div class="panel">
-        <h3>Tus invitaciones</h3>
-        <div id="codesList" style="margin-top:10px;max-height:180px;overflow:auto;font-size:13px;color:var(--muted)">
-          — No hay códigos —
-        </div>
+        <div style="font-weight:700">Tus códigos</div>
+        <div id="codesBox" style="margin-top:10px;color:var(--muted)">— ninguno —</div>
       </div>
-
     </div>
   </main>
 
-
-  <!-- RIGHT COLUMN -->
-  <aside class="right" id="rightPane">
-    <div style="display:flex;justify-content:space-between;align-items:center;">
-      <div>
-        <div style="font-weight:700">Panel</div>
-        <div class="small">Atajos y herramientas</div>
-      </div>
-      <div>
-        <div style="font-size:12px;color:var(--muted)">v2.0 • 2025</div>
-      </div>
+  <!-- RIGHT -->
+  <aside class="panel right">
+    <div style="font-weight:700">Panel rápido</div>
+    <div style="margin-top:10px" id="miniRoot">Selecciona un juego para empezar</div>
+    <div style="margin-top:12px">
+      <div style="font-weight:700">Sesión</div>
+      <div style="margin-top:6px">Usuario: <strong id="activeUser">—</strong></div>
+      <div class="small" id="actCreated">—</div>
     </div>
 
-    <div style="margin-top:12px;">
-      <h3>Sesión</h3>
-      <div style="margin-top:8px;">
-        <div class="small">Usuario activo</div>
-        <div style="font-weight:700;margin-top:6px" id="activeUser">—</div>
-        <div class="small" style="margin-top:6px" id="activeCreated">—</div>
-      </div>
-
-      <div style="margin-top:12px;">
-        <h3>Mini-juego activo</h3>
-        <div id="miniRoot" style="margin-top:10px;">
-          <div class="small">Ninguno</div>
-        </div>
-      </div>
-
-      <div style="margin-top:12px;">
-        <h3>Historial rápido</h3>
-        <div id="miniHistory" style="margin-top:8px;font-size:13px;color:var(--muted); max-height:220px; overflow:auto"></div>
-      </div>
-
+    <div style="margin-top:12px">
+      <div style="font-weight:700">Historial reciente</div>
+      <div id="miniHistory" style="margin-top:8px;color:var(--muted);max-height:220px;overflow:auto"></div>
     </div>
-
   </aside>
-
 </div>
 
-<div class="footbar">© Brisa • Derechos reservados • <a href="https://www.instagram.com/sa_mejia.e/" target="_blank" style="color:var(--accent);text-decoration:none">@sa_mejia.e</a></div>
+<div class="miniFooter" id="miniFooter">© Brisa • Derechos reservados • <span style="color:var(--accent)">@sa_mejia.e</span></div>
 
-<!-- SCRIPTS -->
 <script>
-/* ======================================================
-   BRISA 2.0 — Single-file app
-   Features integrated:
-   - canvas multi-layer animated background (camouflage / damasco style)
-   - dashboard layout (sidebar + main + right)
-   - localStorage users, session, invites, emotions
-   - 3 mini-games: reaction, memory, breathing
-   - audio using WebAudio (optional)
-   - stats, quick actions, export snapshot
-   - responsive behavior
-   ====================================================== */
+/* ---------------------------
+   Lightweight single-file app
+   --------------------------- */
 
-/* --------------------------
-   Utilities & Storage helpers
-   -------------------------- */
+/* Helpers */
 const $ = id => document.getElementById(id);
-const qs = sel => document.querySelector(sel);
-const qsa = sel => document.querySelectorAll(sel);
+const qsa = s => document.querySelectorAll(s);
+const storeKey = 'brisa_v2_store';
 
-function readStore(){ return JSON.parse(localStorage.getItem('brisa2_users') || '[]'); }
-function writeStore(data){ localStorage.setItem('brisa2_users', JSON.stringify(data)); updateStats(); }
-function currentUser(){ return localStorage.getItem('brisa2_active') || ''; }
-function setActive(u){ if(u) localStorage.setItem('brisa2_active', u); else localStorage.removeItem('brisa2_active'); refreshSessionInfo(); }
+function readStore(){ return JSON.parse(localStorage.getItem(storeKey) || '[]'); }
+function writeStore(data){ localStorage.setItem(storeKey, JSON.stringify(data)); updateStats(); }
 
-/* --------------------------
-   Background animation (3 layered canvases)
-   -------------------------- */
-const canvases = ['bg1','bg2','bg3'].map(id => document.getElementById(id));
-const ctxs = canvases.map(c=>c.getContext('2d'));
-function resizeAll(){
-  canvases.forEach(c=>{
-    c.width = innerWidth * devicePixelRatio;
-    c.height = innerHeight * devicePixelRatio;
-    c.style.width = innerWidth+'px';
-    c.style.height = innerHeight+'px';
-    c.getContext('2d').scale(devicePixelRatio, devicePixelRatio);
-  });
-}
-resizeAll(); window.addEventListener('resize', resizeAll);
+function currentUser(){ return localStorage.getItem('brisa_v2_active') || ''; }
+function setActive(u){ if(u) localStorage.setItem('brisa_v2_active', u); else localStorage.removeItem('brisa_v2_active'); refreshSession(); }
 
-// create blob fields for damasco/camuflaje effect
-const blobs = [];
-for(let i=0;i<18;i++){
-  blobs.push({
-    x: Math.random()*innerWidth,
-    y: Math.random()*innerHeight,
-    r: 80 + Math.random()*220,
-    vx: (Math.random()-0.5)*0.2,
-    vy: (Math.random()-0.5)*0.2,
-    color: ['#23182a','#7a263f','#b43b5a','#12202a'][i%4]
-  });
-}
-let t0 = performance.now();
-function drawBG(now){
-  const t = (now - t0) * 0.0006;
-  // layer 1: large radial blobs
-  const ctx1 = ctxs[0]; ctx1.clearRect(0,0,innerWidth,innerHeight);
-  blobs.forEach((b,idx)=>{
-    b.x += b.vx * Math.cos(t*(0.4+idx*0.02));
-    b.y += b.vy * Math.sin(t*(0.3+idx*0.02));
-    const g = ctx1.createRadialGradient(b.x, b.y, b.r*0.05, b.x, b.y, b.r);
-    g.addColorStop(0, hexRgba(b.color, 0.20));
-    g.addColorStop(1, hexRgba(b.color, 0.02));
-    ctx1.beginPath(); ctx1.fillStyle = g; ctx1.arc(b.x,b.y,b.r,0,Math.PI*2); ctx1.fill();
-  });
+/* init UI references */
+const navBtns = qsa('#nav button');
+navBtns.forEach(b => b.addEventListener('click', ()=>{ navBtns.forEach(x=>x.classList.remove('active')); b.classList.add('active'); changePage(b.dataset.view); }));
 
-  // layer 2: moving noise stripes
-  const ctx2 = ctxs[1]; ctx2.clearRect(0,0,innerWidth,innerHeight);
-  for(let i=0;i<40;i++){
-    const x = (Math.sin(t*0.6 + i)*0.5 + 0.5) * innerWidth;
-    const y = (Math.cos(t*0.3 + i*0.7)*0.5 + 0.5) * innerHeight;
-    const r = 200 + Math.sin(t*0.2 + i*0.4)*90;
-    const g = ctx2.createRadialGradient(x,y,r*0.1,x,y,r);
-    g.addColorStop(0, 'rgba(123,226,255,0.035)');
-    g.addColorStop(1, 'rgba(255,77,122,0.015)');
-    ctx2.beginPath(); ctx2.fillStyle=g; ctx2.arc(x,y,r,0,Math.PI*2); ctx2.fill();
-  }
+$('logoutBtn').addEventListener('click', ()=>{ setActive(''); setMsg('Sesion cerrada','info'); });
 
-  // layer 3: subtle moving particles
-  const ctx3 = ctxs[2]; ctx3.clearRect(0,0,innerWidth,innerHeight);
-  for(let p=0;p<800;p++){
-    const px = (Math.sin(t*0.2 + p)*0.5+0.5)*innerWidth;
-    const py = (Math.cos(t*0.26 + p*0.6)*0.5+0.5)*innerHeight;
-    ctx3.fillStyle = `rgba(255,255,255,${(Math.sin(p*0.3+t)+1)/60})`;
-    ctx3.fillRect(px,py,1,1);
-  }
-
-  requestAnimationFrame(drawBG);
-}
-requestAnimationFrame(drawBG);
-
-function hexRgba(h,a){ const c = h.replace('#',''); const n = parseInt(c,16); const r=(n>>16)&255,g=(n>>8)&255,b=n&255; return `rgba(${r},${g},${b},${a})`; }
-
-/* --------------------------
-   App state + UI wiring
-   -------------------------- */
-const navBtns = document.querySelectorAll('#navBtns button');
-navBtns.forEach(b => b.addEventListener('click', (ev)=>{
-  navBtns.forEach(x=>x.classList.remove('active'));
-  b.classList.add('active'); const view=b.dataset.view; showView(view);
-}));
-
-function showView(v){
-  // update title
-  const title = { home:'Inicio', play:'Juegos', journal:'Historial', invites:'Invitaciones', settings:'Ajustes', about:'Acerca' }[v] || 'Inicio';
-  $('#pageTitle').textContent = title;
-  // switch main content based on view
-  if(v === 'play'){ activateGamePanel(); }
-  if(v === 'journal'){ openJournal(); }
-  if(v === 'invites'){ openInvitesPanel(); }
-  if(v === 'settings'){ openSettings(); }
-  if(v === 'about'){ openAbout(); }
-  // default: just show messages in big panel
-  // (we keep the bigPanel content dynamic via the show functions)
+/* basic messages */
+function setMsg(t, type='info'){
+  const el = $('miniFooter');
+  el.textContent = t;
+  el.style.background = type==='error' ? 'rgba(120,20,20,0.7)' : type==='success' ? 'rgba(20,80,40,0.7)' : 'rgba(0,0,0,0.45)';
+  setTimeout(()=> el.textContent = '© Brisa • Derechos reservados • @sa_mejia.e', 2500);
 }
 
-/* --------------------------
-   Initial data & helpers
-   -------------------------- */
-function updateStats(){
-  const users = readStore();
-  const totalUsers = users.length;
-  const records = users.reduce((s,u)=>s + (u.history ? u.history.length : 0), 0);
-  const codes = users.reduce((s,u)=>s + (u.invites ? u.invites.length : 0), 0);
-  $('#statUsers').textContent = totalUsers;
-  $('#statRecords').textContent = records;
-  $('#statCodes').textContent = codes;
-  // recent list
-  const recent = [];
-  users.forEach(u=>{
-    (u.history||[]).slice(-3).forEach(h=> recent.push({u:u.user, h}));
-  });
-  recent.sort((a,b)=> new Date(b.h.date) - new Date(a.h.date));
-  const recentList = recent.slice(0,6).map(r=>`<div style="padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.02)"><strong>${r.u}</strong> • ${r.h.emotion} <div class="small">${new Date(r.h.date).toLocaleString()}</div></div>`).join('') || '<div class="small">— Ninguna actividad —</div>';
-  $('#recentList').innerHTML = recentList;
-  // emotion bars
-  renderEmotionBars();
-  // codes list
-  const allCodes = users.flatMap(u => (u.invites||[]).map(code => ({code, by:u.user})));
-  $('#codesList').innerHTML = allCodes.length ? allCodes.map(c=>`<div style="padding:6px;border-bottom:1px solid rgba(255,255,255,0.02)"><strong>${c.code}</strong> • ${c.by}</div>`).join('') : '— No hay códigos —';
-}
-updateStats();
-
-/* --------------------------
-   Session UI refresh
-   -------------------------- */
-function refreshSessionInfo(){
-  const act = currentUser();
-  $('#currentUser').textContent = act || 'Invitado';
-  $('#activeUser').textContent = act || '—';
-  if(act){
-    const users = readStore(); const u = users.find(x=>x.user===act);
-    $('#activeCreated').textContent = u ? `Usuario creado: ${new Date(u.created).toLocaleDateString()}` : '';
-    $('#logoutBtn').style.display = 'inline-block';
-    $('#quickUser').style.display='none'; $('#quickPass').style.display='none';
-  } else {
-    $('#activeCreated').textContent = '';
-    $('#logoutBtn').style.display = 'none';
-    $('#quickUser').style.display='inline-block'; $('#quickPass').style.display='inline-block';
-  }
-  // stats small label under sidebar
-  const users = readStore(); const recs = users.find(x=>x.user===act)?.history?.length || 0;
-  $('#userStats').textContent = (act? 'Sesión activa' : 'Sin sesión') + ' • ' + recs + ' registros';
-}
-refreshSessionInfo();
-
-/* --------------------------
-   Quick auth & actions
-   -------------------------- */
-$('#quickLoginBtn').addEventListener('click', ()=>{
-  const u = $('#quickUser').value.trim(); const p = $('#quickPass').value.trim();
+/* Events: login/register */
+$('btnLogin').addEventListener('click', ()=>{
+  const u=$('inpUser').value.trim(), p=$('inpPass').value.trim();
+  if(u.length<3||p.length<3){ setMsg('Usuario y contraseña de 3+ caracteres','error'); return; }
   const users = readStore();
   const found = users.find(x=>x.user===u && x.pass===p);
-  if(found){ setActive(u); setMsg('Sesión iniciada como ' + u, 'success'); refreshSessionInfo(); } else setMsg('Usuario/contraseña incorrectos', 'error');
+  if(found){ setActive(u); setMsg('Bienvenido '+u,'success'); $('inpUser').value=''; $('inpPass').value=''; } else setMsg('Usuario/contraseña incorrectos','error');
 });
 
-$('#quickRegBtn').addEventListener('click', ()=>{
-  const u = $('#quickUser').value.trim(); const p = $('#quickPass').value.trim();
-  if(u.length<3 || p.length<3){ setMsg('Usuario y contraseña 3+ caracteres', 'error'); return; }
+$('btnRegister').addEventListener('click', ()=>{
+  const u=$('inpUser').value.trim(), p=$('inpPass').value.trim();
+  if(u.length<3||p.length<3){ setMsg('Usuario y contraseña de 3+ caracteres','error'); return; }
   const users = readStore();
-  if(users.find(x=>x.user===u)){ setMsg('Ese usuario ya existe', 'error'); return; }
+  if(users.find(x=>x.user===u)){ setMsg('Usuario ya existe','error'); return; }
   users.push({ user:u, pass:p, created:new Date().toISOString(), history:[], invites:[] });
-  writeStore(users); setActive(u); setMsg('Usuario creado y sesión iniciada', 'success'); refreshSessionInfo();
+  writeStore(users); setActive(u); setMsg('Usuario creado y sesión iniciada','success'); $('inpUser').value=''; $('inpPass').value='';
 });
 
-$('#downloadBtn').addEventListener('click', ()=> {
-  const data = JSON.stringify(readStore(), null, 2);
-  const blob = new Blob([data], {type:'application/json'}); const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href = url; a.download = 'brisa2_snapshot.json'; a.click(); URL.revokeObjectURL(url);
-  setMsg('Snapshot descargado', 'info');
-});
-
-$('#demoBtn').addEventListener('click', ()=>{
+$('btnDemo').addEventListener('click', ()=>{
   const users = readStore();
   if(users.length===0){
     users.push({user:'alice',pass:'1234',created:new Date().toISOString(),history:[{emotion:'Feliz',date:new Date().toISOString()}],invites:['ABC123']});
     users.push({user:'santiago',pass:'abc',created:new Date().toISOString(),history:[{emotion:'Ansioso',date:new Date().toISOString()}],invites:[]});
-    writeStore(users); setMsg('Demo cargada', 'success');
-  } else setMsg('Ya existen datos', 'info');
+    writeStore(users); setMsg('Demo cargada','success');
+  } else setMsg('Ya hay datos','info');
 });
 
-/* Quick save emotion */
-$('#quickSaveEmotion').addEventListener('click', ()=>{
-  const emo = $('#quickEmotion').value; const u = currentUser();
-  if(!u){ setMsg('Inicia sesión para guardar emociones', 'error'); return; }
+/* export */
+$('btnExport').addEventListener('click', ()=>{
+  const data = JSON.stringify(readStore(), null, 2);
+  const blob = new Blob([data], {type:'application/json'}); const url=URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url; a.download='brisa_data.json'; a.click(); URL.revokeObjectURL(url);
+  setMsg('Snapshot descargado','info');
+});
+
+/* quick save emotion */
+$('btnSaveEmotion').addEventListener('click', ()=>{
+  const emo = $('quickEmotion').value;
+  const u = currentUser();
+  if(!u){ setMsg('Inicia sesión para guardar emociones','error'); return; }
   const users = readStore(); const user = users.find(x=>x.user===u);
   user.history = user.history || []; user.history.push({ emotion: emo, date: new Date().toISOString() });
-  writeStore(users); setMsg('Emoción guardada', 'success'); refreshSessionInfo();
+  writeStore(users); setMsg('Emoción guardada','success'); refreshSession();
 });
 
-/* logout */
-$('#logoutBtn').addEventListener('click', ()=>{ setActive(''); setMsg('Sesión cerrada', 'info'); refreshSessionInfo(); });
-
-/* --------------------------
-   Invite codes
-   -------------------------- */
-$('#genCodeBtn').addEventListener('click', ()=>{
-  const u = currentUser(); if(!u){ setMsg('Inicia sesión para generar códigos', 'error'); return; }
+/* generate code */
+$('btnGen').addEventListener('click', ()=>{
+  const u = currentUser(); if(!u){ setMsg('Inicia sesión para generar códigos','error'); return; }
   const users = readStore(); const user = users.find(x=>x.user===u);
   const code = Math.random().toString(36).substring(2,9).toUpperCase();
-  user.invites = user.invites || []; user.invites.push(code); writeStore(users); setMsg('Código generado: ' + code, 'success');
+  user.invites = user.invites || []; user.invites.push(code); writeStore(users);
+  setMsg('Código generado: '+code,'success'); renderCodes();
 });
 
-$('#showCodesBtn').addEventListener('click', ()=>{ showInvitesModal(); });
+/* show codes */
+$('btnShowCodes').addEventListener('click', renderCodes);
 
-function openInvitesPanel(){
-  // render in bigPanel the user's codes
-  const act = currentUser(); if(!act){ setActive(''); setMsg('Inicia sesión para administrar invitaciones', 'error'); return; }
-  const users = readStore(); const user = users.find(x=>x.user===act);
-  const panel = $('#bigPanel'); $('#bigTitle').textContent = 'Mis invitaciones';
-  // build content
-  const rightHtml = `
-    <div style="width:340px;">
-      <div class="small">Usuario: <strong>${act}</strong></div>
-      <div style="margin-top:10px;">
-        <button class="btn" id="panelGen">Generar código</button>
-        <button class="btn alt" id="panelExport">Exportar codes</button>
-      </div>
-      <div id="panelList" style="margin-top:12px;max-height:240px;overflow:auto"></div>
-    </div>`;
-  // left content
-  const leftHtml = `<div style="flex:1"><div class="small">Tus códigos creados:</div></div>`;
-  panel.querySelector('div').innerHTML = leftHtml; // left
-  panel.querySelector('div + div').innerHTML = rightHtml; // right
-  // attach events
-  setTimeout(()=>{ // small timeout so nodes are in DOM
-    const pl = $('#panelList'); pl.innerHTML = (user.invites||[]).length ? (user.invites||[]).map(c=>`<div style="padding:8px;border-bottom:1px solid rgba(255,255,255,0.02)"><strong>${c}</strong></div>`).join('') : '<div class="small">— No hay códigos —</div>';
-    $('#panelGen').addEventListener('click', ()=>{ $('#genCodeBtn').click(); openInvitesPanel(); });
-    $('#panelExport').addEventListener('click', ()=>{ const blob = new Blob([JSON.stringify(user.invites||[],null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='codes_'+act+'.json'; a.click(); URL.revokeObjectURL(url); setMsg('Exportado'); });
-  },20);
+/* view change */
+function changePage(view){
+  $('pageTitle').textContent = {home:'Inicio', play:'Juegos', journal:'Historial', invites:'Invitaciones', settings:'Ajustes', about:'Acerca'}[view] || 'Inicio';
+  // focus different places - simply update big/mini panels
+  if(view==='play'){ openGameSelection(); }
+  if(view==='journal'){ openJournalView(); }
+  if(view==='invites'){ openInvitesView(); }
+  if(view==='settings'){ openSettings(); }
+  if(view==='about'){ openAbout(); }
 }
 
-/* For clicking show invites */
-function showInvitesModal(){
-  const users = readStore(); const codes = users.flatMap(u => (u.invites||[]).map(c=>({code:c,by:u.user})));
-  const list = codes.length ? codes.map(c=>`${c.code} — ${c.by}`).join('\\n') : 'No hay códigos';
-  alert('Invitaciones:\\n\\n' + list);
+/* initial view */
+changePage('home');
+
+/* render stats & recent */
+function updateStats(){
+  const users = readStore();
+  $('statUsers').textContent = users.length;
+  $('statRecords').textContent = users.reduce((s,u)=>s + (u.history?u.history.length:0), 0);
+  $('statCodes').textContent = users.reduce((s,u)=>s + (u.invites?u.invites.length:0), 0);
+
+  // recent activity:
+  const recent = [];
+  users.forEach(u=> (u.history||[]).slice(-3).forEach(h=> recent.push({user:u.user, h})));
+  recent.sort((a,b)=> new Date(b.h.date) - new Date(a.h.date));
+  if(recent.length===0) $('recent').innerHTML = '— Ninguna actividad todavía —';
+  else $('recent').innerHTML = recent.slice(0,6).map(r=>`<div style="padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.02)"><strong>${r.user}</strong> • ${r.h.emotion} <div style="font-size:12px;color:var(--muted)">${new Date(r.h.date).toLocaleString()}</div></div>`).join('');
+  renderBars();
 }
 
-/* --------------------------
-   Games: reaction, memory, breath
-   -------------------------- */
-
-/* Helper: show game UI in right panel miniRoot */
-function activateGamePanel(){
-  $('#bigTitle').textContent = 'Juegos ▶ Selecciona';
-  $('#bigSub').textContent = 'Elige un mini-juego en el panel derecho o arriba.';
-  // reset bigPanel left/right to default
-  const panel = $('#bigPanel');
-  panel.querySelector('div').innerHTML = `
-    <h3>Juegos</h3>
-    <div class="small" style="margin-top:8px">Prueba los juegos para medir tu reacción, memoria y práctica de respiración.</div>
-    <div style="margin-top:12px; display:flex; gap:8px;">
-      <button class="btn" onclick="startReactionGame()">Iniciar Reacción</button>
-      <button class="btn" onclick="startMemoryGame()">Iniciar Memoria</button>
-      <button class="btn" onclick="startBreathGuide()">Guía de Respiración</button>
-    </div>
-  `;
-  panel.querySelector('div + div').innerHTML = `
-  <div style="padding:10px">
-    <div class="small">Consejo</div>
-    <div style="margin-top:8px" class="small">Haz los juegos en pantalla completa para una experiencia más inmersiva.</div>
-  </div>`;
+/* render emotion bars */
+function renderBars(){
+  const users = readStore();
+  const counts = {};
+  users.forEach(u=> (u.history||[]).forEach(h=> counts[h.emotion] = (counts[h.emotion]||0)+1 ));
+  const container = $('bars'); container.innerHTML = '';
+  const keys = Object.keys(counts); if(keys.length===0){ container.textContent='— sin datos —'; return; }
+  const max = Math.max(...Object.values(counts));
+  keys.forEach(k=>{
+    const v = counts[k]; const pct = Math.round(v/max*100);
+    const el = document.createElement('div'); el.style.display='flex'; el.style.alignItems='center'; el.style.gap='8px';
+    el.innerHTML = `<div style="width:30%">${k}</div><div style="flex:1;background:rgba(255,255,255,0.02);height:12px;border-radius:6px;overflow:hidden"><div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--accent),var(--accent-2))"></div></div><div style="width:36px;text-align:right">${v}</div>`;
+    container.appendChild(el);
+  });
 }
 
-/* Reaction game */
-function startReactionGame(){
-  $('#miniRoot').innerHTML = ''; $('#miniHistory').innerHTML = '';
-  $('#miniRoot').innerHTML = `<div class="game-area">
-    <div style="font-weight:700">Juego: Reacción</div>
-    <div style="margin-top:10px"><button id="reactBtn" class="btn" style="width:220px;padding:18px">Preparar</button></div>
-    <div id="reactRes" class="small" style="margin-top:8px"></div>
-  </div>`;
-  let btn = $('#reactBtn'); let res = $('#reactRes');
-  let timeoutId=null; let startTime=null;
+/* render codes list */
+function renderCodes(){
+  const u = currentUser();
+  if(!u){ $('codesBox').textContent='Inicia sesión para ver tus códigos'; return; }
+  const users = readStore(); const user = users.find(x=>x.user===u);
+  $('codesBox').innerHTML = (user.invites||[]).length ? (user.invites||[]).slice().reverse().map(c=>`<div style="padding:6px;border-bottom:1px solid rgba(255,255,255,0.02)"><strong>${c}</strong></div>`).join('') : '— ninguno —';
+}
+
+/* refresh session display */
+function refreshSession(){
+  const u = currentUser();
+  $('sidebarUser').textContent = u || 'Invitado';
+  $('activeUser').textContent = u || '—';
+  if(u){
+    $('logoutBtn').style.display = 'inline-block';
+    const users = readStore(); const user = users.find(x=>x.user===u);
+    $('actCreated').textContent = user ? `creado: ${new Date(user.created).toLocaleDateString()}` : '';
+  } else {
+    $('logoutBtn').style.display = 'none';
+    $('actCreated').textContent = '';
+  }
+  $('sidebarStats').textContent = (u ? 'Sesión activa' : 'Sin sesión') + ' • ' + (readStore().find(x=>x.user===u)?.history?.length || 0) + ' registros';
+  updateStats();
+  renderCodes();
+}
+refreshSession();
+
+/* -------------------------
+   Games: reaction, memory, breathing
+   ------------------------- */
+function openGameSelection(){
+  $('miniRoot').innerHTML = `<div style="font-weight:700">Elige un minijuego</div><div style="margin-top:8px;display:flex;gap:8px"><button class="btn" onclick="startReaction()">Reacción</button><button class="btn" onclick="startMemory()">Memoria</button><button class="btn" onclick="startBreath()">Respiración</button></div>`;
+}
+
+/* Reaction */
+function startReaction(){
+  $('miniRoot').innerHTML = `<div style="font-weight:700">Reacción</div><div style="margin-top:10px"><button id="reBtn" class="btn" style="padding:16px 32px">Preparar</button></div><div id="reRes" style="margin-top:8px;color:var(--muted)"></div>`;
+  const btn = $('reBtn'), res = $('reRes');
+  let start=null, timeoutId=null;
   btn.addEventListener('click', ()=>{
     btn.disabled=true; btn.textContent='Espera...'; btn.style.background='#333';
-    const delay = Math.random()*2500 + 900;
-    timeoutId = setTimeout(()=>{
-      startTime = performance.now(); btn.disabled=false; btn.textContent='¡Presiona!'; btn.style.background='var(--success)';
-    }, delay);
+    timeoutId = setTimeout(()=>{ start = performance.now(); btn.disabled=false; btn.textContent='¡Presiona!'; btn.style.background= 'var(--success)'; }, Math.random()*1800 + 800);
   });
-  btn.onclick = function(){
-    if(!startTime){ // false start
-      clearTimeout(timeoutId); setTimeout(()=>{ btn.disabled=false; btn.textContent='Preparar'; btn.style.background='var(--accent)'; },200);
-      res.textContent = 'Falso inicio. Intenta de nuevo.';
-      addMiniHistory('Falso inicio');
+  btn.addEventListener('click', ()=>{
+    if(!start){ // was a false click handled above when disabled reset
+      if(timeoutId) clearTimeout(timeoutId);
+      btn.textContent='Preparar'; btn.style.background='var(--accent)';
+      res.textContent='Falso inicio';
+      addMiniHistory('Falso inicio (Reacción)');
       return;
     }
-    const elapsed = Math.round((performance.now()-startTime));
+    const elapsed = Math.round(performance.now() - start);
     res.textContent = 'Tiempo: ' + elapsed + ' ms';
     addMiniHistory('Reacción: ' + elapsed + ' ms');
-    // store result
-    storeMiniResult({ type:'reaction', value:elapsed, date: new Date().toISOString() });
-    // reset
-    startTime = null; btn.textContent='Preparar'; btn.style.background='var(--accent)';
-  };
+    storeMiniResult({type:'reaction', value:elapsed, date:new Date().toISOString()});
+    start=null; btn.textContent='Preparar'; btn.style.background='var(--accent)';
+  }, { once:false });
 }
 
-/* Memory game */
-function startMemoryGame(){
-  $('#miniRoot').innerHTML = ''; $('#miniHistory').innerHTML = '';
+/* Memory */
+function startMemory(){
   const colors = ['🍀','🌸','🌙','🔥','💧','⭐','🍎','⚡'];
-  const deck = shuffle([...colors,...colors]); // pairs
-  let first = null, second = null, matched = 0, locked=false;
-  const root = document.createElement('div'); root.className='game-area';
-  root.innerHTML = `<div style="font-weight:700">Juego: Memoria</div><div class="mem-grid" id="memGrid"></div><div id="memMsg" class="small" style="margin-top:8px"></div>`;
-  $('#miniRoot').appendChild(root);
-  const grid = $('#memGrid');
-  deck.forEach((v,i)=>{
-    const card = document.createElement('div'); card.className='mem-card'; card.dataset.val=v; card.textContent='?';
-    card.addEventListener('click', ()=>{
-      if(locked || card.classList.contains('revealed')) return;
-      card.textContent = v; card.classList.add('revealed');
-      if(!first) first = card; else { second = card; locked=true;
-        setTimeout(()=>{
-          if(first.dataset.val === second.dataset.val){ matched += 2; addMiniHistory('Pair matched: ' + v); storeMiniResult({type:'memory', value:'match', date:new Date().toISOString()}); }
-          else { first.textContent='?'; second.textContent='?'; first.classList.remove('revealed'); second.classList.remove('revealed'); addMiniHistory('Pair failed'); }
-          first = null; second = null; locked=false;
-          if(matched === deck.length){ $('#memMsg').textContent = '¡Completaste el tablero!'; setMsg('Memoria completada', 'success'); }
-        },600);
-      }
-    });
-    grid.appendChild(card);
-  });
+  const deck = shuffle([...colors,...colors]);
+  let first=null, second=null, locked=false, matched=0;
+  const gridHtml = deck.map((v,i)=>`<div class="card" data-i="${i}" data-val="${v}">?</div>`).join('');
+  $('miniRoot').innerHTML = `<div style="font-weight:700">Memoria</div><div style="margin-top:10px" class="mem-grid">${gridHtml}</div><div id="memMsg" style="margin-top:8px;color:var(--muted)"></div>`;
+  const cards = document.querySelectorAll('.mem-grid .card');
+  cards.forEach(c=> c.addEventListener('click', ()=>{
+    if(locked || c.classList.contains('revealed')) return;
+    c.classList.add('revealed'); c.textContent = c.dataset.val;
+    if(!first) first = c;
+    else { second = c; locked=true;
+      setTimeout(()=>{
+        if(first.dataset.val === second.dataset.val){ matched+=2; first.classList.add('matched'); second.classList.add('matched'); addMiniHistory('Pareja encontrada '+first.dataset.val); storeMiniResult({type:'memory', value:'match', date:new Date().toISOString()}); }
+        else { first.classList.remove('revealed'); first.textContent='?'; second.classList.remove('revealed'); second.textContent='?'; addMiniHistory('Pareja fallida'); }
+        first=null; second=null; locked=false;
+        if(matched === deck.length) { $('memMsg').textContent='¡Completado!'; setMsg('Memoria completada','success'); }
+      },600);
+    }
+  }));
 }
 
-/* Breathing guide */
-let breathInterval = null;
-function startBreathGuide(){
-  $('#miniRoot').innerHTML = '';
-  const root = document.createElement('div'); root.className='game-area';
-  root.innerHTML = `
-    <div style="font-weight:700">Guía de respiración (4-2-6)</div>
-    <div class="breath-circle" id="breathCircle">Respira</div>
-    <div id="breathHint" class="small" style="margin-top:10px">Pulsa iniciar</div>
-    <div style="margin-top:12px"><button class="btn" id="startBreathBtn">Iniciar</button><button class="btn alt" id="stopBreathBtn" style="margin-left:8px">Detener</button></div>`;
-  $('#miniRoot').appendChild(root);
-  $('#startBreathBtn').addEventListener('click', ()=>{
+/* Breath (simple) */
+let breathInterval=null;
+function startBreath(){
+  $('miniRoot').innerHTML = `<div style="font-weight:700">Respiración</div><div style="margin-top:12px"><div id="breathCircle" style="width:120px;height:120px;border-radius:999px;background:linear-gradient(135deg, rgba(123,226,255,0.06), rgba(255,77,122,0.04));display:flex;align-items:center;justify-content:center;font-weight:700;margin:auto">Respira</div></div><div style="margin-top:12px;display:flex;gap:8px"><button id="startB" class="btn">Iniciar</button><button id="stopB" class="btn alt">Detener</button></div>`;
+  $('startB').addEventListener('click', ()=>{
     if(breathInterval) clearInterval(breathInterval);
-    const circle = $('#breathCircle'); const hint = $('#breathHint'); let state=0;
+    const circle = $('breathCircle'); const hint = $('miniRoot');
+    let s=0;
     breathInterval = setInterval(()=>{
-      if(state===0){ circle.style.transform='scale(1.4)'; hint.textContent='Inhala (4s)'; }
-      else if(state===1){ circle.style.transform='scale(1.6)'; hint.textContent='Mantén (2s)'; }
-      else { circle.style.transform='scale(1.0)'; hint.textContent='Exhala (6s)'; }
-      state = (state+1)%3;
-    }, 4000);
-    addMiniHistory('Breathing session started');
+      if(s===0){ circle.style.transform='scale(1.4)'; } else if(s===1){ circle.style.transform='scale(1.6)'; } else { circle.style.transform='scale(1)'; }
+      s=(s+1)%3;
+    },4000);
+    addMiniHistory('Breathing started');
   });
-  $('#stopBreathBtn').addEventListener('click', ()=>{ if(breathInterval) clearInterval(breathInterval); setMsg('Sesión de respiración detenida', 'info'); addMiniHistory('Breathing stopped'); });
+  $('stopB').addEventListener('click', ()=>{ if(breathInterval) clearInterval(breathInterval); setMsg('Respiración detenida','info'); addMiniHistory('Breathing stopped'); });
 }
 
-/* --------------------------
-   Mini history + store mini results
-   -------------------------- */
+/* Mini history helper */
 function addMiniHistory(txt){
-  const el = document.createElement('div'); el.className='small'; el.style.padding='6px 0'; el.textContent = `${new Date().toLocaleTimeString()} — ${txt}`;
-  $('#miniHistory').prepend(el);
+  const el = document.createElement('div'); el.style.padding='6px 0'; el.style.borderBottom='1px solid rgba(255,255,255,0.02)'; el.style.fontSize='13px';
+  el.textContent = new Date().toLocaleTimeString() + ' — ' + txt;
+  const box = $('miniHistory'); box.prepend(el);
 }
+
+/* store mini result in user's history */
 function storeMiniResult(obj){
   const u = currentUser(); if(!u) return;
   const users = readStore(); const user = users.find(x=>x.user===u);
-  user.history = user.history || []; user.history.push({ emotion: (obj.type==='reaction'? 'Juego' : 'Juego'), detail: obj.value, date: obj.date || new Date().toISOString(), game: obj.type });
+  user.history = user.history || []; user.history.push({ emotion: obj.type || 'Juego', detail: obj.value, date: obj.date || new Date().toISOString() });
   writeStore(users);
 }
 
-/* --------------------------
-   Journal / history
-   -------------------------- */
-function openJournal(){
-  $('#bigTitle').textContent = 'Tu historial';
-  const act = currentUser();
-  const panel = $('#bigPanel');
-  panel.querySelector('div').innerHTML = `<div style="flex:1"><div class="small">Historial completo</div><div id="journalList" style="margin-top:10px;max-height:340px;overflow:auto"></div></div>`;
-  panel.querySelector('div + div').innerHTML = `<div style="width:340px"><div class="small">Acciones</div><div style="margin-top:8px"><button class="btn" id="expAll">Exportar historial</button></div></div>`;
-  setTimeout(()=>{ renderJournal(); $('#expAll').addEventListener('click', exportAllHistory); }, 30);
-}
-function renderJournal(){
-  const act = currentUser(); const users = readStore(); const user = users.find(x=>x.user===act);
-  const listEl = $('#journalList');
-  if(!user) { listEl.innerHTML = '<div class="small">Inicia sesión para ver historial</div>'; return; }
-  const items = (user.history||[]).slice().reverse().map(h=>`<div style="padding:8px;border-bottom:1px solid rgba(255,255,255,0.02)"><strong>${h.emotion || h.detail || 'Registro'}</strong><div class="small">${new Date(h.date).toLocaleString()}</div></div>`).join('');
-  listEl.innerHTML = items || '<div class="small">Aún no tienes registros</div>';
-}
-function exportAllHistory(){
-  const act = currentUser(); if(!act) { setMsg('Inicia sesión', 'error'); return; }
-  const users = readStore(); const u = users.find(x=>x.user===act);
-  const blob = new Blob([JSON.stringify(u.history||[], null, 2)], {type:'application/json'}); const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href=url; a.download='history_'+act+'.json'; a.click(); URL.revokeObjectURL(url);
-  setMsg('Historial exportado', 'info');
+/* Journal view */
+function openJournalView(){
+  const user = currentUser(); if(!user){ setMsg('Inicia sesión para ver historial','error'); return; }
+  const users = readStore(); const u = users.find(x=>x.user===user);
+  const leftHtml = `<div style="font-weight:700">Historial de ${user}</div><div style="margin-top:10px;max-height:380px;overflow:auto">${(u.history||[]).slice().reverse().map(h=>`<div style="padding:8px;border-bottom:1px solid rgba(255,255,255,0.02)"><strong>${h.emotion||h.detail||'Registro'}</strong><div style="font-size:12px;color:var(--muted)">${new Date(h.date).toLocaleString()}</div></div>`).join('') || '<div class="small">Sin registros</div>'}</div>`;
+  const panel = $('bigPanel'); // not present; we'll update miniRoot instead
+  $('miniRoot').innerHTML = leftHtml;
 }
 
-/* --------------------------
-   settings & about
-   -------------------------- */
-function openSettings(){
-  $('#bigTitle').textContent = 'Ajustes';
-  const panel = $('#bigPanel');
-  panel.querySelector('div').innerHTML = `<div style="flex:1"><h3>Preferencias</h3>
-    <div style="margin-top:8px"><label class="small">Música ambiental <input type="checkbox" id="musicChk" ${$('#ambientToggle').checked?'checked':''}></label></div>
-    <div style="margin-top:8px"><label class="small">Fondo dinámico <input type="checkbox" id="bgChk" ${$('#fancyBG').checked?'checked':''}></label></div>
-    <div style="margin-top:12px"><button class="btn" id="savePref">Guardar preferencias</button></div></div>`;
-  panel.querySelector('div + div').innerHTML = `<div style="width:340px"><div class="small">Ajustes avanzados</div></div>`;
-  setTimeout(()=>{ $('#savePref').addEventListener('click', ()=>{ setMsg('Preferencias guardadas (temporal)', 'success'); }); }, 20);
-}
-function openAbout(){
-  $('#bigTitle').textContent = 'Acerca de Brisa';
-  const panel = $('#bigPanel');
-  panel.querySelector('div').innerHTML = `<div style="flex:1">
-    <h3>Brisa 2.0 — Dashboard</h3>
-    <p class="small" style="margin-top:8px">Versión experimental: interfaz grande, juegos, historial y sistema de invitaciones. Diseñado para ser "bacano".</p>
-    <p class="small" style="margin-top:8px">Autor: Santiago Núñez • <a href="https://www.instagram.com/sa_mejia.e/" target="_blank" style="color:var(--accent)">Instagram</a></p>
-  </div>`;
-  panel.querySelector('div + div').innerHTML = `<div style="width:340px"><div class="small">Licencia</div><div class="small" style="margin-top:8px">© Brisa 2025 — Todos los derechos reservados</div></div>`;
+/* Invites view */
+function openInvitesView(){
+  const u = currentUser(); if(!u){ setMsg('Inicia sesión para administrar invitaciones','error'); return; }
+  const users = readStore(); const user = users.find(x=>x.user===u);
+  $('miniRoot').innerHTML = `<div style="font-weight:700">Invitaciones de ${u}</div><div style="margin-top:10px">${(user.invites||[]).slice().reverse().map(c=>`<div style="padding:8px;border-bottom:1px solid rgba(255,255,255,0.02)">${c}</div>`).join('') || '<div class="small">No hay códigos</div>'}</div>`;
 }
 
-/* --------------------------
-   render emotion bars
-   -------------------------- */
-function renderEmotionBars(){
-  const users = readStore();
-  const counts = {};
-  users.forEach(u => (u.history||[]).forEach(h => {
-    const e = h.emotion || h.emo || h.detail || 'Otro';
-    counts[e] = (counts[e]||0)+1;
-  }));
-  const container = $('#emotionBars'); container.innerHTML = '';
-  const keys = Object.keys(counts).sort((a,b)=>counts[b]-counts[a]);
-  if(keys.length===0){ container.innerHTML = '<div class="small">Aún no hay emociones registradas</div>'; return; }
-  const max = Math.max(...Object.values(counts));
-  keys.forEach(k=>{
-    const v = counts[k];
-    const pct = Math.round(v / max * 100);
-    const div = document.createElement('div'); div.style.display='flex'; div.style.alignItems='center'; div.style.justifyContent='space-between';
-    div.innerHTML = `<div style="width:40%">${k}</div><div style="flex:1;margin-left:8px;margin-right:8px;background:rgba(255,255,255,0.03);height:10px;border-radius:6px;overflow:hidden"><div style="width:${pct}%;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));"></div></div><div style="width:40px;text-align:right">${v}</div>`;
-    container.appendChild(div);
-  });
-}
+/* settings/about */
+function openSettings(){ $('miniRoot').innerHTML = `<div style="font-weight:700">Ajustes</div><div style="margin-top:8px" class="small">Preferencias locales (temporal)</div>`; }
+function openAbout(){ $('miniRoot').innerHTML = `<div style="font-weight:700">Acerca de Brisa</div><div style="margin-top:8px" class="small">Versión funcional. Autor: Santiago Núñez</div>`; }
 
-/* --------------------------
-   Helper: shuffle array
-   -------------------------- */
+/* shuffle */
 function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]] } return arr; }
 
-/* --------------------------
-   small UI helpers
-   -------------------------- */
-function setMsg(text, type='info'){
-  // small footer message
-  const old = document.querySelector('.footbar'); old.textContent = text;
-  old.style.background = type==='error'? 'rgba(120,20,20,0.7)' : type==='success'? 'rgba(20,80,40,0.7)' : 'rgba(0,0,0,0.45)';
-  setTimeout(()=>{ old.textContent = '© Brisa • Derechos reservados • @sa_mejia.e'; old.style.background='rgba(0,0,0,0.45)'; }, 3000);
+/* invite redeem (global simple prompt) */
+function redeemCodePrompt(){
+  const code = prompt('Ingresa el código a canjear:').trim().toUpperCase();
+  if(!code) return;
+  const users = readStore();
+  const owner = users.find(u => (u.invites||[]).includes(code));
+  if(!owner){ setMsg('Código inválido','error'); return; }
+  setMsg('Código válido - bienvenido','success');
 }
 
-/* --------------------------
-   show invites panel on load if needed
-   -------------------------- */
-function openInvitesPanelOnLoad(){
-  // noop
+/* render codes on right and stats */
+function renderCodes(){
+  const all = readStore().flatMap(u => (u.invites||[]).map(c=>({c,by:u.user})));
+  $('codesBox').innerHTML = all.length ? all.map(x=>`<div style="padding:6px;border-bottom:1px solid rgba(255,255,255,0.02)">${x.c} — ${x.by}</div>`).join('') : '— ninguno —';
 }
 
-/* --------------------------
-   Render codes / initialize
-   -------------------------- */
+/* initialize: wired control buttons for quick game buttons */
+document.querySelectorAll('[data-game]').forEach(b => b.addEventListener('click', (ev)=>{
+  const g = b.dataset.game;
+  if(g==='reaction') startReaction();
+  if(g==='memory') startMemory();
+  if(g==='breath') startBreath();
+}));
+
+/* quick keyboard shortcuts */
+window.addEventListener('keydown', e=>{
+  if(e.key==='g'){ $('btnGen').click(); setMsg('Generar código (G)','info'); }
+  if(e.key==='r'){ startReaction(); setMsg('Abrir Reacción (R)','info'); }
+});
+
+/* render initial stats */
 updateStats();
-refreshSessionInfo();
 
-/* initialize nav to home view */
-showView('home');
-
-/* --------------------------
-   Sound: WebAudio tiny cues
-   -------------------------- */
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-function beep(freq=440, dur=0.08, vol=0.02){
-  if(!$('#soundToggle').checked) return;
-  const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
-  o.connect(g); g.connect(audioCtx.destination);
-  o.type = 'sine'; o.frequency.value = freq; g.gain.value = vol;
-  o.start(); setTimeout(()=>{ o.stop(); }, dur*1000);
-}
-
-/* ambient simple loop (sine pad) */
-let ambientOsc=null;
-$('#ambientToggle').addEventListener('change', (e)=>{
-  if(e.target.checked){ startAmbient(); } else { stopAmbient(); }
-});
-function startAmbient(){
-  if(ambientOsc) return;
-  ambientOsc = audioCtx.createOscillator(); const g = audioCtx.createGain();
-  ambientOsc.type='sine'; ambientOsc.frequency.value = 110;
-  g.gain.value = 0.004;
-  ambientOsc.connect(g); g.connect(audioCtx.destination);
-  ambientOsc.start();
-}
-function stopAmbient(){ if(!ambientOsc) return; ambientOsc.stop(); ambientOsc.disconnect(); ambientOsc=null; }
-
-/* ambient on by default if allowed (user gesture may be required) */
-document.addEventListener('click', ()=>{ if($('#ambientToggle').checked) startAmbient(); }, { once:true });
-
-/* --------------------------
-   Misc events (buttons on right control)
-   -------------------------- */
-document.querySelectorAll('[data-game]').forEach(b => b.addEventListener('click', ()=>{ const g=b.dataset.game; if(g==='reaction'){ startReactionGame(); showView('play'); } if(g==='memory'){ startMemoryGame(); showView('play'); } if(g==='breath'){ startBreathGuide(); showView('play'); }}));
-
-/* small sound feedback */
-document.addEventListener('click', (e)=>{ if(e.target.tagName==='BUTTON') beep(800,0.04,0.01); });
-
-/* keyboard shortcuts for speed */
-window.addEventListener('keydown', (e)=>{
-  if(e.key==='g'){ $('#genCodeBtn').click(); setMsg('Generar código (shortcut g)', 'info'); }
-  if(e.key==='r'){ startReactionGame(); showView('play'); }
+/* wire codes show */
+$('btnShowCodes').addEventListener('click', ()=>{
+  const all = readStore().flatMap(u => (u.invites||[]).map(c=> `${c} — ${u.user}`));
+  alert(all.length ? all.join('\\n') : 'No hay códigos');
 });
 
-/* small helper to show invites in panel */
-function openInvitesPanel(){
-  showView('invites');
-  openInvitesPanelOnLoad();
-}
+/* redeem example: attach to some button if wanted */
+window.redeemCodePrompt = redeemCodePrompt;
 
-/* ensure updateStats periodically */
-setInterval(updateStats, 3000);
+/* ---------- Background: damasco-ish dynamic (canvas) ---------- */
+const canvas = $('bg'); const ctx = canvas.getContext('2d');
+function resizeCanvas(){ canvas.width = innerWidth * devicePixelRatio; canvas.height = innerHeight * devicePixelRatio; canvas.style.width = innerWidth + 'px'; canvas.style.height = innerHeight + 'px'; ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0); }
+resizeCanvas(); window.addEventListener('resize', resizeCanvas);
+
+const blobs = [];
+for(let i=0;i<18;i++){
+  blobs.push({ x: Math.random()*innerWidth, y: Math.random()*innerHeight, r: 80 + Math.random()*220, vx:(Math.random()-0.5)*0.3, vy:(Math.random()-0.5)*0.3, color: ['#23182a','#7a263f','#b43b5a','#12202a'][i%4] });
+}
+let t0 = performance.now();
+(function draw(now){
+  const t = (now - t0) * 0.0006;
+  ctx.clearRect(0,0,innerWidth,innerHeight);
+  // layer blobs
+  blobs.forEach((b,idx)=>{
+    b.x += b.vx * Math.cos(t*(0.4+idx*0.02));
+    b.y += b.vy * Math.sin(t*(0.3+idx*0.02));
+    const g = ctx.createRadialGradient(b.x,b.y,b.r*0.05,b.x,b.y,b.r);
+    g.addColorStop(0, hexRgba(b.color, 0.18));
+    g.addColorStop(1, hexRgba(b.color, 0.03));
+    ctx.beginPath(); ctx.fillStyle = g; ctx.arc(b.x,b.y,b.r,0,Math.PI*2); ctx.fill();
+  });
+  // soft overlay particles
+  for(let i=0;i<600;i++){
+    ctx.fillStyle = `rgba(255,255,255,${(Math.random()-0.96)*0.02})`;
+    ctx.fillRect(Math.random()*innerWidth, Math.random()*innerHeight, 1,1);
+  }
+  requestAnimationFrame(draw);
+})(performance.now());
+
+function hexRgba(hex,a){ const c = hex.replace('#',''); const n = parseInt(c,16); const r=(n>>16)&255,g=(n>>8)&255,b=n&255; return `rgba(${r},${g},${b},${a})`; }
+
+/* make sure UI stays updated every 2s */
+setInterval(()=>{ updateStats(); refreshSession(); }, 2000);
+
 </script>
-
 </body>
 </html>
