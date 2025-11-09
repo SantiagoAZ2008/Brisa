@@ -1,331 +1,231 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Brisa 2025</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Brisa 2025</title>
 
-<style>
-/* ======== RESET ======== */
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
-html,body{height:100%;overflow:hidden;background:#030712;color:white}
+  <!-- 🌈 Favicon SVG animado -->
+  <link rel="icon" href="data:image/svg+xml,
+  <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>
+    <defs>
+      <radialGradient id='grad'>
+        <stop offset='0%' stop-color='%2300f'/>
+        <stop offset='100%' stop-color='%23f0f'/>
+      </radialGradient>
+    </defs>
+    <circle cx='50' cy='50' r='40' fill='url(%23grad)'>
+      <animate attributeName='fill' values='url(%23grad);url(%23grad)' dur='5s' repeatCount='indefinite' />
+    </circle>
+  </svg>" type="image/svg+xml">
 
-/* ======== FONDO ANIMADO ======== */
-body::before{
-  content:"";
-  position:fixed;top:0;left:0;width:100%;height:100%;
-  background:linear-gradient(120deg,#0d1117,#111827,#0d1117);
-  background-size:300% 300%;
-  animation:camuflaje 12s infinite alternate ease-in-out;
-  z-index:-1;
-}
-@keyframes camuflaje{
-  0%{background-position:0% 50%}
-  50%{background-position:100% 50%}
-  100%{background-position:0% 50%}
-}
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
 
-/* ======== CONTENEDOR LOGIN ======== */
-#authBox{
-  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-  width:350px;background:rgba(255,255,255,0.05);
-  border:1px solid rgba(255,255,255,0.1);border-radius:20px;
-  backdrop-filter:blur(12px);
-  padding:40px 30px;text-align:center;
-  box-shadow:0 0 40px rgba(0,0,0,0.5);
-  transition:all .8s ease;
-}
-#authBox h1{font-size:28px;color:#3b82f6;margin-bottom:15px}
-#authBox input{
-  width:100%;padding:12px;margin-top:12px;
-  border:none;border-radius:8px;
-  background:rgba(255,255,255,0.1);color:white;
-}
-#authBox button{
-  margin-top:20px;width:100%;padding:12px;
-  border:none;border-radius:10px;
-  background:linear-gradient(90deg,#2563eb,#3b82f6);
-  color:white;font-size:16px;cursor:pointer;
-  transition:0.3s;
-}
-#authBox button:hover{transform:scale(1.05)}
-.link{margin-top:15px;font-size:14px;color:#9ca3af;cursor:pointer}
-.link:hover{color:white}
+    body {
+      height: 100vh;
+      overflow: hidden;
+      background: radial-gradient(circle at 30% 30%, #050505, #0b0b0f, #101018);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-/* ======== DASHBOARD ======== */
-#dashboard{display:none;height:100%;width:100%;display:flex}
-.sidebar{
-  width:250px;background:#0f172a;display:flex;flex-direction:column;
-  justify-content:space-between;padding:25px 0;
-  border-right:2px solid rgba(255,255,255,0.05);
-}
-.sidebar h2{color:#3b82f6;text-align:center;margin-bottom:20px}
-.menu{display:flex;flex-direction:column;gap:10px}
-.menu button{
-  background:none;border:none;color:#9ca3af;
-  font-size:16px;padding:12px 20px;text-align:left;
-  cursor:pointer;transition:0.3s;
-}
-.menu button:hover,.menu button.active{
-  background:#1e293b;color:white;border-left:3px solid #3b82f6;
-}
-footer{font-size:12px;color:#64748b;text-align:center;margin-top:30px}
-footer a{color:#3b82f6;text-decoration:none}
+    /* 🌌 Fondo animado tipo camuflaje neón */
+    body::before {
+      content: "";
+      position: absolute;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(0, 153, 255, 0.1) 0%, transparent 60%),
+                  radial-gradient(circle, rgba(255, 0, 255, 0.1) 0%, transparent 60%);
+      background-size: 60% 60%;
+      animation: moveBg 15s infinite alternate ease-in-out;
+      z-index: 0;
+    }
 
-/* ======== CONTENIDO PRINCIPAL ======== */
-.content{flex:1;padding:40px;overflow-y:auto}
-.content h1{font-size:30px;color:#3b82f6;margin-bottom:20px}
-.section{animation:fadeIn .6s ease}
-@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes moveBg {
+      0% { transform: translate(0, 0) rotate(0deg); }
+      50% { transform: translate(-20%, -10%) rotate(45deg); }
+      100% { transform: translate(10%, 20%) rotate(90deg); }
+    }
 
-/* ======== JUEGOS ======== */
-.gameBox{margin-top:20px}
-#reactionBtn{
-  background:#3b82f6;color:white;border:none;padding:15px 30px;
-  border-radius:10px;font-size:16px;cursor:pointer;transition:0.3s;
-}
-#reactionBtn.waiting{background:#1e293b;cursor:not-allowed}
-#memoryGrid{
-  display:grid;grid-template-columns:repeat(4,80px);gap:10px;margin-top:20px;
-}
-.card{
-  width:80px;height:80px;background:#1e293b;border-radius:10px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:22px;cursor:pointer;color:transparent;transition:.3s;
-}
-.card.flipped{background:#3b82f6;color:white}
+    /* 🌟 Header superior animado */
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      text-align: center;
+      padding: 15px;
+      font-size: 1.8em;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      color: #fff;
+      text-shadow: 0 0 12px #7f00ff, 0 0 20px #00b3ff;
+      animation: glow 4s ease-in-out infinite alternate;
+      z-index: 10;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
 
-/* ======== SCROLL ======== */
-::-webkit-scrollbar{width:6px}
-::-webkit-scrollbar-thumb{background:#3b82f6;border-radius:10px}
-</style>
+    @keyframes glow {
+      0% { text-shadow: 0 0 10px #7f00ff, 0 0 25px #00b3ff; }
+      50% { text-shadow: 0 0 25px #ff00ff, 0 0 35px #0099ff; }
+      100% { text-shadow: 0 0 12px #7f00ff, 0 0 20px #00b3ff; }
+    }
+
+    /* 🎯 Tarjetas */
+    .card {
+      position: relative;
+      width: 380px;
+      background: rgba(255, 255, 255, 0.07);
+      padding: 40px;
+      border-radius: 25px;
+      backdrop-filter: blur(15px);
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
+      animation: fadeIn 1s ease-in-out;
+      z-index: 1;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      font-size: 15px;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 12px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(90deg, #0077ff, #9b00ff);
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: linear-gradient(90deg, #0099ff, #b300ff);
+      transform: scale(1.03);
+    }
+
+    .link {
+      margin-top: 15px;
+      text-align: center;
+      font-size: 14px;
+      color: #ccc;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    #error, #errorReg { color: #ff8080; display: none; margin-top: 12px; text-align: center; }
+  </style>
 </head>
 
 <body>
-<!-- LOGIN / REGISTRO -->
-<div id="authBox">
-  <h1>Bienvenido a Brisa</h1>
-  <p>Inicia sesión o regístrate</p>
-  <input type="text" id="user" placeholder="Usuario">
-  <input type="password" id="pass" placeholder="Contraseña">
-  <div id="inviteDiv" style="display:none">
-    <input type="text" id="invite" placeholder="Código de invitación (opcional)">
-  </div>
-  <button id="loginBtn">Entrar</button>
-  <div class="link" id="toggleForm">¿No tienes cuenta? Regístrate</div>
-</div>
+  <header>🌌 Brisa 2025 — Bienestar Emocional</header>
 
-<!-- DASHBOARD -->
-<div id="dashboard">
-  <div class="sidebar">
-    <div>
-      <h2>🌌 Brisa</h2>
-      <div class="menu">
-        <button class="active" onclick="showSection('home')">Inicio</button>
-        <button onclick="showSection('games')">Mini-juegos</button>
-        <button onclick="showSection('emotions')">Emociones</button>
-        <button onclick="showSection('users')">Usuarios</button>
-        <button onclick="showSection('profile')">Perfil</button>
-      </div>
-    </div>
-    <footer>© 2025 Brisa<br><a href="https://www.instagram.com/sa_mejia.e/" target="_blank">@sa_mejia.e</a></footer>
+  <!-- LOGIN -->
+  <div class="card" id="loginCard">
+    <h2>Bienvenido</h2>
+    <p>Inicia sesión para continuar</p>
+    <input type="text" id="loginUser" placeholder="Usuario">
+    <input type="password" id="loginPass" placeholder="Contraseña">
+    <button onclick="login()">Entrar</button>
+    <div id="error">Usuario o contraseña incorrectos</div>
+    <div class="link" onclick="switchToRegister()">Crear cuenta</div>
   </div>
 
-  <div class="content">
-    <div id="home" class="section">
-      <h1>Bienvenido a Brisa 🌌</h1>
-      <p><strong>Creador:</strong> Santiago Nuñez Mejía</p>
-      <p><strong>Propósito:</strong> Brisa es una aplicación diseñada para el bienestar emocional, ayudándote a registrar tus emociones, relajarte con mini-juegos y mantener tu mente en equilibrio.</p>
-    </div>
-
-    <div id="games" class="section" style="display:none">
-      <h1>Mini-juegos 🎮</h1>
-      <div class="gameBox">
-        <h3>Reflejos</h3>
-        <button id="reactionBtn" class="waiting">Espera...</button>
-        <p id="reactionResult"></p>
-      </div>
-      <div class="gameBox">
-        <h3>Memoria</h3>
-        <div id="memoryGrid"></div>
-      </div>
-    </div>
-
-    <div id="emotions" class="section" style="display:none">
-      <h1>Registro emocional 💭</h1>
-      <p>Describe cómo te sientes hoy:</p>
-      <textarea id="emotionNote" rows="5" style="width:100%;padding:10px;border-radius:10px;background:#1e293b;color:white;border:none;margin-top:10px"></textarea>
-      <button onclick="saveEmotion()" style="margin-top:15px;">Guardar emoción</button>
-      <div id="emotionLog" style="margin-top:20px;"></div>
-    </div>
-
-    <div id="users" class="section" style="display:none">
-      <h1>Usuarios registrados 👥</h1>
-      <div id="userList"></div>
-    </div>
-
-    <div id="profile" class="section" style="display:none">
-      <h1>Mi Perfil 👤</h1>
-      <div id="profileInfo"></div>
-      <button onclick="logout()" style="margin-top:20px;">Cerrar sesión</button>
-    </div>
+  <!-- REGISTER -->
+  <div class="card" id="registerCard" style="display:none;">
+    <h2>Crear cuenta</h2>
+    <input type="text" id="regUser" placeholder="Usuario nuevo">
+    <input type="password" id="regPass" placeholder="Contraseña nueva">
+    <button onclick="registerUser()">Registrar</button>
+    <div id="errorReg">Complete los campos</div>
+    <div class="link" onclick="switchToLogin()">Volver</div>
   </div>
-</div>
 
-<script>
-let isLogin=true;
-const authBox=document.getElementById("authBox");
-const toggleForm=document.getElementById("toggleForm");
-const inviteDiv=document.getElementById("inviteDiv");
-const loginBtn=document.getElementById("loginBtn");
+  <!-- DASHBOARD -->
+  <div class="card" id="homeCard" style="display:none;">
+    <h2>Hola, <span id="userName"></span> 👋</h2>
+    <p>Bienvenido a Brisa 2025</p>
+    <button onclick="logout()">Cerrar sesión</button>
+  </div>
 
-toggleForm.onclick=()=>{
-  isLogin=!isLogin;
-  if(isLogin){
-    inviteDiv.style.display="none";
-    loginBtn.textContent="Entrar";
-    toggleForm.textContent="¿No tienes cuenta? Regístrate";
-  }else{
-    inviteDiv.style.display="block";
-    loginBtn.textContent="Registrar";
-    toggleForm.textContent="¿Ya tienes cuenta? Inicia sesión";
-  }
-};
+  <script>
+    // 🌠 Título animado en la pestaña
+    const titles = ["💫 Brisa 2025", "🌌 Bienestar Emocional", "💭 Conecta contigo"];
+    let i = 0;
+    setInterval(() => {
+      document.title = titles[i % titles.length];
+      i++;
+    }, 2000);
 
-loginBtn.onclick=()=>{
-  const user=document.getElementById("user").value.trim();
-  const pass=document.getElementById("pass").value.trim();
-  if(!user||!pass){alert("Completa los campos");return;}
-
-  let users=JSON.parse(localStorage.getItem("brisaUsers")||"[]");
-
-  if(isLogin){
-    const found=users.find(u=>u.user===user&&u.pass===pass);
-    if(!found){alert("Usuario o contraseña incorrectos");return;}
-    enterDashboard(user);
-  }else{
-    if(users.find(u=>u.user===user)){alert("Ese usuario ya existe");return;}
-    const code="INV-"+Math.random().toString(36).substr(2,6).toUpperCase();
-    users.push({user,pass,myCode:code});
-    localStorage.setItem("brisaUsers",JSON.stringify(users));
-    alert("Registrado exitosamente. Tu código: "+code);
-    isLogin=true;toggleForm.click();
-  }
-};
-
-function enterDashboard(user){
-  localStorage.setItem("brisaSession",user);
-  authBox.style.opacity="0";
-  setTimeout(()=>{
-    authBox.style.display="none";
-    document.getElementById("dashboard").style.display="flex";
-    loadUsers();
-    loadProfile();
-  },800);
-}
-
-function logout(){
-  localStorage.removeItem("brisaSession");
-  location.reload();
-}
-
-/* ----------- SECCIONES ----------- */
-function showSection(id){
-  document.querySelectorAll(".section").forEach(s=>s.style.display="none");
-  document.querySelectorAll(".menu button").forEach(b=>b.classList.remove("active"));
-  document.getElementById(id).style.display="block";
-  event.target.classList.add("active");
-}
-
-/* ----------- USUARIOS ----------- */
-function loadUsers(){
-  const list=document.getElementById("userList");
-  const users=JSON.parse(localStorage.getItem("brisaUsers")||"[]");
-  list.innerHTML=users.map(u=>`<p>👤 ${u.user} — Código: ${u.myCode}</p>`).join("")||"<p>No hay usuarios registrados.</p>";
-}
-
-/* ----------- PERFIL ----------- */
-function loadProfile(){
-  const user=localStorage.getItem("brisaSession");
-  const users=JSON.parse(localStorage.getItem("brisaUsers")||"[]");
-  const data=users.find(u=>u.user===user);
-  document.getElementById("profileInfo").innerHTML=`
-    <p><strong>Usuario:</strong> ${data.user}</p>
-    <p><strong>Código:</strong> ${data.myCode}</p>
-    <p><strong>Miembro desde:</strong> ${new Date().toLocaleDateString()}</p>`;
-}
-
-/* ----------- EMOCIONES ----------- */
-function saveEmotion(){
-  const note=document.getElementById("emotionNote").value;
-  if(!note){alert("Escribe algo primero");return;}
-  const user=localStorage.getItem("brisaSession");
-  const data=JSON.parse(localStorage.getItem("brisaEmotions")||"{}");
-  if(!data[user])data[user]=[];
-  data[user].push({text:note,date:new Date().toLocaleString()});
-  localStorage.setItem("brisaEmotions",JSON.stringify(data));
-  document.getElementById("emotionNote").value="";
-  renderEmotions();
-}
-function renderEmotions(){
-  const user=localStorage.getItem("brisaSession");
-  const data=JSON.parse(localStorage.getItem("brisaEmotions")||"{}");
-  const list=(data[user]||[]).map(e=>`<p>🕓 ${e.date}<br>${e.text}</p>`).join("");
-  document.getElementById("emotionLog").innerHTML=list||"<p>Aún no registras emociones.</p>";
-}
-
-/* ----------- JUEGO DE REACCIÓN ----------- */
-let reactionTimeout,startTime;
-const btn=document.getElementById("reactionBtn");
-btn.onclick=()=>{
-  if(btn.classList.contains("waiting"))return;
-  const end=Date.now()-startTime;
-  document.getElementById("reactionResult").innerText=`Tu tiempo: ${end} ms`;
-  btn.classList.add("waiting");btn.textContent="Espera...";
-  startReaction();
-};
-function startReaction(){
-  clearTimeout(reactionTimeout);
-  reactionTimeout=setTimeout(()=>{
-    btn.classList.remove("waiting");
-    btn.textContent="¡Ahora!";
-    startTime=Date.now();
-  },Math.random()*3000+1000);
-}
-startReaction();
-
-/* ----------- JUEGO DE MEMORIA ----------- */
-const grid=document.getElementById("memoryGrid");
-const symbols=["🌙","☀️","⭐","🔥","💧","🌈","⚡","🍀"];
-let cards=[...symbols,...symbols].sort(()=>Math.random()-0.5);
-let flipped=[],solved=0;
-cards.forEach((sym,i)=>{
-  const c=document.createElement("div");
-  c.className="card";
-  c.dataset.sym=sym;
-  c.onclick=()=>flip(c);
-  grid.appendChild(c);
-});
-function flip(card){
-  if(flipped.length<2&&!card.classList.contains("flipped")){
-    card.classList.add("flipped");
-    card.textContent=card.dataset.sym;
-    flipped.push(card);
-    if(flipped.length===2)checkMatch();
-  }
-}
-function checkMatch(){
-  setTimeout(()=>{
-    if(flipped[0].dataset.sym===flipped[1].dataset.sym){
-      solved+=2;
-      flipped.forEach(c=>c.style.background="#22c55e");
-    }else{
-      flipped.forEach(c=>{c.classList.remove("flipped");c.textContent="";});
+    // 🔄 Alternar entre Login y Registro
+    function switchToRegister() {
+      loginCard.style.display = "none";
+      registerCard.style.display = "block";
     }
-    flipped=[];
-    if(solved===cards.length)alert("¡Completaste el juego de memoria!");
-  },700);
-}
-</script>
+    function switchToLogin() {
+      registerCard.style.display = "none";
+      loginCard.style.display = "block";
+    }
+
+    // 🧩 Registro de usuario
+    function registerUser() {
+      const u = regUser.value.trim();
+      const p = regPass.value.trim();
+      if (u.length < 3 || p.length < 3) {
+        errorReg.style.display = "block";
+        return;
+      }
+      let users = JSON.parse(localStorage.getItem("brisaUsers")) || [];
+      if (users.find(x => x.user === u)) {
+        errorReg.innerText = "Usuario ya existe";
+        errorReg.style.display = "block";
+        return;
+      }
+      users.push({ user: u, pass: p });
+      localStorage.setItem("brisaUsers", JSON.stringify(users));
+      switchToLogin();
+      alert("Cuenta creada correctamente 🌟");
+    }
+
+    // 🔑 Inicio de sesión
+    function login() {
+      const u = loginUser.value.trim();
+      const p = loginPass.value.trim();
+      let users = JSON.parse(localStorage.getItem("brisaUsers")) || [];
+      let exists = users.find(x => x.user === u && x.pass === p);
+      if (exists) {
+        loginCard.style.display = "none";
+        registerCard.style.display = "none";
+        homeCard.style.display = "block";
+        document.getElementById("userName").innerText = u;
+      } else {
+        error.style.display = "block";
+      }
+    }
+
+    // 🚪 Cerrar sesión
+    function logout() {
+      homeCard.style.display = "none";
+      loginCard.style.display = "block";
+    }
+  </script>
 </body>
 </html>
