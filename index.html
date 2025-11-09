@@ -1,696 +1,331 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Brisa 1.1 — Acceso Mejorado</title>
-<link rel="preconnect" href="https://fonts.gstatic.com">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brisa 2025</title>
+
 <style>
-/* =========================
-   Brisa 1.1 — Interfaz mejorada
-   - Fondo nebula (violeta/azul)
-   - Modal login/register con blur animado
-   - Dashboard básico (Inicio, Juegos, Emociones, Usuarios, Perfil)
-   - Invitations, games, emotion registry
-   - localStorage persistence
-   ========================= */
+/* ======== RESET ======== */
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
+html,body{height:100%;overflow:hidden;background:#030712;color:white}
 
-/* Reset & base */
-:root{
-  --bg-dark:#071221;
-  --panel: rgba(255,255,255,0.03);
-  --muted: rgba(230,238,246,0.68);
-  --accent: #9b6bff;
-  --accent2:#5ef0ff;
-  --glass: rgba(255,255,255,0.05);
-  --success:#44d69e;
-  --danger:#ff6b6b;
+/* ======== FONDO ANIMADO ======== */
+body::before{
+  content:"";
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:linear-gradient(120deg,#0d1117,#111827,#0d1117);
+  background-size:300% 300%;
+  animation:camuflaje 12s infinite alternate ease-in-out;
+  z-index:-1;
 }
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;background:var(--bg-dark);color:#e6eef8; -webkit-font-smoothing:antialiased;}
-a{color:var(--accent)}
-
-/* Canvas background */
-canvas#bg { position:fixed; inset:0; width:100%; height:100%; z-index:0; display:block; }
-
-/* Page wrapper that gets blurred when modal open */
-#wrap { position:relative; z-index:1; width:100%; height:100%; transition:filter .8s cubic-bezier(.2,.9,.3,1), opacity .4s ease; }
-
-/* App layout: sidebar / main / right */
-.app { display:grid; grid-template-columns:84px 1fr 340px; gap:18px; padding:28px; min-height:100vh; align-items:start; position:relative; z-index:2; }
-
-/* Sidebar */
-.sidebar {
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-  padding:12px; border-radius:14px; display:flex; flex-direction:column; align-items:center; gap:12px;
-  box-shadow:0 12px 40px rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.02);
-}
-.logo {
-  width:58px;height:58px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#6bd1ff);
-  display:flex;align-items:center;justify-content:center;font-weight:900;color:#071221;font-size:18px;
-  box-shadow:0 8px 20px rgba(0,0,0,0.5);
-}
-.sideBtn { width:100%; display:flex; flex-direction:column; align-items:center; gap:6px; padding:10px; border-radius:10px; color:var(--muted); background:transparent; border:none; cursor:pointer; transition:all .12s ease; }
-.sideBtn:hover{ transform: translateX(6px); color:#fff; background: rgba(255,255,255,0.02); }
-.sideBtn.active{ background: linear-gradient(90deg, rgba(155,107,255,0.08), rgba(94,240,255,0.03)); color:#fff; }
-
-/* Main */
-.main {
-  border-radius:12px; padding:18px; min-height: calc(100vh - 56px);
-  background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));
-  border:1px solid rgba(255,255,255,0.02);
-  box-shadow:0 12px 40px rgba(0,0,0,0.6);
-  overflow:auto;
-}
-.topbar { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:14px; }
-.title { font-weight:800; font-size:20px; }
-.subtitle { color:var(--muted); font-size:13px; }
-
-/* Page area */
-.page { display:grid; grid-template-columns:1fr; gap:12px; }
-.card {
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-  border-radius:12px; padding:14px; border:1px solid rgba(255,255,255,0.02);
+@keyframes camuflaje{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
 }
 
-/* Right pane */
-.right {
-  border-radius:12px; padding:14px; min-height: calc(100vh - 56px); overflow:auto;
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-  box-shadow:0 12px 40px rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.02);
+/* ======== CONTENEDOR LOGIN ======== */
+#authBox{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:350px;background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.1);border-radius:20px;
+  backdrop-filter:blur(12px);
+  padding:40px 30px;text-align:center;
+  box-shadow:0 0 40px rgba(0,0,0,0.5);
+  transition:all .8s ease;
 }
-
-/* Buttons/inputs */
-input, select, textarea { width:100%; padding:10px 12px; border-radius:8px; background: rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.03); color:inherit; }
-textarea{ min-height:84px; resize:vertical; }
-.btn { padding:10px 12px; border-radius:10px; border:none; cursor:pointer; background:linear-gradient(90deg,var(--accent),var(--accent2)); color:#071221; font-weight:700; }
-.btn.alt{ background:transparent; border:1px solid rgba(255,255,255,0.04); color:var(--muted); }
-
-/* Small */
-.small{ font-size:13px; color:var(--muted); }
-.statGrid{ display:flex; gap:8px; margin-top:10px; }
-.statBox{ flex:1; background: rgba(255,255,255,0.01); padding:10px; border-radius:8px; text-align:center; }
-
-/* Grid & tiles */
-.grid-4{ display:grid; grid-template-columns: repeat(4,1fr); gap:8px; }
-.tile{ background: rgba(255,255,255,0.02); border-radius:10px; padding:18px; text-align:center; cursor:pointer; transition:transform .12s ease; user-select:none; font-size:20px; }
-.tile.revealed{ transform:scale(1.04); background: linear-gradient(135deg, rgba(155,107,255,0.12), rgba(94,240,255,0.06)); }
-
-/* Emotions table */
-.table{ width:100%; border-collapse:collapse; margin-top:10px; }
-.table th, .table td{ text-align:left; padding:8px; border-bottom:1px solid rgba(255,255,255,0.03); font-size:13px; color: #eaf0f8; }
-
-/* Modal (glass) */
-.modalWrap{ position:fixed; inset:0; display:flex; align-items:center; justify-content:center; z-index:60; }
-.modal { width:420px; max-width:94%; padding:18px; border-radius:12px; background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)); box-shadow:0 30px 90px rgba(0,0,0,0.7); border:1px solid rgba(255,255,255,0.02); transform-origin:center; transition: transform .6s cubic-bezier(.2,.9,.3,1), opacity .5s ease; }
-.modal h2{ color:var(--accent); margin-bottom:8px; text-align:center; }
-.modal .muted{ color:var(--muted); margin-top:8px; font-size:13px; text-align:center; }
-
-/* Toast */
-#toast{ position:fixed; right:18px; bottom:18px; background:rgba(0,0,0,0.6); color:var(--muted); padding:10px 12px; border-radius:10px; z-index:80; border:1px solid rgba(255,255,255,0.03); display:none; }
-
-/* blur class used on wrap when modal is open */
-.blurActive { filter: blur(10px) brightness(.75); transition: filter .8s cubic-bezier(.2,.9,.3,1); }
-
-/* responsive */
-@media (max-width:1100px){
-  .app{ grid-template-columns:72px 1fr; }
-  .right{ display:none; }
-  .grid-4{ grid-template-columns:repeat(2,1fr); }
+#authBox h1{font-size:28px;color:#3b82f6;margin-bottom:15px}
+#authBox input{
+  width:100%;padding:12px;margin-top:12px;
+  border:none;border-radius:8px;
+  background:rgba(255,255,255,0.1);color:white;
 }
+#authBox button{
+  margin-top:20px;width:100%;padding:12px;
+  border:none;border-radius:10px;
+  background:linear-gradient(90deg,#2563eb,#3b82f6);
+  color:white;font-size:16px;cursor:pointer;
+  transition:0.3s;
+}
+#authBox button:hover{transform:scale(1.05)}
+.link{margin-top:15px;font-size:14px;color:#9ca3af;cursor:pointer}
+.link:hover{color:white}
+
+/* ======== DASHBOARD ======== */
+#dashboard{display:none;height:100%;width:100%;display:flex}
+.sidebar{
+  width:250px;background:#0f172a;display:flex;flex-direction:column;
+  justify-content:space-between;padding:25px 0;
+  border-right:2px solid rgba(255,255,255,0.05);
+}
+.sidebar h2{color:#3b82f6;text-align:center;margin-bottom:20px}
+.menu{display:flex;flex-direction:column;gap:10px}
+.menu button{
+  background:none;border:none;color:#9ca3af;
+  font-size:16px;padding:12px 20px;text-align:left;
+  cursor:pointer;transition:0.3s;
+}
+.menu button:hover,.menu button.active{
+  background:#1e293b;color:white;border-left:3px solid #3b82f6;
+}
+footer{font-size:12px;color:#64748b;text-align:center;margin-top:30px}
+footer a{color:#3b82f6;text-decoration:none}
+
+/* ======== CONTENIDO PRINCIPAL ======== */
+.content{flex:1;padding:40px;overflow-y:auto}
+.content h1{font-size:30px;color:#3b82f6;margin-bottom:20px}
+.section{animation:fadeIn .6s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* ======== JUEGOS ======== */
+.gameBox{margin-top:20px}
+#reactionBtn{
+  background:#3b82f6;color:white;border:none;padding:15px 30px;
+  border-radius:10px;font-size:16px;cursor:pointer;transition:0.3s;
+}
+#reactionBtn.waiting{background:#1e293b;cursor:not-allowed}
+#memoryGrid{
+  display:grid;grid-template-columns:repeat(4,80px);gap:10px;margin-top:20px;
+}
+.card{
+  width:80px;height:80px;background:#1e293b;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;cursor:pointer;color:transparent;transition:.3s;
+}
+.card.flipped{background:#3b82f6;color:white}
+
+/* ======== SCROLL ======== */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-thumb{background:#3b82f6;border-radius:10px}
 </style>
 </head>
+
 <body>
-
-<canvas id="bg"></canvas>
-
-<!-- Page wrapper (will blur when modal open) -->
-<div id="wrap">
-  <div class="app">
-    <!-- Sidebar -->
-    <aside class="sidebar" aria-hidden="false">
-      <div class="logo">Br1</div>
-      <button class="sideBtn active" data-view="inicio"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M3 10.5L12 4l9 6.5" stroke="currentColor" stroke-width="1.5"/></svg><div class="small">Inicio</div></button>
-      <button class="sideBtn" data-view="juegos"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M6 12h12" stroke="currentColor" stroke-width="1.5"/></svg><div class="small">Juegos</div></button>
-      <button class="sideBtn" data-view="emociones"><svg width="20" height="20"><path d="M7 11h10" stroke="currentColor" stroke-width="1.5"/></svg><div class="small">Emociones</div></button>
-      <button class="sideBtn" data-view="usuarios"><svg width="20" height="20"><circle cx="12" cy="8" r="3" stroke="currentColor" stroke-width="1.5"/></svg><div class="small">Usuarios</div></button>
-      <button class="sideBtn" data-view="perfil"><svg width="20" height="20"><path d="M3 8h18" stroke="currentColor" stroke-width="1.5"/></svg><div class="small">Perfil</div></button>
-      <div style="flex:1"></div>
-      <div class="small" style="text-align:center;color:var(--muted)">© Brisa 1.1 — 2025<br><a href="https://www.instagram.com/sa_mejia.e/" target="_blank" style="color:var(--accent);text-decoration:none">@sa_mejia.e</a></div>
-    </aside>
-
-    <!-- Main -->
-    <main class="main">
-      <div class="topbar">
-        <div>
-          <div class="title" id="pageTitle">Inicio</div>
-          <div class="subtitle" id="pageSub">Bienvenido — Brisa 1.1 (Interfaz mejorada)</div>
-        </div>
-        <div style="display:flex;align-items:center;gap:10px">
-          <label class="small">Sonido <input id="soundToggle" type="checkbox" checked style="margin-left:8px"/></label>
-          <button class="btn alt" id="btnLogout" style="display:none">Cerrar sesión</button>
-        </div>
-      </div>
-
-      <div class="page" id="pageArea">
-        <!-- Inicio card -->
-        <section id="inicio" class="card">
-          <h3>¿Qué es Brisa?</h3>
-          <p class="small" style="margin-top:8px">Brisa es una app para el bienestar emocional y entrenamiento mental: registra emociones, practica minijuegos y lleva seguimiento de tu estado.</p>
-
-          <div style="display:flex;gap:12px;margin-top:12px;align-items:stretch">
-            <div style="flex:1">
-              <div class="card">
-                <strong>Propósito</strong>
-                <p class="small" style="margin-top:6px">Ayudarte a monitorizar emociones y hacer ejercicios cortos para mejorar atención y memoria. Interfaz privada y sencilla.</p>
-                <div style="margin-top:8px" class="small">Autor: <strong>Santiago Núñez Mejía</strong><br><a href="https://www.instagram.com/sa_mejia.e/" target="_blank">@sa_mejia.e</a></div>
-              </div>
-            </div>
-
-            <div style="width:320px">
-              <div class="card">
-                <strong>Cómo usar</strong>
-                <ol class="small" style="margin-top:8px;padding-left:16px;line-height:1.4">
-                  <li>Regístrate/inicia sesión (obligatorio para guardar datos).</li>
-                  <li>Registra tus emociones con nota y puntuación.</li>
-                  <li>Juega los minijuegos para registrar resultados.</li>
-                  <li>Genera códigos para invitar otros (se registra quién invitó).</li>
-                </ol>
-              </div>
-            </div>
-          </div>
-
-          <div id="recent" style="margin-top:12px"></div>
-        </section>
-
-        <!-- Dynamic area for other views -->
-        <section id="dynamic" class="card" style="display:none"></section>
-
-      </div>
-    </main>
-
-    <!-- Right -->
-    <aside class="right">
-      <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div><strong>Mini-juegos</strong><div class="small">Entrenamientos rápidos</div></div>
-          <div class="small" id="miniStat">—</div>
-        </div>
-
-        <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
-          <button class="btn alt" id="startReaction">Reacción</button>
-          <button class="btn alt" id="startSpatial">Memoria espacial</button>
-          <button class="btn alt" id="startBreath">Respiración</button>
-        </div>
-      </div>
-
-      <div class="card" style="margin-top:12px">
-        <strong>Invitaciones</strong>
-        <div style="display:flex;gap:8px;margin-top:8px">
-          <button class="btn" id="genInvite">Generar</button>
-          <button class="btn alt" id="viewInvites">Ver</button>
-        </div>
-        <div id="invList" class="small" style="margin-top:8px">— ninguna —</div>
-      </div>
-
-      <div class="card" style="margin-top:12px">
-        <strong>Sesión</strong>
-        <div style="margin-top:6px">Usuario: <strong id="activeUser">—</strong></div>
-        <div id="createdAt" class="small" style="margin-top:6px">—</div>
-        <div style="margin-top:8px">
-          <button class="btn alt" id="exportBtn">Exportar datos</button>
-        </div>
-      </div>
-    </aside>
+<!-- LOGIN / REGISTRO -->
+<div id="authBox">
+  <h1>Bienvenido a Brisa</h1>
+  <p>Inicia sesión o regístrate</p>
+  <input type="text" id="user" placeholder="Usuario">
+  <input type="password" id="pass" placeholder="Contraseña">
+  <div id="inviteDiv" style="display:none">
+    <input type="text" id="invite" placeholder="Código de invitación (opcional)">
   </div>
+  <button id="loginBtn">Entrar</button>
+  <div class="link" id="toggleForm">¿No tienes cuenta? Regístrate</div>
 </div>
 
-<!-- Toast -->
-<div id="toast"></div>
+<!-- DASHBOARD -->
+<div id="dashboard">
+  <div class="sidebar">
+    <div>
+      <h2>🌌 Brisa</h2>
+      <div class="menu">
+        <button class="active" onclick="showSection('home')">Inicio</button>
+        <button onclick="showSection('games')">Mini-juegos</button>
+        <button onclick="showSection('emotions')">Emociones</button>
+        <button onclick="showSection('users')">Usuarios</button>
+        <button onclick="showSection('profile')">Perfil</button>
+      </div>
+    </div>
+    <footer>© 2025 Brisa<br><a href="https://www.instagram.com/sa_mejia.e/" target="_blank">@sa_mejia.e</a></footer>
+  </div>
 
-<!-- Modal Login / Register -->
-<div id="modal" class="modalWrap" style="display:flex; z-index:80">
-  <div class="modal" id="modalCard">
-    <h2 id="modalTitle">Iniciar sesión</h2>
-
-    <label class="small">Usuario</label>
-    <input id="mUser" placeholder="usuario mínimo 3 caracteres">
-
-    <label class="small" style="margin-top:8px">Contraseña</label>
-    <input id="mPass" type="password" placeholder="contraseña mínima 3 caracteres">
-
-    <div style="margin-top:10px; display:flex; gap:8px;">
-      <button class="btn" id="modalPrimary">Entrar</button>
-      <button class="btn alt" id="modalSecondary">Registrar</button>
+  <div class="content">
+    <div id="home" class="section">
+      <h1>Bienvenido a Brisa 🌌</h1>
+      <p><strong>Creador:</strong> Santiago Nuñez Mejía</p>
+      <p><strong>Propósito:</strong> Brisa es una aplicación diseñada para el bienestar emocional, ayudándote a registrar tus emociones, relajarte con mini-juegos y mantener tu mente en equilibrio.</p>
     </div>
 
-    <div class="muted" id="modalMsg" style="margin-top:8px">Debes iniciar sesión o registrarte para guardar datos.</div>
-
-    <div style="margin-top:10px;">
-      <label class="small">Código de invitación (opcional)</label>
-      <input id="mInvite" placeholder="Código (si te invitaron)">
+    <div id="games" class="section" style="display:none">
+      <h1>Mini-juegos 🎮</h1>
+      <div class="gameBox">
+        <h3>Reflejos</h3>
+        <button id="reactionBtn" class="waiting">Espera...</button>
+        <p id="reactionResult"></p>
+      </div>
+      <div class="gameBox">
+        <h3>Memoria</h3>
+        <div id="memoryGrid"></div>
+      </div>
     </div>
 
-    <div style="margin-top:10px;text-align:center"><span id="toggleLink" style="color:var(--accent);cursor:pointer" class="small">¿No tienes cuenta? Regístrate</span></div>
+    <div id="emotions" class="section" style="display:none">
+      <h1>Registro emocional 💭</h1>
+      <p>Describe cómo te sientes hoy:</p>
+      <textarea id="emotionNote" rows="5" style="width:100%;padding:10px;border-radius:10px;background:#1e293b;color:white;border:none;margin-top:10px"></textarea>
+      <button onclick="saveEmotion()" style="margin-top:15px;">Guardar emoción</button>
+      <div id="emotionLog" style="margin-top:20px;"></div>
+    </div>
+
+    <div id="users" class="section" style="display:none">
+      <h1>Usuarios registrados 👥</h1>
+      <div id="userList"></div>
+    </div>
+
+    <div id="profile" class="section" style="display:none">
+      <h1>Mi Perfil 👤</h1>
+      <div id="profileInfo"></div>
+      <button onclick="logout()" style="margin-top:20px;">Cerrar sesión</button>
+    </div>
   </div>
 </div>
 
 <script>
-/* ============================
-   Brisa 1.1 — JS funcional
-   - login/register modal with blur animation
-   - invites, users, games, emotions (localStorage)
-   ============================ */
+let isLogin=true;
+const authBox=document.getElementById("authBox");
+const toggleForm=document.getElementById("toggleForm");
+const inviteDiv=document.getElementById("inviteDiv");
+const loginBtn=document.getElementById("loginBtn");
 
-/* Basic selectors/helpers */
-const $ = id => document.getElementById(id);
-const qAll = s => document.querySelectorAll(s);
-const STORE = 'brisa_1_users_v1';
-const ACTIVE = 'brisa_1_active';
-
-function readStore(){ try{ return JSON.parse(localStorage.getItem(STORE) || '[]'); } catch(e){ return []; } }
-function writeStore(arr){ localStorage.setItem(STORE, JSON.stringify(arr)); renderInvites(); renderStats(); renderActive(); }
-function currentUser(){ return localStorage.getItem(ACTIVE) || ''; }
-function setActive(u){ if(u) localStorage.setItem(ACTIVE, u); else localStorage.removeItem(ACTIVE); renderActive(); }
-
-/* Toast */
-function toast(txt, t=2200){
-  const el = $('toast'); el.textContent = txt; el.style.display='block'; el.style.opacity='1';
-  setTimeout(()=>{ el.style.opacity='0'; setTimeout(()=> el.style.display='none', 300); }, t);
-}
-
-/* Canvas background (nebula/soft waves) */
-const canvas = $('bg'); const ctx = canvas.getContext('2d');
-function resizeCanvas(){ canvas.width = innerWidth * devicePixelRatio; canvas.height = innerHeight * devicePixelRatio; canvas.style.width = innerWidth+'px'; canvas.style.height = innerHeight+'px'; ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0); }
-resizeCanvas(); window.addEventListener('resize', resizeCanvas);
-
-const blobs = []; const palette=['#2b1a3a','#4b2b7a','#7a5bff','#5ef0ff','#2b4460'];
-for(let i=0;i<18;i++){ blobs.push({ x:Math.random()*innerWidth, y:Math.random()*innerHeight, r:70+Math.random()*220, vx:(Math.random()-0.5)*0.3, vy:(Math.random()-0.5)*0.3, c:palette[i%palette.length] }); }
-let startT = performance.now();
-
-(function draw(t){
-  const tt = (t - startT) * 0.0006;
-  ctx.clearRect(0,0,innerWidth,innerHeight);
-  // blobs
-  blobs.forEach((b,i)=>{
-    b.x += b.vx * Math.cos(tt*(0.4+i*0.02));
-    b.y += b.vy * Math.sin(tt*(0.3+i*0.02));
-    const g = ctx.createRadialGradient(b.x,b.y,b.r*0.03,b.x,b.y,b.r);
-    g.addColorStop(0, hexRgba(b.c, 0.14));
-    g.addColorStop(1, hexRgba(b.c, 0.02));
-    ctx.beginPath(); ctx.fillStyle=g; ctx.arc(b.x,b.y,b.r,0,Math.PI*2); ctx.fill();
-  });
-  // neon ribbons
-  for(let i=0;i<16;i++){
-    const cx = (Math.sin(tt*0.6 + i)*0.5+0.5)*innerWidth;
-    const cy = (Math.cos(tt*0.5 + i*0.5)*0.5+0.5)*innerHeight;
-    const r = 200 + Math.sin(tt*0.2 + i)*80;
-    const g2 = ctx.createRadialGradient(cx,cy,r*0.08,cx,cy,r);
-    g2.addColorStop(0, `rgba(94,240,255,${0.02 + (i%2)*0.03})`);
-    g2.addColorStop(1, `rgba(155,107,255,0.012)`);
-    ctx.beginPath(); ctx.fillStyle=g2; ctx.arc(cx,cy,r,0,Math.PI*2); ctx.fill();
+toggleForm.onclick=()=>{
+  isLogin=!isLogin;
+  if(isLogin){
+    inviteDiv.style.display="none";
+    loginBtn.textContent="Entrar";
+    toggleForm.textContent="¿No tienes cuenta? Regístrate";
+  }else{
+    inviteDiv.style.display="block";
+    loginBtn.textContent="Registrar";
+    toggleForm.textContent="¿Ya tienes cuenta? Inicia sesión";
   }
-  // grain
-  for(let i=0;i<350;i++){ ctx.fillStyle = `rgba(255,255,255,${(Math.random()-0.98)*0.02})`; ctx.fillRect(Math.random()*innerWidth, Math.random()*innerHeight, 1,1); }
-  requestAnimationFrame(draw);
-})(performance.now());
+};
 
-function hexRgba(hex,a){ const c=hex.replace('#',''); const n=parseInt(c,16); const r=(n>>16)&255,g=(n>>8)&255,b=n&255; return `rgba(${r},${g},${b},${a})`; }
+loginBtn.onclick=()=>{
+  const user=document.getElementById("user").value.trim();
+  const pass=document.getElementById("pass").value.trim();
+  if(!user||!pass){alert("Completa los campos");return;}
 
-/* Modal logic + blur animation */
-const modal = $('modal'), wrap = $('wrap'), modalCard = $('modalCard');
-const modalTitle = $('modalTitle'), modalMsg = $('modalMsg'), toggleLink = $('toggleLink');
-let isLogin = true;
-
-function showModal(mode='login'){
-  isLogin = (mode==='login');
-  modal.style.display='flex';
-  wrap.classList.add('blurActive');
-  // animate modal
-  modalCard.style.transform = 'translateY(8px) scale(.98)'; modalCard.style.opacity='0';
-  setTimeout(()=>{ modalCard.style.transform = 'translateY(0) scale(1)'; modalCard.style.opacity='1'; }, 10);
+  let users=JSON.parse(localStorage.getItem("brisaUsers")||"[]");
 
   if(isLogin){
-    modalTitle.textContent='Iniciar sesión';
-    $('modalPrimary').textContent='Entrar';
-    $('modalSecondary').textContent='Registrar';
-    toggleLink.textContent='¿No tienes cuenta? Regístrate';
-    modalMsg.textContent='Debes iniciar sesión o registrarte para usar Brisa.';
-  } else {
-    modalTitle.textContent='Registrar cuenta';
-    $('modalPrimary').textContent='Registrar';
-    $('modalSecondary').textContent='Volver';
-    toggleLink.textContent='¿Ya tienes cuenta? Iniciar sesión';
-    modalMsg.textContent='Regístrate con un código opcional (si te invitaron).';
+    const found=users.find(u=>u.user===user&&u.pass===pass);
+    if(!found){alert("Usuario o contraseña incorrectos");return;}
+    enterDashboard(user);
+  }else{
+    if(users.find(u=>u.user===user)){alert("Ese usuario ya existe");return;}
+    const code="INV-"+Math.random().toString(36).substr(2,6).toUpperCase();
+    users.push({user,pass,myCode:code});
+    localStorage.setItem("brisaUsers",JSON.stringify(users));
+    alert("Registrado exitosamente. Tu código: "+code);
+    isLogin=true;toggleForm.click();
   }
-}
+};
 
-function hideModal(){
-  // modal hide with animation
-  modalCard.style.transform = 'translateY(8px) scale(.98)'; modalCard.style.opacity='0';
-  setTimeout(()=>{ modal.style.display='none'; wrap.classList.remove('blurActive'); }, 320);
-}
-
-/* Toggle link */
-toggleLink.addEventListener('click', ()=> showModal(isLogin ? 'register' : 'login'));
-
-/* Modal buttons */
-$('modalSecondary').addEventListener('click', ()=> showModal(isLogin ? 'register' : 'login'));
-
-/* Register/login handler */
-$('modalPrimary').addEventListener('click', ()=>{
-  const u = $('mUser').value.trim(); const p = $('mPass').value.trim(); const inv = $('mInvite').value.trim().toUpperCase();
-  if(u.length<3 || p.length<3){ modalMsg.textContent='Usuario y contraseña mínimo 3 caracteres'; return; }
-  const users = readStore();
-  if(isLogin){
-    const found = users.find(x => x.user===u && x.pass===p);
-    if(!found){ modalMsg.textContent='Usuario o contraseña incorrectos'; return; }
-    // success: animate out, set active, show dashboard
-    setActive(u); modalMsg.textContent='Bienvenido ' + u; playTone(880,0.06);
-    // remove modal with blur fade
-    setTimeout(()=>{ hideModal(); enterDashboardAnimation(); }, 450);
-  } else {
-    // register
-    if(users.find(x=>x.user===u)){ modalMsg.textContent='Usuario ya existe'; return; }
-    // validate invite if provided
-    let invitedBy = null;
-    if(inv){
-      const owner = users.find(x => (x.invites||[]).includes(inv));
-      if(!owner){ modalMsg.textContent='Código de invitación inválido'; return; }
-      invitedBy = owner.user;
-      owner.invited = owner.invited || []; owner.invited.push(u);
-    }
-    const myCode = 'INV-'+Math.random().toString(36).substring(2,8).toUpperCase();
-    const newUser = { user:u, pass:p, created:new Date().toISOString(), history:[], invites:[], invitedBy: invitedBy, invited:[], myCode, profile:{ peso:'', nacimiento:'' } };
-    users.push(newUser); writeStore(users); setActive(u);
-    modalMsg.textContent='Registrado ✓';
-    playTone(660,0.06);
-    setTimeout(()=>{ hideModal(); enterDashboardAnimation(); }, 450);
-  }
-});
-
-/* Enter dashboard animation */
-function enterDashboardAnimation(){
-  // fade out blur (wrap will remove blur in hideModal)
-  // show logout button and update UI
-  $('btnLogout').style.display = 'inline-block';
-  navigateTo('inicio');
-  toast('Bienvenido — ' + currentUser());
-}
-
-/* Logout */
-$('btnLogout').addEventListener('click', ()=> { setActive(''); showModal('login'); toast('Sesión cerrada'); });
-
-/* Keyboard submit */
-['mUser','mPass'].forEach(id => { $(id).addEventListener('keydown', (e)=> { if(e.key==='Enter') $('modalPrimary').click(); }); });
-
-/* Navigation wiring */
-qAll('.sideBtn').forEach(b => b.addEventListener('click', ()=>{
-  qAll('.sideBtn').forEach(x=>x.classList.remove('active'));
-  b.classList.add('active');
-  const view = b.getAttribute('data-view');
-  navigateTo(view);
-}));
-
-function navigateTo(view){
-  const dynamic = $('dynamic');
-  $('pageTitle').textContent = view==='inicio' ? 'Inicio' : view==='juegos' ? 'Juegos' : view==='emociones' ? 'Registro de emociones' : view==='usuarios' ? 'Usuarios' : 'Perfil';
-  $('pageSub').textContent = view==='inicio' ? 'Información y propósito' : '';
-  if(view === 'inicio'){ dynamic.style.display='none'; } else { dynamic.style.display='block'; renderView(view); }
-  window.scrollTo({top:0, behavior:'smooth'});
-}
-
-/* Render views */
-function renderView(view){
-  const out = $('dynamic');
-  if(view==='juegos'){ renderGames(out); }
-  if(view==='emociones'){ renderEmotions(out); }
-  if(view==='usuarios'){ renderUsers(out); }
-  if(view==='perfil'){ renderProfile(out); }
-}
-
-/* ------- Games -------- */
-$('startReaction').addEventListener('click', ()=> navigateTo('juegos') || renderGames($('dynamic')));
-$('startSpatial').addEventListener('click', ()=> navigateTo('juegos') || renderGames($('dynamic')));
-$('startBreath').addEventListener('click', ()=> navigateTo('juegos') || renderGames($('dynamic')));
-
-function renderGames(host){
-  host.innerHTML = `<h3>Minijuegos</h3><div class="small" style="margin-top:6px">Elige un juego y registra tu desempeño.</div>
-    <div style="display:flex;gap:8px;margin-top:10px">
-      <button class="btn" id="playReaction">Reacción (mejorado)</button>
-      <button class="btn" id="playSpatial">Memoria espacial</button>
-      <button class="btn" id="playBreath">Respiración guiada</button>
-    </div>
-    <div id="gameArea" style="margin-top:12px"></div>`;
-  $('playReaction').addEventListener('click', ()=> startReaction($('gameArea')));
-  $('playSpatial').addEventListener('click', ()=> startSpatial($('gameArea')));
-  $('playBreath').addEventListener('click', ()=> startBreathing($('gameArea')));
-}
-
-function startReaction(host){
-  host.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;gap:12px"><div style="font-weight:700">Reacción</div><div id="react" style="width:220px;height:120px;border-radius:12px;background:rgba(255,255,255,0.02);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer">Pulsa para iniciar</div><div id="reactRes" class="small"></div></div>`;
-  const box = host.querySelector('#react'), res = host.querySelector('#reactRes');
-  let start=null, tid=null;
-  box.addEventListener('click', ()=>{
-    if(!currentUser()){ toast('Inicia sesión para jugar'); showModal('login'); return; }
-    if(!start){
-      box.textContent='...';
-      box.style.background='linear-gradient(90deg,#111,#222)'; 
-      tid = setTimeout(()=>{ start = performance.now(); box.textContent='AHORA'; box.style.background='linear-gradient(90deg,var(--accent),var(--accent2))'; playTone(880,0.05); }, Math.random()*1800 + 700);
-      res.textContent='Espera el color...';
-    } else {
-      const elapsed = Math.round(performance.now() - start);
-      res.textContent = 'Tiempo: ' + elapsed + ' ms';
-      storeGame({game:'reaction', value:elapsed});
-      addRecent('Reacción: '+elapsed+'ms');
-      start=null; clearTimeout(tid);
-      setTimeout(()=>{ box.textContent='Pulsa para iniciar'; box.style.background='rgba(255,255,255,0.02)'; }, 400);
-    }
-  });
-}
-
-function startSpatial(host){
-  host.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;gap:8px"><div style="font-weight:700">Memoria espacial</div><div class="small">Recuerda las posiciones mostradas y selecciónalas.</div><div id="spatialGrid" style="margin-top:12px;width:100%;max-width:520px"></div><div id="spatialRes" class="small"></div></div>`;
-  const area = host.querySelector('#spatialGrid'), res = host.querySelector('#spatialRes');
-  const size = 4; const cells = size*size; const targets=4;
-  const indices=[];
-  while(indices.length < targets){ const r=Math.floor(Math.random()*cells); if(!indices.includes(r)) indices.push(r); }
-  // render grid
-  const grid = document.createElement('div'); grid.className='grid-4';
-  for(let i=0;i<cells;i++){ const t=document.createElement('div'); t.className='tile'; t.dataset.i=i; grid.appendChild(t); }
-  area.appendChild(grid);
-  indices.forEach(i=>{ grid.children[i].classList.add('revealed'); grid.children[i].textContent='★'; });
-  res.textContent='Fíjate en las posiciones...';
+function enterDashboard(user){
+  localStorage.setItem("brisaSession",user);
+  authBox.style.opacity="0";
   setTimeout(()=>{
-    indices.forEach(i=>{ grid.children[i].classList.remove('revealed'); grid.children[i].textContent=''; });
-    res.textContent='Selecciona las posiciones recordadas';
-    let selected=[];
-    for(let k=0;k<grid.children.length;k++){
-      grid.children[k].addEventListener('click', function onClick(){
-        if(selected.includes(k)) return;
-        this.classList.add('revealed'); this.textContent='✓'; selected.push(k);
-        if(selected.length === targets){
-          const correct = selected.filter(s => indices.includes(s)).length;
-          res.textContent = `Acertaste ${correct} de ${targets}`;
-          storeGame({game:'spatial', value:`${correct}/${targets}`});
-          addRecent('Memoria espacial: '+correct+'/'+targets);
-          indices.forEach(i=>{ grid.children[i].classList.add('revealed'); grid.children[i].textContent='★'; });
-          // remove listeners
-          for(let j=0;j<grid.children.length;j++){ grid.children[j].replaceWith(grid.children[j].cloneNode(true)); }
-        }
-      });
-    }
-  }, 2000 + targets*200);
+    authBox.style.display="none";
+    document.getElementById("dashboard").style.display="flex";
+    loadUsers();
+    loadProfile();
+  },800);
 }
 
-function startBreathing(host){
-  host.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;gap:10px"><div style="font-weight:700">Respiración 4-2-6</div><div id="breathCircle" style="width:120px;height:120px;border-radius:999px;background:linear-gradient(135deg, rgba(123,226,255,0.06), rgba(155,107,255,0.06));display:flex;align-items:center;justify-content:center">Respira</div><div><button class="btn" id="startB">Iniciar</button><button class="btn alt" id="stopB">Detener</button></div></div>`;
-  const circle = host.querySelector('#breathCircle');
-  let bi=null; host.querySelector('#startB').addEventListener('click', ()=>{
-    if(bi) clearInterval(bi);
-    let s=0; bi = setInterval(()=>{ if(s===0) circle.style.transform='scale(1.35)'; else if(s===1) circle.style.transform='scale(1.6)'; else circle.style.transform='scale(1)'; s=(s+1)%3; }, 4000);
-    addRecent('Respiración iniciada');
-  });
-  host.querySelector('#stopB').addEventListener('click', ()=>{ if(bi) clearInterval(bi); circle.style.transform='scale(1)'; addRecent('Respiración detenida'); });
+function logout(){
+  localStorage.removeItem("brisaSession");
+  location.reload();
 }
 
-/* store game */
-function storeGame(obj){
-  if(!currentUser()) return;
-  const users = readStore(); const me = users.find(u=>u.user===currentUser());
-  me.history = me.history || []; me.history.push({ game: obj.game, value: obj.value, date: new Date().toISOString() });
-  writeStore(users);
+/* ----------- SECCIONES ----------- */
+function showSection(id){
+  document.querySelectorAll(".section").forEach(s=>s.style.display="none");
+  document.querySelectorAll(".menu button").forEach(b=>b.classList.remove("active"));
+  document.getElementById(id).style.display="block";
+  event.target.classList.add("active");
 }
 
-/* ------- Emotions ------- */
-function renderEmotions(host){
-  host.innerHTML = `<h3>Registro de emociones</h3><div class="small" style="margin-top:6px">Guarda cómo estuvo tu día y una puntuación (1-10).</div>
-    <div style="display:flex;gap:8px;margin-top:8px"><select id="emoSel"><option>Feliz</option><option>Triste</option><option>Ansioso</option><option>Calmado</option><option>Motivado</option></select><input id="emoScore" placeholder="Puntuación 1-10"></div>
-    <div style="margin-top:8px"><textarea id="emoNote" placeholder="Escribe cómo estuvo tu día..."></textarea></div>
-    <div style="display:flex;gap:8px;margin-top:8px"><button class="btn" id="saveEmo">Guardar</button><button class="btn alt" id="exportEmo">Exportar</button></div>
-    <div id="emoTable" style="margin-top:10px"></div>`;
-  $('saveEmo').addEventListener('click', ()=> {
-    if(!currentUser()){ toast('Inicia sesión para guardar'); showModal('login'); return; }
-    const e = $('emoSel').value, s = parseInt($('emoScore').value) || null, n = $('emoNote').value.trim();
-    const users = readStore(), me = users.find(u=>u.user===currentUser());
-    me.history = me.history || []; me.history.push({ emotion:e, score:s, note:n, date:new Date().toISOString() });
-    writeStore(users); toast('Emoción guardada'); renderEmotions(host);
-  });
-  $('exportEmo').addEventListener('click', ()=> {
-    if(!currentUser()){ toast('Inicia sesión'); return; }
-    const users = readStore(), me = users.find(u=>u.user===currentUser());
-    const blob = new Blob([JSON.stringify(me.history || [], null, 2)], { type:'application/json' }); const url = URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href=url; a.download = `emotions_${currentUser()}.json`; a.click(); URL.revokeObjectURL(url); toast('Exportado');
-  });
-  // table
-  const users = readStore(), me = users.find(u=>u.user===currentUser());
-  const tableDiv = $('emoTable');
-  if(!me || !me.history || !me.history.length){ tableDiv.innerHTML = '<div class="small">No hay entradas</div>'; return; }
-  const rows = me.history.slice().reverse().map(h => `<tr><td style="width:170px">${new Date(h.date).toLocaleString()}</td><td style="width:120px">${h.emotion}${h.score? ' • '+h.score : ''}</td><td>${h.note || ''}</td></tr>`).join('');
-  tableDiv.innerHTML = `<table class="table"><thead><tr><th>Fecha</th><th>Emoción (score)</th><th>Nota</th></tr></thead><tbody>${rows}</tbody></table>`;
+/* ----------- USUARIOS ----------- */
+function loadUsers(){
+  const list=document.getElementById("userList");
+  const users=JSON.parse(localStorage.getItem("brisaUsers")||"[]");
+  list.innerHTML=users.map(u=>`<p>👤 ${u.user} — Código: ${u.myCode}</p>`).join("")||"<p>No hay usuarios registrados.</p>";
 }
 
-/* ------- Users ------- */
-function renderUsers(host){
-  const users = readStore();
-  host.innerHTML = `<h3>Usuarios (${users.length})</h3><div class="small" style="margin-top:6px">Información disponible (editar desde Perfil si es tu cuenta).</div><div id="userList" style="margin-top:8px"></div>`;
-  const ul = $('userList');
-  if(!users.length){ ul.innerHTML='<div class="small">No hay usuarios</div>'; return; }
-  ul.innerHTML = users.map(u => `<div style="padding:8px;border-bottom:1px solid rgba(255,255,255,0.02)"><strong>${u.user}</strong> • ${u.history?u.history.length:0} registros • <div class="small">Creado: ${new Date(u.created).toLocaleDateString()}</div><div class="small">Invitó: ${(u.invited||[]).length} • Invitado por: ${(u.invitedBy||'—')}</div></div>`).join('');
+/* ----------- PERFIL ----------- */
+function loadProfile(){
+  const user=localStorage.getItem("brisaSession");
+  const users=JSON.parse(localStorage.getItem("brisaUsers")||"[]");
+  const data=users.find(u=>u.user===user);
+  document.getElementById("profileInfo").innerHTML=`
+    <p><strong>Usuario:</strong> ${data.user}</p>
+    <p><strong>Código:</strong> ${data.myCode}</p>
+    <p><strong>Miembro desde:</strong> ${new Date().toLocaleDateString()}</p>`;
 }
 
-/* ------- Profile ------- */
-function renderProfile(host){
-  const u = currentUser(); if(!u){ host.innerHTML = `<div class="small">Inicia sesión para ver tu perfil.</div>`; return; }
-  const users = readStore(); const me = users.find(x=>x.user===u);
-  host.innerHTML = `<h3>Perfil — ${u}</h3>
-    <div style="display:flex;gap:12px">
-      <div style="flex:1">
-        <label class="small">Peso (kg)</label>
-        <input id="pPeso" value="${me.profile?.peso || ''}" placeholder="ej: 70">
-        <label class="small" style="margin-top:8px">Fecha de nacimiento</label>
-        <input id="pBirth" type="date" value="${me.profile?.nacimiento || ''}">
-        <div style="display:flex;gap:8px;margin-top:10px"><button class="btn" id="saveProfile">Guardar</button><button class="btn alt" id="deleteAcc">Eliminar cuenta</button></div>
-      </div>
-      <div style="width:260px">
-        <div class="card small"><strong>Mi código</strong><div style="margin-top:6px"><strong>${me.myCode || '—'}</strong></div></div>
-        <div class="card small" style="margin-top:8px"><strong>Invitados</strong><div style="margin-top:6px" id="myInvited">${(me.invited||[]).length ? me.invited.join(', ') : '— ninguno —'}</div></div>
-      </div>
-    </div>`;
-  $('saveProfile').addEventListener('click', ()=> {
-    me.profile = me.profile || {}; me.profile.peso = $('pPeso').value.trim(); me.profile.nacimiento = $('pBirth').value;
-    writeStore(users); toast('Perfil guardado');
-  });
-  $('deleteAcc').addEventListener('click', ()=> {
-    if(!confirm('Eliminar cuenta localmente? Se borrarán datos en este navegador.')) return;
-    const idx = users.findIndex(x=>x.user===u); if(idx>=0){ users.splice(idx,1); writeStore(users); setActive(''); showModal('register'); toast('Cuenta eliminada'); }
-  });
+/* ----------- EMOCIONES ----------- */
+function saveEmotion(){
+  const note=document.getElementById("emotionNote").value;
+  if(!note){alert("Escribe algo primero");return;}
+  const user=localStorage.getItem("brisaSession");
+  const data=JSON.parse(localStorage.getItem("brisaEmotions")||"{}");
+  if(!data[user])data[user]=[];
+  data[user].push({text:note,date:new Date().toLocaleString()});
+  localStorage.setItem("brisaEmotions",JSON.stringify(data));
+  document.getElementById("emotionNote").value="";
+  renderEmotions();
+}
+function renderEmotions(){
+  const user=localStorage.getItem("brisaSession");
+  const data=JSON.parse(localStorage.getItem("brisaEmotions")||"{}");
+  const list=(data[user]||[]).map(e=>`<p>🕓 ${e.date}<br>${e.text}</p>`).join("");
+  document.getElementById("emotionLog").innerHTML=list||"<p>Aún no registras emociones.</p>";
 }
 
-/* ------- Invitations ------- */
-function renderInvites(){
-  const users = readStore(); const all = users.flatMap(u => (u.invites||[]).map(c => ({c, by:u.user})));
-  $('invList').innerHTML = all.length ? all.map(x=>`<div style="padding:6px;border-bottom:1px solid rgba(255,255,255,0.02)">${x.c} • ${x.by}</div>`).join('') : '— ninguna —';
-  // also update my code area if open
-  if(currentUser()){
-    const me = users.find(u=>u.user===currentUser());
-    if(me) $('myInvited') && ($('myInvited').textContent = (me.invited||[]).length ? me.invited.join(', ') : '— ninguno —');
+/* ----------- JUEGO DE REACCIÓN ----------- */
+let reactionTimeout,startTime;
+const btn=document.getElementById("reactionBtn");
+btn.onclick=()=>{
+  if(btn.classList.contains("waiting"))return;
+  const end=Date.now()-startTime;
+  document.getElementById("reactionResult").innerText=`Tu tiempo: ${end} ms`;
+  btn.classList.add("waiting");btn.textContent="Espera...";
+  startReaction();
+};
+function startReaction(){
+  clearTimeout(reactionTimeout);
+  reactionTimeout=setTimeout(()=>{
+    btn.classList.remove("waiting");
+    btn.textContent="¡Ahora!";
+    startTime=Date.now();
+  },Math.random()*3000+1000);
+}
+startReaction();
+
+/* ----------- JUEGO DE MEMORIA ----------- */
+const grid=document.getElementById("memoryGrid");
+const symbols=["🌙","☀️","⭐","🔥","💧","🌈","⚡","🍀"];
+let cards=[...symbols,...symbols].sort(()=>Math.random()-0.5);
+let flipped=[],solved=0;
+cards.forEach((sym,i)=>{
+  const c=document.createElement("div");
+  c.className="card";
+  c.dataset.sym=sym;
+  c.onclick=()=>flip(c);
+  grid.appendChild(c);
+});
+function flip(card){
+  if(flipped.length<2&&!card.classList.contains("flipped")){
+    card.classList.add("flipped");
+    card.textContent=card.dataset.sym;
+    flipped.push(card);
+    if(flipped.length===2)checkMatch();
   }
 }
-$('genInvite').addEventListener('click', ()=> {
-  if(!currentUser()){ toast('Inicia sesión para generar códigos'); showModal('login'); return; }
-  const users = readStore(); const me = users.find(u=>u.user===currentUser());
-  const code = 'INV-'+Math.random().toString(36).substring(2,8).toUpperCase();
-  me.invites = me.invites || []; me.invites.push(code); writeStore(users); toast('Código: '+code);
-});
-$('viewInvites').addEventListener('click', ()=> {
-  const list = readStore().flatMap(u => (u.invites||[]).map(c=>`${c} — ${u.user}`));
-  alert(list.join('\n') || 'No hay códigos');
-});
-
-/* ------- Quick area: export ------- */
-$('exportBtn').addEventListener('click', ()=> {
-  const data = JSON.stringify(readStore(), null, 2); const blob = new Blob([data], { type:'application/json' }); const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href=url; a.download='brisa_export.json'; a.click(); URL.revokeObjectURL(url); toast('Datos exportados');
-});
-
-/* ------- Helper: recent list ------- */
-function addRecent(txt){
-  const el = $('recent'); if(!el) return;
-  const d = document.createElement('div'); d.className='small'; d.style.padding='6px 0'; d.textContent = `${new Date().toLocaleTimeString()} — ${txt}`; el.prepend(d);
+function checkMatch(){
+  setTimeout(()=>{
+    if(flipped[0].dataset.sym===flipped[1].dataset.sym){
+      solved+=2;
+      flipped.forEach(c=>c.style.background="#22c55e");
+    }else{
+      flipped.forEach(c=>{c.classList.remove("flipped");c.textContent="";});
+    }
+    flipped=[];
+    if(solved===cards.length)alert("¡Completaste el juego de memoria!");
+  },700);
 }
-
-/* ------- Play sound (tiny) ------- */
-const audioCtx = (window.AudioContext||window.webkitAudioContext) ? new (window.AudioContext||window.webkitAudioContext)() : null;
-function playTone(freq=440, dur=0.06){
-  if(!audioCtx || !$('soundToggle').checked) return;
-  const o = audioCtx.createOscillator(), g = audioCtx.createGain();
-  o.connect(g); g.connect(audioCtx.destination); o.type='sine'; o.frequency.value=freq; g.gain.value=0.02;
-  o.start(); setTimeout(()=> o.stop(), dur*1000);
-}
-
-/* ------- Auth UI updates ------- */
-function renderActive(){ const u=currentUser(); $('activeUser').textContent = u || '—'; $('createdAt').textContent = u ? 'Creado: ' + new Date((readStore().find(x=>x.user===u)||{}).created || '').toLocaleDateString() : ''; $('btnLogout').style.display = u ? 'inline-block' : 'none'; renderInvites(); renderStats(); }
-function renderStats(){ const users=readStore(); $('miniStat').textContent = users.length + ' users'; }
-
-/* ------- View rendering dispatcher ------- */
-function renderView(view){
-  const host = $('dynamic');
-  if(view==='juegos'){ renderGames(host); }
-  else if(view==='emociones'){ renderEmotions(host); }
-  else if(view==='usuarios'){ renderUsers(host); }
-  else if(view==='perfil'){ renderProfile(host); }
-}
-
-/* Wrapper to call from navigation */
-function renderViewPublic(view){
-  const dynamic = $('dynamic');
-  dynamic.style.display = 'block';
-  renderView(view);
-}
-
-/* Called by navigateTo earlier */
-function renderViewFromNav(view){
-  const dynamic = $('dynamic');
-  if(view==='inicio'){ dynamic.style.display='none'; }
-  else { dynamic.style.display='block'; renderView(view); }
-}
-
-/* ------- Initial wiring & state ------- */
-// sidebar navigation
-qAll('.sideBtn').forEach(b=> b.addEventListener('click', (e)=>{
-  qAll('.sideBtn').forEach(x=>x.classList.remove('active')); b.classList.add('active');
-  const v = b.getAttribute('data-view'); if(v==='inicio'){ $('dynamic').style.display='none'; $('pageTitle').textContent='Inicio'; $('pageSub').textContent='Bienvenido'; } else { $('dynamic').style.display='block'; $('pageTitle').textContent = b.textContent.trim(); $('pageSub').textContent=''; renderView(v); }
-}));
-
-// show modal on load if no active user
-if(!currentUser()){ showModal('login'); } else { hideModal(); renderActive(); }
-
-// modal shortcuts: clicking outside modal hides? we keep modal strict: only hide on success
-document.addEventListener('keydown', (e)=> { if(e.key==='Escape'){ /* do nothing */ } });
-
-// small demo loader if empty
-if(readStore().length===0){
-  const btn = document.createElement('button'); btn.className='btn alt'; btn.style.marginTop='12px'; btn.textContent='Cargar demo';
-  btn.onclick = ()=> {
-    const users = readStore();
-    users.push({ user:'alice', pass:'123', created:new Date().toISOString(), history:[{emotion:'Feliz', note:'Buen día', date:new Date().toISOString()}], invites:['ABC123'], invitedBy:null, invited:[], myCode:'INV-ALC1', profile:{} });
-    users.push({ user:'santiago', pass:'abc', created:new Date().toISOString(), history:[{emotion:'Ansioso', note:'Examen', date:new Date().toISOString()}], invites:[], invitedBy:null, invited:[], myCode:'INV-SANT', profile:{} });
-    writeStore(users); toast('Demo cargada'); btn.remove();
-  };
-  document.querySelector('#inicio .card').appendChild(btn);
-}
-
-/* render functions initial */
-renderActive(); renderInvites(); renderStats();
-
-/* tiny helpers exposed */
-window.showModal = showModal;
-window.hideModal = hideModal;
-
-/* storage event to refresh UI across tabs */
-window.addEventListener('storage', (e)=>{ if(e.key===STORE){ renderActive(); renderInvites(); renderStats(); } });
-
 </script>
 </body>
 </html>
